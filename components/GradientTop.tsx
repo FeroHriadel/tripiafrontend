@@ -1,5 +1,5 @@
 import React from 'react';
-import './TopGradient.css';
+import './GradientTop.css';
 
 
 

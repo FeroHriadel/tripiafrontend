@@ -12,6 +12,11 @@
   z-index: -1;
 }
 
+.car-image {
+  transform: scale(1.25);
+  width: 100%;
+}
+
 @media (max-width: 1200px) {
   .computer-image {
     position: absolute;
@@ -21,6 +26,11 @@
     height: 400px;
     transform: translateY(-10%);
     z-index: -1;
+  }
+
+  .car-image {
+    transform: scale(1.5);
+    width: 100%;
   }
 }
 
