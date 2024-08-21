@@ -72,3 +72,21 @@
     height: 150px;
   }
 }
+
+@media (max-height: 600px) {
+  /*flattened top wave*/
+  .custom-shape-divider-top-1724221658 svg {
+    position: relative;
+    display: block;
+    width: calc(135% + 1.3px);
+    height: 50px;
+  }
+
+  /*flattened bottom wave*/
+  .custom-shape-divider-bottom-1724222867 svg {
+    position: relative;
+    display: block;
+    width: calc(225% + 1.3px);
+    height: 100px;
+  }
+}
