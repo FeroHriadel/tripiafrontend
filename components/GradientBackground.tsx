@@ -1,5 +1,5 @@
 import React from 'react';
-import './GradientTop.css';
+import './GradientBackground.css';
 
 
 
@@ -13,7 +13,7 @@ interface Props {
 
 
 
-const TopGradient = ({children, height = '95vh', minHeight = '280px', className = '', style = {}}: Props) => {
+const GradientBackground = ({children, height = '100vh', minHeight = '280px', className = '', style = {}}: Props) => {
   return (
     <section 
       className={`relative gradient w-[100%] flex justify-center items-center ` + className}
@@ -42,4 +42,4 @@ const TopGradient = ({children, height = '95vh', minHeight = '280px', className 
   )
 }
 
-export default TopGradient
+export default GradientBackground

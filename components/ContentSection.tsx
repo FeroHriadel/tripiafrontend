@@ -10,7 +10,7 @@ interface Props {
 
 const ContentSection = ({ children, className = '', style = {} }: Props) => {
   return (
-    <main className={`w-100 m-h-[280px] py-[5vh] ` + className} style={{...style}}>
+    <main className={`relative w-100 m-h-[280px] ` + className} style={{...style}}>
       {children}
     </main>
   )
