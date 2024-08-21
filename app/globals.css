@@ -10,7 +10,13 @@
 
 body {
   width: 100vw;
+  height: 200vh;
   overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+body::-webkit-scrollbar {
+  display: none;
 }
 
 @layer utilities {

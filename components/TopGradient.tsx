@@ -27,7 +27,7 @@ const TopGradient = ({children, height = '95vh', minHeight = '280px', className 
       </div>
 
       {/* content */}
-      <div className="relative w-[1000px]">
+      <div className='content-container'>
         {children}
       </div>
 
