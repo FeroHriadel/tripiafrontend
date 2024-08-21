@@ -1,0 +1,74 @@
+/*gradient*/
+.gradient {
+  background: linear-gradient(to right, 
+    #833AB4, 
+    rgba(253, 29, 218, 0.3), 
+    #FCB045
+  );
+}
+
+
+/*top wave*/
+.custom-shape-divider-top-1724221658 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 110%;
+  overflow: hidden;
+  line-height: 0;
+  transform: rotate(180deg);
+}
+
+.custom-shape-divider-top-1724221658 svg {
+  position: relative;
+  display: block;
+  width: calc(135% + 1.3px);
+  height: 150px;
+}
+
+.custom-shape-divider-top-1724221658 .shape-fill {
+  fill: #FFFFFF;
+}
+
+
+/*bottom wave*/
+.custom-shape-divider-bottom-1724222867 {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  transform: rotate(180deg);
+}
+
+.custom-shape-divider-bottom-1724222867 svg {
+  position: relative;
+  display: block;
+  width: calc(225% + 1.3px);
+  height: 250px;
+}
+
+.custom-shape-divider-bottom-1724222867 .shape-fill {
+  fill: #FFFFFF;
+}
+
+
+
+@media (max-width: 800px) {
+  /*flattened top wave*/
+  .custom-shape-divider-top-1724221658 svg {
+    position: relative;
+    display: block;
+    width: calc(135% + 1.3px);
+    height: 100px;
+  }
+
+  /*flattened bottom wave*/
+  .custom-shape-divider-bottom-1724222867 svg {
+    position: relative;
+    display: block;
+    width: calc(225% + 1.3px);
+    height: 150px;
+  }
+}
