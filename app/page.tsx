@@ -1,11 +1,12 @@
 import React from 'react';
-import GradientBackground from '@/components/GradientBackground';
 import GradientHeader from '@/components/GradientHeader';
+import GradientBackground from '@/components/GradientBackground';
 import GradientSubheader from '@/components/GradientSubheader';
 import GradientDescription from '@/components/GradientDescription';
 import ContentSection from '@/components/ContentSection';
 import hillsImage from '@/public/images/hills.png';
-import { leagueSpartan } from './fonts';
+import computerImage from '@/public/images/computer.png';
+import { leagueSpartan, lato } from './fonts';
 import './page.css';
 
 
@@ -14,18 +15,15 @@ const HomePage = () => {
   return (
     <>
       <GradientBackground>
-        <div className='w-100'>
-          <div className='home-page-text'>
-            <GradientHeader text='Team Up Now' className='sm-whitespace-nowrap'/>
-            <GradientSubheader text='Tripia' className='subheader' />
-            <GradientDescription text='Share your journey. Invite others.' />
-            <GradientDescription text=' Or just browse and hop onboard.' />
+        <div className='hero-content-wrapper'>
+          <div className="hero-text">
+            <GradientHeader text="TEAM UP NOW" />
+            <GradientSubheader className='tripia' text='tripia' />
+            <GradientDescription text='Share the journey. Invite others.' />
+            <GradientDescription text='Or just browse an hop onboard.' />
           </div>
 
-          <div 
-            className='computer-image'
-            style={{background: `url(/images/computer.png) no-repeat center center/cover`}}
-          />
+          <img className='hero-image' src={computerImage.src} alt="computer image" />
         </div>
       </GradientBackground>
 

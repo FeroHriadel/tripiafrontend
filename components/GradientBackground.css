@@ -60,18 +60,9 @@
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  max-width: 1200px;
   width: 100%;
-  padding: 0;
 }
 
-
-
-@media (max-width: 1300px) {
-  .content-container {
-    padding: 4rem;
-  }
-}
 
 
 @media (max-width: 800px) {
@@ -107,9 +98,5 @@
     display: block;
     width: calc(225% + 1.3px);
     height: 100px;
-  }
-
-  .content-container {
-    padding: 1rem;
   }
 }
