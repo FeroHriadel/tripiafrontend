@@ -28,11 +28,11 @@ const HomePage = () => {
       </GradientBackground>
 
       <ContentSection style={{zIndex: 2}}>
-        <img src={hillsImage.src} alt="car" className='hills-image' />
+        <img className='hills-image' src={hillsImage.src} alt="car" />
         <div className="absolute top-0 left-0 h-[100%] w-[100%] flex flex-col justify-center items-center gap-5">
           <h2 className='text-white text-5xl xs:text-6xl md:text-8xl text-center font-semibold drop-shadow-lg'>Discover New Adventures</h2>
           <GradientSubheader 
-            text='Share the journey, split the costs of gas and accommodation, while making new friends along the way' 
+            text='Share the journey. Split the costs of gas and accommodation while making new friends along the way' 
             className='text-center font-semibold drop-shadow-lg w-[75%]' 
           />
         </div>

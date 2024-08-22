@@ -7,6 +7,12 @@
   );
 }
 
+@media (max-height: 600px) {
+  .gradient {
+    height: 700px;
+  }
+}
+
 
 /*top wave*/
 .custom-shape-divider-top-1724221658 {

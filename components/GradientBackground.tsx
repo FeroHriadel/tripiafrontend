@@ -13,11 +13,11 @@ interface Props {
 
 
 
-const GradientBackground = ({children, height = '100vh', minHeight = '280px', className = '', style = {}}: Props) => {
+const GradientBackground = ({children, height, minHeight = '500px', className = '', style = {}}: Props) => {
   return (
     <section 
-      className={`relative gradient w-[100%] flex justify-center items-center ` + className}
-      style={{height: height, minHeight: minHeight, ...style}}
+      className={`gradient relative w-[100%] flex justify-center items-center h-lvh ` + className}
+      style={height ? { height, minHeight: minHeight, ...style} : {minHeight: minHeight, ...style}}
     >
       {/* top wave */}
       <div className="top-wave custom-shape-divider-top-1724221658">
