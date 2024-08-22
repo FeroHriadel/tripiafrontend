@@ -67,6 +67,19 @@ export const Blob4 = ({color = "#F0F0F0", style={}, className = ''}: BlobProps) 
       )
 }
 
+export const Blob5 = ({color = "#F0F0F0", style={}, className = ''}: BlobProps) => {
+  return (
+    <svg 
+      viewBox="0 0 200 200" 
+      xmlns="http://www.w3.org/2000/svg"
+      className={`blob blob5 ${className}`}
+      style={{...style}}
+    >
+      <path fill="#F0F0F0" d="M23.2,-14.5C39.3,-7.1,67.9,-3.6,72.7,4.7C77.4,13,58.2,26.1,42.2,37.6C26.1,49.1,13,59.2,2.1,57.1C-8.9,55,-17.7,40.8,-25.2,29.3C-32.6,17.7,-38.7,8.9,-38.2,0.5C-37.7,-7.9,-30.7,-15.8,-23.2,-23.2C-15.8,-30.6,-7.9,-37.6,-2.2,-35.5C3.6,-33.3,7.1,-22,23.2,-14.5Z" transform="translate(100 100)" />
+    </svg>
+      )
+}
+
 export const BlobArea = () => {
   return (
     <div className='blob-area'>
@@ -74,6 +87,7 @@ export const BlobArea = () => {
       <Blob2 style={{opacity: 0.15}} />
       <Blob3 style={{opacity: 0.2}} />
       <Blob4 />
+      <Blob5 style={{opacity: 0.15}} />
     </div>
   )
 }

@@ -41,6 +41,13 @@
   display: none;
 }
 
+.blob5 {
+  width: 1000px;
+  height: 1000px;
+  top: -250px;
+  left: 5%;
+}
+
 @media (max-width: 900px) {
   .blob1 {
     opacity: 0.2;
@@ -48,5 +55,11 @@
 
   .blob4 {
     display: inline;
+  }
+}
+
+@media (max-width: 1500px) {
+  .blob5 {
+    display: none;
   }
 }
