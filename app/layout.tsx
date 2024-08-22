@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Navbar from "@/components/Navbar";
 import { montserrat } from "./fonts";
 import "./globals.css";
 
@@ -13,7 +14,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{children: React.ReactNode}>) {
   return (
     <html lang="en">
-      <body className={montserrat.className}>{children}</body>
+      <body className={montserrat.className}>
+        <Navbar />
+        {children}
+      </body>
     </html>
   );
 }

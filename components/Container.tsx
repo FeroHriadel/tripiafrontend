@@ -3,7 +3,7 @@ import React from 'react';
 
 
 interface Props {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
 }
