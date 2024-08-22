@@ -10,7 +10,7 @@ interface Props {
 const GradientSubheader = ({ text, className = '', style = {} }: Props) => {
   return (
     <h2 
-      className={leagueSpartan.className + ` text-3xl xs:text-4xl md:text-6xl font-bold text-white ` + className}
+      className={leagueSpartan.className + ` text-3xl xs:text-4xl md:text-6xl font-bold text-white drop-shadow-lg ` + className}
       style={style}
     >
       {text}

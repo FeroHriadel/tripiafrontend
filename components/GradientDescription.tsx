@@ -10,7 +10,7 @@ interface Props {
 const GradientDescription = ({ text, className = '', style = {} }: Props) => {
   return (
     <h3 
-      className={leagueSpartan.className + ` text-2xl xs:text-3xl md:text-4xl text-white ` + className}
+      className={leagueSpartan.className + ` text-2xl xs:text-3xl md:text-4xl text-white drop-shadow-lg ` + className}
       style={style}
     >
       {text}

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Blob1, BlobArea } from './Blobs';
 import './GradientBackground.css';
 
 
@@ -19,6 +20,8 @@ const GradientBackground = ({children, height, minHeight = '500px', className = 
       className={`gradient relative w-[100%] flex justify-center items-center h-lvh ` + className}
       style={height ? { height, minHeight: minHeight, ...style} : {minHeight: minHeight, ...style}}
     >
+      <BlobArea />
+
       {/* top wave */}
       <div className="top-wave custom-shape-divider-top-1724221658">
           <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">

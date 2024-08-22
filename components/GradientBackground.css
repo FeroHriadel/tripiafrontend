@@ -5,6 +5,7 @@
     rgba(253, 29, 218, 0.3), 
     #FCB045
   );
+  overflow: hidden;
 }
 
 @media (max-height: 600px) {
