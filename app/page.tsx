@@ -16,8 +16,8 @@ const HomePage = () => {
     <>
       <GradientBackground>
         <div className='hero-content-wrapper'>
-          <div className="hero-text">
-            <GradientHeader text="TEAM UP NOW" />
+          <div className="hero-text" >
+            <GradientHeader text="TEAM UP NOW" className='' />
             <GradientSubheader className='tripia' text='tripia' />
             <GradientDescription text='Share the journey. Invite others.' />
             <GradientDescription text='Or just browse an hop onboard.' />
