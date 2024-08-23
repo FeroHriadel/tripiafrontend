@@ -21,7 +21,7 @@ const GradientFlexi = ({children, height, minHeight = '500px', className = '', s
       style={height ? { height, minHeight: minHeight, ...style} : {minHeight: minHeight, ...style}}
     >
       <BlobArea />
-
+      
       {/* top wave */}
       <div className="top-wave flexi-custom-shape-divider-top-1724221658">
           <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">

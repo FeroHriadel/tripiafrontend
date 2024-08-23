@@ -13,6 +13,7 @@ import { leagueSpartan } from '@/app/fonts';
 import './HomePageHero.css';
 import './HomePagePromo.css';
 import './HomePageFooter.css';
+import GradientButtonBig from '@/components/GradientButtonBig';
 
 
 
@@ -42,24 +43,16 @@ const HomePage = () => {
       </ContentSection>
 
       <GradientFlexi>
-      <Container className='px-10'>
-            <GradientHeader text='TRIPIA' className='md:translate-y-10 translate-y-7 translate-x-10 lg:-translate-x-10' />
-            <GradientDescription 
-              text={`Welcome to Tripia, the perfect platform for car trips and hikes! Whether you're planning a road trip or a weekend hike, you can invite others to join or find a trip to hop on. Share the journey, split the costs of gas, accommodation, and more, while making new friends along the way. Say goodbye to solo trips and enjoy the company of like-minded adventurers.`}
-              className='drop-shadow-lg'
-            />
+        <Container className='px-10'>
+          <GradientHeader text='TRIPIA' className='md:translate-y-10 translate-y-7 translate-x-10 lg:-translate-x-10' />
+          <GradientDescription 
+            text={`Welcome to Tripia, the perfect platform for car trips and hikes! Whether you're planning a road trip or a weekend hike, you can invite others to join or find a trip to hop on. Share the journey, split the costs of gas, accommodation, and more, while making new friends along the way. Say goodbye to solo trips and enjoy the company of like-minded adventurers.`}
+            className='drop-shadow-lg'
+          />
+          <GradientButtonBig text='Join a Trip' className='my-4' />
+          <GradientButtonBig text='Post a Trip' />
         </Container>
       </GradientFlexi>
-
-      {/* <GradientBackgroundFullScreen className='bottom-gradient'>
-        <Container className='px-10'>
-            <GradientHeader text='TRIPIA' className='md:translate-y-10 translate-y-7 translate-x-10 lg:-translate-x-10' />
-            <GradientDescription 
-              text={`Welcome to Tripia, the perfect platform for car trips and hikes! Whether you're planning a road trip or a weekend hike, you can invite others to join or find a trip to hop on. Share the journey, split the costs of gas, accommodation, and more, while making new friends along the way. Say goodbye to solo trips and enjoy the company of like-minded adventurers.`}
-              className='drop-shadow-lg'
-            />
-        </Container>
-      </GradientBackgroundFullScreen> */}
     </>
   )
 }
