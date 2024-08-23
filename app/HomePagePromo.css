@@ -1,0 +1,68 @@
+.hills-image {
+  height: 50vh;
+  min-height: 600px;
+  width: 100%;
+  transform: scale(1.5)
+}
+
+.promo-text-wrapper {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  padding: 0 12.5%;
+}
+
+.discover-new-adventures {
+  font-size: 4rem;
+}
+
+.promo-description {
+  font-size: 3rem;
+  line-height: 1;
+  font-weight: 600;
+  width: 75%;
+}
+
+@media (max-width: 1200px) {
+  .discover-new-adventures {
+    font-size: 3.5rem;
+  }
+
+  .promo-description {
+    font-size: 2.75rem;
+  }
+}
+
+@media (max-width: 1000px) {
+  .promo-text-wrapper {
+    padding: 0 1rem;
+  }
+
+  .discover-new-adventures {
+    font-size: 3.5rem;
+  }
+
+  .promo-description {
+    font-size: 2.25rem;
+    width: 100%;
+  }
+}
+
+@media (max-width: 500px) {
+  .discover-new-adventures {
+    font-size: 2.75rem;
+  }
+
+  .promo-description {
+    font-size: 1.9rem;
+    width: 100%;
+  }
+}
