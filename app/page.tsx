@@ -1,6 +1,7 @@
 import React from 'react';
 import GradientHeader from '@/components/GradientHeader';
-import GradientBackground from '@/components/GradientBackground';
+import GradientFullScreen from '@/components/GradientFullScreen';
+import GradientFlexi from '@/components/GradientFlexi';
 import GradientSubheader from '@/components/GradientSubheader';
 import GradientDescription from '@/components/GradientDescription';
 import ContentSection from '@/components/ContentSection';
@@ -11,13 +12,14 @@ import { lato } from '@/app/fonts';
 import { leagueSpartan } from '@/app/fonts';
 import './HomePageHero.css';
 import './HomePagePromo.css';
+import './HomePageFooter.css';
 
 
 
 const HomePage = () => {
   return (
     <>
-      <GradientBackground>
+      <GradientFullScreen>
         <main className="hero-content">
           <section className="hero-text">
             <h2 className={lato.className + ` team-up-now`}>TEAM UP NOW</h2>
@@ -27,7 +29,7 @@ const HomePage = () => {
           </section>
           <img className="computer-image" src={computerImage.src} alt="comuter image"/>
         </main>       
-      </GradientBackground>
+      </GradientFullScreen>
 
       <ContentSection style={{zIndex: 2}}>
           <img className='hills-image' src={hillsImage.src} alt="hills image" />
@@ -39,9 +41,25 @@ const HomePage = () => {
           </aside>
       </ContentSection>
 
-      <GradientBackground>
+      <GradientFlexi>
+      <Container className='px-10'>
+            <GradientHeader text='TRIPIA' className='md:translate-y-10 translate-y-7 translate-x-10 lg:-translate-x-10' />
+            <GradientDescription 
+              text={`Welcome to Tripia, the perfect platform for car trips and hikes! Whether you're planning a road trip or a weekend hike, you can invite others to join or find a trip to hop on. Share the journey, split the costs of gas, accommodation, and more, while making new friends along the way. Say goodbye to solo trips and enjoy the company of like-minded adventurers.`}
+              className='drop-shadow-lg'
+            />
+        </Container>
+      </GradientFlexi>
 
-      </GradientBackground>
+      {/* <GradientBackgroundFullScreen className='bottom-gradient'>
+        <Container className='px-10'>
+            <GradientHeader text='TRIPIA' className='md:translate-y-10 translate-y-7 translate-x-10 lg:-translate-x-10' />
+            <GradientDescription 
+              text={`Welcome to Tripia, the perfect platform for car trips and hikes! Whether you're planning a road trip or a weekend hike, you can invite others to join or find a trip to hop on. Share the journey, split the costs of gas, accommodation, and more, while making new friends along the way. Say goodbye to solo trips and enjoy the company of like-minded adventurers.`}
+              className='drop-shadow-lg'
+            />
+        </Container>
+      </GradientBackgroundFullScreen> */}
     </>
   )
 }

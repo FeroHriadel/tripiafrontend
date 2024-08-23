@@ -1,0 +1,99 @@
+/*gradient*/
+.gradient-flexi {
+  background: linear-gradient(to right, 
+    #833AB4, 
+    rgba(253, 29, 218, 0.3), 
+    #FCB045
+  );
+  overflow: hidden;
+  padding-top: calc(150px + 4rem);
+  padding-bottom: calc(250px);
+}
+
+/*top wave*/
+.flexi-custom-shape-divider-top-1724221658 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 110%;
+  overflow: hidden;
+  line-height: 0;
+  transform: rotate(180deg);
+}
+
+.flexi-custom-shape-divider-top-1724221658 svg {
+  position: relative;
+  display: block;
+  width: calc(135% + 1.3px);
+  height: 150px;
+}
+
+.flexi-custom-shape-divider-top-1724221658 .shape-fill {
+  fill: #FFFFFF;
+}
+
+
+/*bottom wave*/
+.flexi-custom-shape-divider-bottom-1724222867 {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  transform: rotate(180deg);
+}
+
+.flexi-custom-shape-divider-bottom-1724222867 svg {
+  position: relative;
+  display: block;
+  width: calc(225% + 1.3px);
+  height: 250px;
+}
+
+.flexi-custom-shape-divider-bottom-1724222867 .shape-fill {
+  fill: #FFFFFF;
+}
+
+
+
+
+@media (max-width: 800px) {
+  /*flattened top wave*/
+  .flexi-custom-shape-divider-top-1724221658 svg {
+    width: calc(140% + 1.3px);
+    height: 125px;
+  }
+
+  /*flattened bottom wave*/
+  .flexi-custom-shape-divider-bottom-1724222867 svg {
+    width: calc(225% + 1.3px);
+    height: 150px;
+  }
+
+  /* adjust gradient content padding */
+  .gradient-flexi {
+    padding-top: calc(125px + 4rem);
+    padding-bottom: calc(150px);
+  }
+}
+
+@media (max-height: 600px) {
+  /*flattened top wave*/
+  .flexi-custom-shape-divider-top-1724221658 svg {
+    width: calc(135% + 1.3px);
+    height: 112.5px;
+  }
+
+  /*flattened bottom wave*/
+  .flexi-custom-shape-divider-bottom-1724222867 svg {
+    width: calc(225% + 1.3px);
+    height: 100px;
+  }
+
+    /* adjust gradient content padding */
+    .gradient-flexi {
+      padding-top: calc(112.5px + 4rem);
+      padding-bottom: calc(100px);
+    }
+}
