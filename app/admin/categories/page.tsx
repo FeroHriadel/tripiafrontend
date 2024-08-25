@@ -21,6 +21,8 @@ const CategoriesPage = () => {
           <ContentSectionDescription text='Create, edit and delete categories' className='mb-20' />
         </Container>
       </ContentSection>
+
+      <GradientFlexi />
     </>
   )
 }
