@@ -10,10 +10,10 @@ interface Props {
 
 
 
-const ContentSectionHeader = ({ text, className = '', style = {} }: Props) => {
+const ContentSectionDescription = ({ text, className = '', style = {} }: Props) => {
   return (
     <h4 className={`font-semibold text-xl xs:text-2xl md:text-3xl text-center ` + className} style={{...style}}>{text}</h4>
   )
 }
 
-export default ContentSectionHeader
+export default ContentSectionDescription
