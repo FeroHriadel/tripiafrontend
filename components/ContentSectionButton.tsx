@@ -5,18 +5,21 @@ import './ContentSectionButton.css';
 
 interface Props {
   text: string;
+  type?: "button" | "submit" | "reset";
   className?: string;
   style?: {[key: string]: string | number};
+  disabled?: boolean;
 }
 
 
 
-const ContentSectionButton = ({ text = 'addTextDummy', className = '', style = {} }: Props) => {
+const ContentSectionButton = ({ text = 'Add text, Dummy', type = 'button', disabled = false, className = '', style = {} }: Props) => {
   return (
     <button 
-      type='button'
+      type={type}
       className={className + ` ` + `content-button`}
       style={style}
+      disabled={disabled}
     >
       <p className='content-button-text'>
         {text}

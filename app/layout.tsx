@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AppProvider } from "@/components/AppProvider";
 import Navbar from "@/components/Navbar";
 import { montserrat } from "./fonts";
 import "./globals.css";
@@ -15,8 +16,10 @@ export default function RootLayout({ children }: Readonly<{children: React.React
   return (
     <html lang="en">
       <body className={montserrat.className}>
-        <Navbar />
-        {children}
+        <AppProvider>
+          <Navbar />
+          {children}
+        </AppProvider>
       </body>
     </html>
   );
