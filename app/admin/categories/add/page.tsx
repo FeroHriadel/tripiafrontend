@@ -10,20 +10,64 @@ import ContentSectionHeader from '@/components/ContentSectionHeader';
 import ContentSectionDescription from '@/components/ContentSectionDescription';
 import InputText from '@/components/InputText';
 import ContentSectionButton from '@/components/ContentSectionButton';
+import { apiCalls } from '@/utils/apiCalls';
+import { Category } from '@/types';
+import { useAppDispatch } from "@/redux/store";
+import { addCategory } from "@/redux/slices/categoriesSlice";
+import { useRouter } from 'next/navigation';
 
 
 
 const CategoryAddPage = () => {
   const [name, setName] = React.useState('');
   const [loading, setLoading] = useState(false);
+  const dispatch = useAppDispatch();
+  const router = useRouter();
   
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setName(e.target.value);
   }
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  function isFormOk() {
+    if (!name) return false;
+    else return true;
+  }
+
+  function addCategoryToState(category: Category) {
+    dispatch(addCategory(category));
+  }
+
+  function handleError(text?: string) {
+    console.log(text);
+    setLoading(false);
+  }
+
+  function handleSuccess(category: Category) {
+    addCategoryToState(category);
+    setName('');
+    console.log('Category created');
+    setLoading(false);
+    router.push('/admin/categories');
+  }
+
+  async function createCategory() {
+    try {
+      const body = {name}; 
+      const res = await apiCalls.post('/categories', body);
+      if (res.error) handleError(res.error)
+      else handleSuccess(res);
+    } catch (error) {
+      console.log(error);
+      handleError('Failed to create category');
+    }
+  }
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!isFormOk()) return;
+    setLoading(true);
+    await createCategory();
   }
 
 
@@ -34,7 +78,7 @@ const CategoryAddPage = () => {
         <GradientDescription text='Create a new category for trips.' className='text-center' />
       </GradientFlexi>
 
-      <ContentSection>
+      <ContentSection className='pb-60'>
         <Container className='px-4 max-w-[500px]'>
           <ContentSectionHeader text='Add Category' />
           <ContentSectionDescription text='Create a new Category' className='mb-20' />
@@ -55,6 +99,8 @@ const CategoryAddPage = () => {
           </form>
         </Container>
       </ContentSection>
+
+      <GradientFlexi />
     </>
   )
 }

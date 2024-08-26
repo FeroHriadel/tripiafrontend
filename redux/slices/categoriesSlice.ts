@@ -2,6 +2,13 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Category } from "@/types";
 
 
+
+function categoriesAlphabetically(categories: Category[]) {
+    return categories.sort((a, b) => a.name.localeCompare(b.name));
+}
+
+
+
 const initialState: Category[] = [];
 
 export const categoriesSlice = createSlice({
@@ -9,11 +16,14 @@ export const categoriesSlice = createSlice({
     name: `categoriesSlice`,
     reducers: {
         setCategories: (state, action: PayloadAction<Category[]>) => {
-            return action.payload;
+            return categoriesAlphabetically(action.payload);
         },
-        //updateCategories: ...
+        addCategory: (state, action: PayloadAction<Category>) => {
+            const newCategories = [...state, action.payload];
+            return categoriesAlphabetically(newCategories);
+        }
     }
 });
 
 export default categoriesSlice.reducer;
-export const { setCategories } = categoriesSlice.actions;
+export const { setCategories, addCategory } = categoriesSlice.actions;
