@@ -15,6 +15,7 @@ import { Category } from '@/types';
 import { useAppDispatch } from "@/redux/store";
 import { addCategory } from "@/redux/slices/categoriesSlice";
 import { useRouter } from 'next/navigation';
+import { useToast } from '@/context/toastContext';
 
 
 
@@ -23,6 +24,7 @@ const CategoryAddPage = () => {
   const [loading, setLoading] = useState(false);
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const { showToast } = useToast();
   
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -39,14 +41,14 @@ const CategoryAddPage = () => {
   }
 
   function handleError(text?: string) {
-    console.log(text);
+    showToast(text || 'Failed to create category');
     setLoading(false);
   }
 
   function handleSuccess(category: Category) {
     addCategoryToState(category);
     setName('');
-    console.log('Category created');
+    showToast('Category created')
     setLoading(false);
     router.push('/admin/categories');
   }

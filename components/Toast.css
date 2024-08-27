@@ -1,0 +1,38 @@
+.toast {
+  position: fixed;
+  top: 1rem;
+  right: -500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 400px;
+  height: 75px;
+  background: linear-gradient(to right, #FCB045 75%, #966929 100%);
+  box-shadow: -2px 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 3;
+  border-radius: 16px;
+  transition: 0.4s right linear;
+  padding: 1rem;
+}
+
+.toast.shown {
+  right: 1rem;
+}
+
+.toast-text {
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1.1;
+  text-align: center;
+}
+
+@media (max-width: 450px) {
+  .toast {
+    width: calc(280px - 2rem);
+    height: 100px;
+  }
+
+  .toast-text {
+    font-size: 1rem;
+  }
+}

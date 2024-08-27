@@ -7,7 +7,7 @@ import { CgProfile } from "react-icons/cg";
 
 const Navbar = () => {
   return (
-    <nav className='flex navbar w-[100vw] h-[50px] items-center fixed top-0 left-0 z-10 bg-white opacity-75'>
+    <nav className='flex navbar w-[100vw] h-[50px] items-center absolute top-0 left-0 bg-white' style={{zIndex: 3}}>
       <Container className='flex justify-between items-center px-5'>
         <div className="left">
           <Link href="/"><p>tripia</p></Link>
