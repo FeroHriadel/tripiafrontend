@@ -2,6 +2,8 @@ import React , { useEffect } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import './ConfirmDialog.css';
 import ButtonOrange from './ButtonOrange';
+import ModalHeader from './ModalHeader';
+import ModalDescription from './ModalDescription';
 
 
 
@@ -17,6 +19,10 @@ const ConfirmDialog = ({ text = 'Are you sure?', open, onConfirm, onClose }: Pro
   function closeDialogOnEsc(e: KeyboardEvent) {
     if (e.key === 'Escape' || e.key === 'Esc') onClose();
   }
+
+  function closeDialogOnOutsideClick(e: React.MouseEvent) {
+    if ((e.target as HTMLElement).classList.contains('confirm-dialog-container')) onClose();
+  }
   
 
   useEffect(() => {
@@ -26,13 +32,14 @@ const ConfirmDialog = ({ text = 'Are you sure?', open, onConfirm, onClose }: Pro
 
 
   return (
-    <div className={open ? 'confirm-dialog-container shown' : 'confirm-dialog-container'}>
+    <div className={open ? 'confirm-dialog-container shown' : 'confirm-dialog-container'} onClick={closeDialogOnOutsideClick}>
       <div className="confirm-dialog">
         <FaTimes className='close-icon' onClick={onClose} />
-        <p>{text}</p>
+        <ModalHeader text='Are you sure?' />
+        <ModalDescription text={text} />
         <span className='w-[100%] flex flex-col sm:flex-row justify-center items-center gap-4 my-8'>
-          <ButtonOrange text='No, Close' className='w-[100%] sm:w-[200px]' onClick={onClose} />
-          <ButtonOrange text='Yes, Delete' className='w-[100%] sm:w-[200px]' onClick={onConfirm} />
+          <ButtonOrange text='No' className='w-[100%] sm:w-[200px] h-auto py-2' onClick={onClose} />
+          <ButtonOrange text='Yes' className='w-[100%] sm:w-[200px] h-auto py-2' onClick={onConfirm} />
         </span>
       </div>
     </div>

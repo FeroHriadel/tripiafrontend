@@ -1,9 +1,7 @@
 .orange-button {
   appearance: none;         
   border: none;
-  padding: 0;
   outline: none;
-  height: 3.5rem;
   background-color: white;
   border-radius: 1rem;
   font-weight: 600;

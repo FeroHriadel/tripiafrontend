@@ -18,7 +18,7 @@ const ButtonOrange = ({ text = 'Add text, Dummy', type = 'button', disabled = fa
   return (
     <button 
       type={type}
-      className={`orange-button w-[100%]` + ` ` + className}
+      className={`orange-button w-[100%] h-[3.5rem]` + ` ` + className}
       style={style}
       disabled={disabled}
       onClick={onClick}
