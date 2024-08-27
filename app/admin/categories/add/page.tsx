@@ -55,6 +55,7 @@ const CategoryAddPage = () => {
 
   async function createCategory() {
     try {
+      showToast('Saving Category...');
       const body = {name}; 
       const res = await apiCalls.post('/categories', body);
       if (res.error) handleError(res.error)
