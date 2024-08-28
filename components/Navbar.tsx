@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { FaCarAlt, FaSignInAlt } from 'react-icons/fa';
 import { MdGroups2 } from "react-icons/md";
 import { CgProfile } from "react-icons/cg";
+import { BiSolidMessageRoundedAdd } from "react-icons/bi";
 
 const Navbar = () => {
   return (
@@ -14,16 +15,16 @@ const Navbar = () => {
         </div>
 
         <ul className="right flex gap-5">
-          <Link href="/mytrips">
+          <Link href="/trips">
             <li className="flex items-center">
               <FaCarAlt className="block xs:hidden" />  {/* Icon visible on xs */}
-              <span className="hidden xs:block">My Trips</span>  {/* Text visible on larger screens */}
+              <span className="hidden xs:block">Trips</span>  {/* Text visible on larger screens */}
             </li>
           </Link>
-          <Link href="/mygroups">
+          <Link href="/posttrip">
             <li className="flex items-center">
-              <MdGroups2 className="block xs:hidden" />  {/* Icon visible on xs */}
-              <span className="hidden xs:block">My Groups</span>  {/* Text visible on larger screens */}
+              <BiSolidMessageRoundedAdd className="block xs:hidden" />  {/* Icon visible on xs */}
+              <span className="hidden xs:block">Post Trip</span>  {/* Text visible on larger screens */}
             </li>
           </Link>
           <Link href="/myprofile">
