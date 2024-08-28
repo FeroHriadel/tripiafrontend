@@ -37,9 +37,9 @@ const ConfirmDialog = ({ text = 'Are you sure?', open, onConfirm, onClose }: Pro
         <FaTimes className='close-icon' onClick={onClose} />
         <ModalHeader text='Are you sure?' />
         <ModalDescription text={text} />
-        <span className='w-[100%] flex flex-col sm:flex-row justify-center items-center gap-4 my-8'>
-          <ButtonOrange text='No' className='w-[100%] sm:w-[200px] h-auto py-2' onClick={onClose} />
-          <ButtonOrange text='Yes' className='w-[100%] sm:w-[200px] h-auto py-2' onClick={onConfirm} />
+        <span className='w-[100%] flex flex-col sm:flex-row justify-center items-center gap-4 my-4'>
+          <ButtonOrange text='No' className='w-[100%] sm:w-[200px] h-auto py-1' onClick={onClose} />
+          <ButtonOrange text='Yes' className='w-[100%] sm:w-[200px] h-auto py-1' onClick={onConfirm} />
         </span>
       </div>
     </div>
