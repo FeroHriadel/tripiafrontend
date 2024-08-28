@@ -43,12 +43,29 @@ const del = async (endpoint: string, body: {[key: string]: any} = {}) => {
   }
 }
 
+const put = async (endpoint: string, body: {[key: string]: any} = {}) => {
+  try {
+    const options = {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    };
+    const res = await fetch(process.env.NEXT_PUBLIC_API_ENDPOINT! + endpoint, options);
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.log(error);
+    return { error: 'Failed to update data' };
+  }
+}
+
 
 
 export const apiCalls = {
   get,
   post,
   del,
+  put
 }
 
 

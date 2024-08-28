@@ -74,7 +74,7 @@ const CategoriesPage = () => {
                 <TableLine key={category.id}>
                   <p>{category.name}</p>
                   <span className='flex gap-2'>
-                    <FaPenFancy className='cursor-pointer' />
+                    <Link href={`/admin/categories/edit?id=${category.id}`}><FaPenFancy className='cursor-pointer' /></Link>
                     <FaTrashAlt className='cursor-pointer' onClick={() => openConfirm(category)} />
                   </span>
                 </TableLine>

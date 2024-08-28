@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import GradientFlexi from '@/components/GradientFlexi';
 import GradientHeader from '@/components/GradientHeader';
 import GradientDescription from '@/components/GradientDescription';
@@ -13,22 +13,36 @@ import ContentSectionButton from '@/components/ContentSectionButton';
 import { apiCalls } from '@/utils/apiCalls';
 import { Category } from '@/types';
 import { useAppDispatch } from "@/redux/store";
-import { addCategory } from "@/redux/slices/categoriesSlice";
-import { useRouter } from 'next/navigation';
+import { replaceCategory } from "@/redux/slices/categoriesSlice";
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from '@/context/toastContext';
 
 
 
-const CategoryAddPage = () => {
-  const [name, setName] = React.useState('');
+const CategoryEditPage = () => {
+  const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const dispatch = useAppDispatch();
-  const router = useRouter();
   const { showToast } = useToast();
+  const router = useRouter();
+  const params = useSearchParams();
+  const categoryId = params.get('id');
   
-
+  
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setName(e.target.value);
+  }
+
+  async function prefillInput() {
+    setLoading(true);
+    const res = await apiCalls.get(`/categories?id=${categoryId}`);
+    if (!res.id) { 
+      showToast('Category not found. Redirecting...'); 
+      setTimeout(() => {router.push('/admin/categories')}, 1000); 
+    } else {
+      setName(res.name);
+      setLoading(false);
+    }
   }
 
   function isFormOk() {
@@ -36,55 +50,60 @@ const CategoryAddPage = () => {
     else return true;
   }
 
-  function addCategoryToState(category: Category) {
-    dispatch(addCategory(category));
+  function editCategoryInState(category: Category) {
+    dispatch(replaceCategory(category));
   }
 
   function handleError(text?: string) {
-    showToast(text || 'Failed to create category');
+    showToast(text || 'Failed to save category');
     setLoading(false);
   }
 
   function handleSuccess(category: Category) {
-    addCategoryToState(category);
+    editCategoryInState(category);
     setName('');
-    showToast('Category created')
+    showToast('Category saved')
     setLoading(false);
     router.push('/admin/categories');
   }
 
-  async function createCategory() {
+  async function updateCategory() {
     try {
-      const body = {name: name.toLowerCase()}; 
-      const res = await apiCalls.post('/categories', body);
+      showToast('Saving Category...');
+      const body = {name}; 
+      const res = await apiCalls.put(`/categories/${categoryId}`, body);
       if (res.error) handleError(res.error)
       else handleSuccess(res);
     } catch (error) {
       console.log(error);
-      handleError('Failed to create category');
+      handleError('Failed to save category');
     }
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!isFormOk()) return showToast('Please enter a name');
+    if (!isFormOk()) return;
     setLoading(true);
-    showToast('Saving Category...');
-    await createCategory();
+    await updateCategory();
   }
+
+
+  useEffect(() => {
+    prefillInput();
+  }, [])
 
 
   return (
     <>
       <GradientFlexi>
-        <GradientHeader text='ADD CATEGORY' className='text-center' />
-        <GradientDescription text='Create a new category for trips.' className='text-center' />
+        <GradientHeader text='EDIT CATEGORY' className='text-center' />
+        <GradientDescription text={`Change category's name`} className='text-center' />
       </GradientFlexi>
 
       <ContentSection className='pb-60'>
         <Container className='px-4 max-w-[500px]'>
-          <ContentSectionHeader text='Add Category' />
-          <ContentSectionDescription text='Create a new Category' className='mb-20' />
+          <ContentSectionHeader text='Edit Category' />
+          <ContentSectionDescription text='Rename an existing category' className='mb-20' />
           <form onSubmit={handleSubmit}>
             <InputText 
               labelText='name' 
@@ -95,7 +114,7 @@ const CategoryAddPage = () => {
               disabled={loading}
             />
             <ContentSectionButton 
-              text='Add Category' 
+              text='Edit Category' 
               type='submit' 
               disabled={loading} 
             />
@@ -108,4 +127,4 @@ const CategoryAddPage = () => {
   )
 }
 
-export default CategoryAddPage
+export default CategoryEditPage
