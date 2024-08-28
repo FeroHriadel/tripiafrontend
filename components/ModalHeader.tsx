@@ -12,7 +12,7 @@ interface Props {
 
 const ModalHeader = ({ text, className = '', style = {} }: Props) => {
   return (
-    <h2 className={`font-semibold text-2xl xs:text-3xl text-center text-textorange mb-1 ` + className} style={{...style}}>{text}</h2>
+    <h2 className={`font-semibold text-xl xs:text-2xl text-center text-textorange mb-1 ` + className} style={{...style}}>{text}</h2>
   )
 }
 
