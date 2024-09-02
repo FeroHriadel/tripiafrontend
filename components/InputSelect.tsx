@@ -46,7 +46,6 @@ const InputSelect = ({inputName, options = [], labelText, value, onChange, class
       (e.target as HTMLElement).classList.contains('select-click-area')
     ) return
     else {
-      console.log('closing!!!!!!!!')
       setIsFocused(false);
     }
   }
@@ -64,26 +63,28 @@ const InputSelect = ({inputName, options = [], labelText, value, onChange, class
 
   
   return (
-    <div className={`select-input-container ` + className}>
+    <div className={`select-input-container ` + className} style={disabled ? { ...style, pointerEvents: 'none', opacity: 0.5 } : style}>
+      {/* input area */}
       <div className="input-and-label-wrapper">
         <input 
           type="text" 
           name={inputName}
           id={inputName}
-          value={value} 
+          value={value}
           onChange={onChange} 
           className={'select-input' + ' ' + className}
-          style={style}
           disabled={true}
-        />
+        /> {/* input text = option.value & is invisible; <p className='selected-option-label'/> shows option.label text to the user instead */}
+
         <label 
           className={isFocused || value ? `select-input-label up ` : `select-input-label `}
           htmlFor={inputName}
         >
           {labelText}
         </label>
-        <div className="select-click-area" onClick={handleFocus}>
-          <p className='selected-option-label'>
+
+        <div className="select-click-area" onClick={handleFocus}> {/* covers input and intercepts click events */}
+          <p className='selected-option-label'> {/* shows option.label text */}
             {selectedOptionLabel}
             {' '}
             {
@@ -95,6 +96,7 @@ const InputSelect = ({inputName, options = [], labelText, value, onChange, class
         </div>
       </div>
 
+      {/*options area*/}
       {
         isFocused
         &&
