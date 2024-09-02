@@ -21,7 +21,7 @@ const Navbar = () => {
               <span className="hidden xs:block">Trips</span>  {/* Text visible on larger screens */}
             </li>
           </Link>
-          <Link href="/posttrip">
+          <Link href="/trips/post">
             <li className="flex items-center">
               <BiSolidMessageRoundedAdd className="block xs:hidden" />  {/* Icon visible on xs */}
               <span className="hidden xs:block">Post Trip</span>  {/* Text visible on larger screens */}

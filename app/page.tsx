@@ -53,7 +53,7 @@ const HomePage = () => {
           <Link href='/trips'>
             <GradientButtonBig text='Join a Trip' className='my-4' />
           </Link>
-          <Link href='/posttrip'>
+          <Link href='/trips/post'>
             <GradientButtonBig text='Post a Trip' />
           </Link>
         </Container>
