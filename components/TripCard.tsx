@@ -11,15 +11,17 @@ interface Props {
   trip: Trip;
   className?: string;
   style?: {[key: string]: string | number};
+  id?: string;
 }
 
 
 
-const TripCard = ({ trip, className = '', style = {} }: Props) => {
+const TripCard = ({ trip, className = '', style = {}, id }: Props) => {
   return (
     <div 
       className={`---card-container--- w-[100%] bg-gradient-to-l from-gray-200 to-white px-4 py-4 font-xl sm:text-xl text-base rounded-2xl ` + className}
       style={{...style}}
+      id={id}
     >
 
       {/* user's image, trip name, category & icons */}
