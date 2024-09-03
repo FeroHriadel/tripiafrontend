@@ -61,6 +61,10 @@ const InputSelect = ({inputName, options = [], labelText, value, onChange, class
     return () => window.removeEventListener('click', closeDialogOnOutsideClick);
   }, []);
 
+  React.useEffect(() => {
+    if (!value) { setselectedOptionLabel(''); setSelectedOptionExtraInfo(''); }
+  }, [value]);
+
   
   return (
     <div className={`select-input-container ` + className} style={disabled ? { ...style, pointerEvents: 'none', opacity: 0.5 } : style}>

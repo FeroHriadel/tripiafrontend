@@ -53,8 +53,7 @@
 .selected-option-label {
   position: absolute;
   font-size: 1.25rem;
-  color: #787878;
-  font-weight: 600;
+  font-weight: 500;
   top: 50%;
   left: 2rem;
   pointer-events: none;
