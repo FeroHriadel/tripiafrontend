@@ -11,16 +11,17 @@ interface Props {
   value: string;
   className?: string;
   style?: React.CSSProperties;
+  type?: string;
 }
 
 
 
-const InputText = ({ inputName, labelText, value, onChange, className = '', style = {}, disabled = false }: Props) => {
+const InputText = ({ inputName, labelText, value, onChange, type = 'text', className = '', style = {}, disabled = false }: Props) => {
   return (
     <div className={`text-input-container ` + className}>
       <div className="input-and-label-wrapper">
       <input 
-        type="text" 
+        type={type} 
         name={inputName}
         id={inputName}
         value={value} 
@@ -28,6 +29,7 @@ const InputText = ({ inputName, labelText, value, onChange, className = '', styl
         className={'text-input' + ' ' + className}
         style={style}
         disabled={disabled}
+        autoComplete='off'
       />
 
       <label className={value ? `text-input-label up` : `text-input-label`} htmlFor={inputName}>
