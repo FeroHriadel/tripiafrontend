@@ -96,22 +96,10 @@ const TripsPage = () => {
             /* render trips */
             trips && trips.length > 0
             &&
-            trips.map(trip => (
-              <TripCard key={trip.id} trip={trip} id={trip.id} className='mb-10' />
-            ))
+            trips.map(trip => (<TripCard key={trip.id} trip={trip} id={trip.id} className='mb-10' />))
           }
-          {
-            /* if no trips */
-            !loading && trips.length === 0
-            &&
-            <p className='text-center'>No trips found</p>
-          }
-          {
-            /* loader */
-            loading
-            &&
-            <p className='text-center'>Loading...</p>
-          }
+          { /* if no trips */ !loading && trips.length === 0 && <p className='text-center'>No trips found</p> }
+          { /* loader */ loading && <p className='text-center'>Loading...</p> }
         </Container>
       </ContentSection>
 
