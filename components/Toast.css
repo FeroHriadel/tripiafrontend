@@ -26,10 +26,10 @@
   text-align: center;
 }
 
-@media (max-width: 450px) {
+@media (max-width: 600px) {
   .toast {
-    width: calc(280px - 2rem);
-    height: 100px;
+    width: calc(260px);
+    height: 75px;
   }
 
   .toast-text {

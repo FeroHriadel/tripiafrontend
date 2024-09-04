@@ -1,14 +1,24 @@
-import React from 'react'
+'use client'
+
+import React, { useState } from 'react'
 import CenteredImage from './CenteredImage';
 import { FaPenFancy, FaTrashAlt, FaRegStar } from 'react-icons/fa';
 import Tag from './Tag';
 import ContentSectionButton from './ContentSectionButton';
 import { Trip } from '@/types';
+import ConfirmDialog from './ConfirmDialog';
+import { apiCalls } from '@/utils/apiCalls';
+import { useToast } from '@/context/toastContext';
+
+
+
+export const dynamic = 'force-dynamic';
 
 
 
 interface Props {
   trip: Trip;
+  onDelete: (id: string) => void;
   className?: string;
   style?: {[key: string]: string | number};
   id?: string;
@@ -16,7 +26,18 @@ interface Props {
 
 
 
-const TripCard = ({ trip, className = '', style = {}, id }: Props) => {
+const TripCard = ({ trip, onDelete, className = '', style = {}, id }: Props) => {
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const { showToast } = useToast();
+
+
+  function openConfirm() { setConfirmOpen(true); }
+
+  function closeConfirm() { setConfirmOpen(false); }
+
+  async function deleteTrip() { closeConfirm(); onDelete(trip.id!); }
+
+
   return (
     <div 
       className={`---card-container--- w-[100%] bg-gradient-to-l from-gray-200 to-white px-4 py-4 font-xl sm:text-xl text-base rounded-2xl ` + className}
@@ -41,7 +62,7 @@ const TripCard = ({ trip, className = '', style = {}, id }: Props) => {
           </div>
         </div>
         <div className="---right-icons-container--- flex flex-col sm:flex-row gap-4 sm:gap-2">
-          <p className='cursor-pointer'><FaTrashAlt /></p>
+          <p className='cursor-pointer' onClick={openConfirm}><FaTrashAlt /></p>
           <p className='cursor-pointer'><FaPenFancy /></p>
           <p className='cursor-pointer' style={{color: '#F48957'}}><FaRegStar /></p>
         </div>
@@ -80,6 +101,8 @@ const TripCard = ({ trip, className = '', style = {}, id }: Props) => {
 
       }
       <ContentSectionButton text='View Details' />
+
+      <ConfirmDialog open={confirmOpen} onClose={closeConfirm} onConfirm={deleteTrip} text={`Do you want to permanently delete this trip?`} />
     </div>
   )
 }

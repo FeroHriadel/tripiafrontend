@@ -69,6 +69,16 @@ const TripsPage = () => {
     }
   }
 
+  async function deleteTrip(id: string) {
+    showToast('Deleting trip...');
+    const res = await apiCalls.del(`/trips/${id}`);
+    if (res.error) showToast('Failed to delete trip');
+    else {
+      showToast('Trip deleted');
+      setTrips(trips.filter(trip => trip.id !== id));
+    }
+  }
+
 
   useEffect(() => { loadMoreTrips(); }, []);
 
@@ -96,7 +106,7 @@ const TripsPage = () => {
             /* render trips */
             trips && trips.length > 0
             &&
-            trips.map(trip => (<TripCard key={trip.id} trip={trip} id={trip.id} className='mb-10' />))
+            trips.map(trip => (<TripCard key={trip.id} trip={trip} id={trip.id} onDelete={deleteTrip} className='mb-10' />))
           }
           { /* if no trips */ !loading && trips.length === 0 && <p className='text-center'>No trips found</p> }
           { /* loader */ loading && <p className='text-center'>Loading...</p> }
