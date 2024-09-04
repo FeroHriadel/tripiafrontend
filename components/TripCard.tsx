@@ -20,7 +20,7 @@ const TripCard = ({ trip, className = '', style = {}, id }: Props) => {
   return (
     <div 
       className={`---card-container--- w-[100%] bg-gradient-to-l from-gray-200 to-white px-4 py-4 font-xl sm:text-xl text-base rounded-2xl ` + className}
-      style={{...style}}
+      style={{boxShadow: '0 4px 15px rgba(0, 0, 0, 0.25)' , ...style}}
       id={id}
     >
 

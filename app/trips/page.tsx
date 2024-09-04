@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import GradientFlexi from '@/components/GradientFlexi';
 import Container from '@/components/Container';
 import GradientHeader from '@/components/GradientHeader';
@@ -24,7 +24,8 @@ const TripsPage = () => {
   const [lastEvaluatedKey, setLastEvaluatedKey] = useState<{[key: string]: any} | null | undefined>(null);
   const [loading, setLoading] = useState(true);
   const { showToast } = useToast();
-  
+  const observerRef = useRef<IntersectionObserver | null>(null);
+ 
 
   function uriEncodeObj(obj: {[key: string]: any}) {
     const stringified = JSON.stringify(obj);
@@ -32,26 +33,46 @@ const TripsPage = () => {
     return uriEncoded;
   }
 
-  async function fetchTrips() {
+  async function fetchTripsFromAPI() {
     const encodedLastEvaluatedKey = lastEvaluatedKey ? uriEncodeObj(lastEvaluatedKey) : null;
     const queryString = encodedLastEvaluatedKey ? `?lastEvaluatedKey=${encodedLastEvaluatedKey}` : '';
     const res = await apiCalls.get('/trips' + queryString);
     return res;
   }
 
-  async function getTrips() {
+  async function loadMoreTrips() {
     setLoading(true);
-    const res = await fetchTrips();
+    const res = await fetchTripsFromAPI();
     if (!res.items) { showToast(res.error || 'Failed to get more trips'); return setLoading(false) }
-    if (res.lastEvaluatedKey) setLastEvaluatedKey(res.lastEvaluatedKey);
+    setLastEvaluatedKey(res.lastEvaluatedKey);
     setTrips([...trips, ...res.items]);
     setLoading(false);
   }
 
+  function isMoreCardsToLoad() {
+    if (lastEvaluatedKey) return true
+    else return false;
+  }
+  
+  function unobserveLastCard() { if (observerRef.current) observerRef.current.disconnect(); }
 
-  useEffect(() => {
-    getTrips();
-  }, [])
+  function observeLastCard() {
+    unobserveLastCard();
+    observerRef.current = new IntersectionObserver((entries) => {
+      const entry = entries[0];
+      if (entry.isIntersecting && isMoreCardsToLoad()) loadMoreTrips();
+    });
+    if (trips.length > 0) {
+      const lastTripIdx = trips.length - 1;
+      const lastCardEl = document.getElementById(`${trips[lastTripIdx].id}`);
+      if (lastCardEl) observerRef.current.observe(lastCardEl);
+    }
+  }
+
+
+  useEffect(() => { loadMoreTrips(); }, []);
+
+  useEffect(() => { if (trips.length) observeLastCard(); }, [trips]); //will load more cards when last card shows in viewport
 
 
   return (
@@ -76,7 +97,7 @@ const TripsPage = () => {
             trips && trips.length > 0
             &&
             trips.map(trip => (
-              <TripCard key={trip.id} trip={trip} id={trip.id} className='mb-8' />
+              <TripCard key={trip.id} trip={trip} id={trip.id} className='mb-10' />
             ))
           }
           {
