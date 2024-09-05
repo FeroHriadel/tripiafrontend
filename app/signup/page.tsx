@@ -7,9 +7,10 @@ import ContentSectionHeader from '@/components/ContentSectionHeader';
 import ContentSectionDescription from '@/components/ContentSectionDescription';
 import InputText from '@/components/InputText';
 import ContentSectionButton from '@/components/ContentSectionButton';
-import { useToast } from '@/context/toastContext';
-import { cognitoSignup, confirmCognitoSignup, cognitoSignin } from '@/utils/cognito';
+import { cognitoSignup, confirmCognitoSignup, cognitoSignin, getCognitoSession } from '@/utils/cognito';
+import { useAuth } from "@/context/authContext";
 import { useRouter } from 'next/navigation';
+import { useToast } from '@/context/toastContext';
 import GradientFlexi from '@/components/GradientFlexi';
 import GradientHeader from '@/components/GradientHeader';
 import GradientDescription from '@/components/GradientDescription';
@@ -25,6 +26,7 @@ const SignupPage = () => {
   const disabled = loading || showConfirmSignupForm;
   const { showToast } = useToast();
   const router = useRouter();
+  const { user, setUser, getUserFromSession } = useAuth();
 
 
   //signup functions
@@ -47,7 +49,7 @@ const SignupPage = () => {
   function handleSignupSuccess() {
     setShowConfirmSignupForm(true);
     setLoading(false);
-    setTimeout(() => { window.scrollBy({ top: 250, left: 0, behavior: 'smooth' }); }, 250);
+    setTimeout(() => { scrollToConfirmForm(); }, 250);
   }
 
   async function handleSignupSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -65,24 +67,39 @@ const SignupPage = () => {
     setLoading(false);
   }
 
-  async function handleConfirmSignupSuccess() {
-    showToast('Sign up confirmed');
-  }
-
   async function handleConfirmSignupSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault(); setLoading(true);
     const res = await confirmCognitoSignup(email, code);
     if (res.error) handleConfirmSignupFail(res.error);
-    else handleConfirmSignupSuccess();
+    else await signUserIn();
+  }
+
+
+  //signin functions
+  function handleSigninFail(error: string, redirect?: string) {
+    showToast(error);
+    if (redirect) setTimeout(() => { router.push(redirect); }, 1000);
+  }
+
+  async function signUserIn() {
+    const res = await cognitoSignin(email, password); if (res.error) return handleSigninFail('You are in! You may now sign in.', '/login');
+    const session = await getCognitoSession(); if (session.error) return handleSigninFail('You are in! You may now sign in.', '/login');
+    const { isAdmin, email: userEmail, expires, idToken } = getUserFromSession(session);
+    setUser({isAdmin, email: userEmail, expires: expires, idToken: idToken});
+    showToast('Thank you for joining :)');
+    setTimeout(() => { router.push('/profile'); }, 1000);
   }
 
 
   //other functions
   function scrollToFormHeader() {
     const element = document.getElementById('form-header');
-    if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
+    if (element) element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function scrollToConfirmForm() {
+    const element = document.getElementById('confirm-form');
+    if (element) element.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {

@@ -23,3 +23,10 @@ export interface Trip {
   requirements: string;  
   type: '#TRIP'
 }
+
+export interface User {
+  isAdmin: boolean;
+  email: string;
+  expires: number;
+  idToken: string;
+}

@@ -56,3 +56,56 @@ export const cognitoSignin = async (username: string, password: string) => {
     return {error: 'Sign in failed'};
   }
 }
+
+export const cognitoSignout = async () => {
+  try {
+    await signOut();
+    return {error: ''};
+  } catch (error) {
+    console.log(error);
+    let er = JSON.parse(JSON.stringify(error)).name || 'Sign out failed';
+    return {error: er};
+  }
+}
+
+export const getCognitoSession = async () => {
+  try {
+    const { accessToken, idToken } = (await fetchAuthSession()).tokens ?? {}
+    if (!idToken) throw new Error('No session');
+    return {accessToken, idToken, err: ''};
+  } catch (error) {
+    console.log(error);
+    return {error: 'Getting session failed'};
+  }
+}
+
+export const refreshCognitoSession = async () => {
+  try {
+    const { tokens } = await fetchAuthSession({forceRefresh: true});
+    return {tokens, error: ''};
+  } catch (error) {
+    console.log(error);
+    return {error: 'Refreshing session failed'};
+  }
+}
+
+export const handleResetPassword = async(email: string) => {
+  try {
+    const output = await resetPassword({ username: email });
+    return {output, error: ''};
+  } catch (error) {
+    console.log(error);
+    return {error: 'Resetting password failed'};
+  }
+}
+
+export const handleConfirmResetPassword = async (props: {email: string, confirmationCode: string, newPassword: string}) => {
+  try {
+    const { email, confirmationCode, newPassword } = props;
+    await confirmResetPassword({ username: email, confirmationCode: confirmationCode, newPassword: newPassword});
+    return {ok: true, error: ''}
+  } catch (error) {
+    console.log(error);
+    return {error: 'Resetting password failed'};
+  }
+}

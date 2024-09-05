@@ -3,6 +3,7 @@
 import StoreProvider from "@/redux/StoreProvider";
 import CategoriesFetcher from "./CategoriesFetcher";
 import { ToastContextProvider } from "@/context/toastContext";
+import { AuthContextProvider } from "@/context/authContext";
 
 
 
@@ -11,8 +12,10 @@ export function AppProvider({children}: {children: React.ReactNode}) {
     <>
       <StoreProvider>
         <ToastContextProvider>
-          <CategoriesFetcher />
-          {children}
+          <AuthContextProvider>
+            <CategoriesFetcher />
+            {children}
+          </AuthContextProvider>
         </ToastContextProvider>
       </StoreProvider>
     </>
