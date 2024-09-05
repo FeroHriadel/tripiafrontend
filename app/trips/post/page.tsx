@@ -85,9 +85,11 @@ const PostTripPage = () => {
       </GradientFlexi>
 
       <ContentSection>
-        <Container className='max-w-[500px] px-4'>
+        <Container className='px-4'>
           <ContentSectionHeader text='Post Your Trip' />
           <ContentSectionDescription text='Fill in the details before you post' className='mb-20'/>
+        </Container>
+        <Container className='max-w-[500px] px-4'>
           <form onSubmit={handleSubmit}>
             <InputText inputName='name' labelText='trip name' value={name} onChange={handleChange} disabled={loading} className='mb-4' />
             <InputSelect inputName='departureDate' labelText='departure date' value={departureDate} onChange={handleDate} options={getNext14Days()} disabled={loading} className='mb-4' />

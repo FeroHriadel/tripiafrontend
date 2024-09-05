@@ -87,8 +87,15 @@ const SignupPage = () => {
     const { isAdmin, email: userEmail, expires, idToken } = getUserFromSession(session);
     setUser({isAdmin, email: userEmail, expires: expires, idToken: idToken});
     showToast('Thank you for joining :)');
-    setTimeout(() => { router.push('/profile'); }, 1000);
   }
+
+  const redirectToProfilePage = (msDelay: number) => {
+    setTimeout(() => {
+      router.push('/profile');
+    }, msDelay);
+  }
+
+  useEffect(() => { if (user?.email) redirectToProfilePage(1000); }, [user]);
 
 
   //other functions

@@ -14,6 +14,7 @@ import { useToast } from '@/context/toastContext';
 import GradientFlexi from '@/components/GradientFlexi';
 import GradientHeader from '@/components/GradientHeader';
 import GradientDescription from '@/components/GradientDescription';
+import Link from 'next/link';
 
 
 
@@ -79,7 +80,7 @@ const page = () => {
       </GradientFlexi>
 
       <ContentSection>
-        <Container>
+        <Container className='px-4 '>
           <ContentSectionHeader text='Ready for a Trip?' id='form-header' />
           <ContentSectionDescription text='Sign in and get going' className='mb-20' />
         </Container>
@@ -89,6 +90,12 @@ const page = () => {
             <InputText value={password} labelText='password' type='password' inputName='password' onChange={handleChange} disabled={loading} className='mb-4' />
             <ContentSectionButton text='Sign in' type='submit' disabled={loading} />
           </form>
+          <Link href='/signup'>
+            <p className='text-center mb-2'>Don't have an account? <span className='underline text-textorange'>Sign up!</span></p> 
+          </Link>
+          <Link href='/resetpassword'>
+            <p className='text-center'>Forgot your password? <span className='underline text-textorange'>Reset password</span></p>
+          </Link>
         </Container>
       </ContentSection>
 
