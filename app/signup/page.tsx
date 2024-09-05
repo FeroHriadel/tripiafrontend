@@ -55,7 +55,7 @@ const SignupPage = () => {
   async function handleSignupSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault(); if (!isSignupFormOk()) return;
     setLoading(true); 
-    const res = await cognitoSignup(email, password);
+    const res = await cognitoSignup(email.toLowerCase(), password);
     if (res.error) handleSignupFail(res.error)
     else handleSignupSuccess();
   }
@@ -82,7 +82,7 @@ const SignupPage = () => {
   }
 
   async function signUserIn() {
-    const res = await cognitoSignin(email, password); if (res.error) return handleSigninFail('You are in! You may now sign in.', '/login');
+    const res = await cognitoSignin(email.toLowerCase(), password); if (res.error) return handleSigninFail('You are in! You may now sign in.', '/login');
     const session = await getCognitoSession(); if (session.error) return handleSigninFail('You are in! You may now sign in.', '/login');
     const { isAdmin, email: userEmail, expires, idToken } = getUserFromSession(session);
     setUser({isAdmin, email: userEmail, expires: expires, idToken: idToken});

@@ -26,7 +26,7 @@ interface Props {
 
 
 
-const TripCard = ({ trip, onDelete, className = '', style = {}, id }: Props) => {
+const CardTrip = ({ trip, onDelete, className = '', style = {}, id }: Props) => {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const { showToast } = useToast();
 
@@ -107,4 +107,4 @@ const TripCard = ({ trip, onDelete, className = '', style = {}, id }: Props) => 
   )
 }
 
-export default TripCard
+export default CardTrip
