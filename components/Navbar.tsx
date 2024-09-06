@@ -2,7 +2,7 @@ import React from 'react';
 import Container from '@/components/Container';
 import Link from 'next/link';
 import { FaCarAlt, FaSignInAlt } from 'react-icons/fa';
-import { MdGroups2 } from "react-icons/md";
+import NavbarSigninButton from './NavbarSigninButton';
 import { CgProfile } from "react-icons/cg";
 import { BiSolidMessageRoundedAdd } from "react-icons/bi";
 
@@ -33,12 +33,7 @@ const Navbar = () => {
               <span className="hidden xs:block">My Profile</span>  {/* Text visible on larger screens */}
             </li>
           </Link>
-          <Link href="/login">
-            <li className="flex items-center">
-              <FaSignInAlt className="block xs:hidden" />  {/* Icon visible on xs */}
-              <span className="hidden xs:block">Log in</span>  {/* Text visible on larger screens */}
-            </li>
-          </Link>
+          <NavbarSigninButton />
         </ul>
       </Container>
     </nav>

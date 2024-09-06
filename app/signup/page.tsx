@@ -14,6 +14,7 @@ import { useToast } from '@/context/toastContext';
 import GradientFlexi from '@/components/GradientFlexi';
 import GradientHeader from '@/components/GradientHeader';
 import GradientDescription from '@/components/GradientDescription';
+import Link from 'next/link';
 
 
 
@@ -126,15 +127,7 @@ const SignupPage = () => {
     <>
       <GradientFlexi>
         <Container className='px-10'>
-          <GradientHeader text='SIGN UP' className='md:translate-y-10 translate-y-7 translate-x-10 lg:-translate-x-10' />
-          <GradientDescription 
-            text={`Create an account so you can join trips and invite people to yours.`} 
-            className='drop-shadow-lg text-center'
-          />
-          <GradientDescription 
-            text={`Just confirm your email and you are in.`} 
-            className='drop-shadow-lg text-center'
-          />
+          <GradientHeader text='SIGN UP' className='text-center' />
         </Container>
       </GradientFlexi>
 
@@ -149,6 +142,14 @@ const SignupPage = () => {
             <InputText value={password} labelText='password' type='password' inputName='password' onChange={handleChange} disabled={disabled} className='mb-4' />
             <ContentSectionButton text='Sign up' type='submit' disabled={disabled} />
           </form>
+
+          {
+            !showConfirmSignupForm
+            &&
+            <Link href='/login'>
+              <p className='text-center mb-2'>Already have an account? <span className='underline text-textorange'>Sign in!</span></p> 
+            </Link>
+          }
 
           {
             /* signup confirmation form */

@@ -7,7 +7,7 @@ import ContentSectionHeader from '@/components/ContentSectionHeader';
 import ContentSectionDescription from '@/components/ContentSectionDescription';
 import InputText from '@/components/InputText';
 import ContentSectionButton from '@/components/ContentSectionButton';
-import { cognitoSignup, confirmCognitoSignup, cognitoSignin, getCognitoSession } from '@/utils/cognito';
+import { cognitoSignin, getCognitoSession } from '@/utils/cognito';
 import { useAuth } from "@/context/authContext";
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/context/toastContext';
@@ -53,29 +53,43 @@ const page = () => {
     const res = await cognitoSignin(email.toLowerCase(), password); if (res.error) return handleSigninError('Failed to log in');
     const session = await getCognitoSession(); if (session.error) return handleSigninError(res.error);
     const { isAdmin, email: userEmail, expires, idToken } = getUserFromSession(session);
-    setUser({isAdmin, email: userEmail, expires: expires, idToken: idToken});
+    setUser({isAdmin, email: userEmail, expires: expires, idToken: idToken}); 
+    setLastSignedInUser(userEmail); //to prefill the form next time user signs in
     showToast(`You're now signed in`);
   }
 
-  const redirectToProfilePage = (msDelay: number) => {
+  function redirectToProfilePage(msDelay: number) {
     setTimeout(() => {
       router.push('/profile');
     }, msDelay);
   }
 
+  function setLastSignedInUser(email: string) {
+    localStorage.setItem('lastSignedInUser', email);
+  }
+
+  function getLastSignedInUser() {
+    return localStorage.getItem('lastSignedInUser') || '';
+  }
+
+  function scrollToFormHeader() {
+    const element = document.getElementById('form-header');
+    if (element) element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
 
   useEffect(() => { if (user?.email) redirectToProfilePage(1000); }, [user]);
+
+  useEffect(() => { if (!user.email) setValues({...values, email: getLastSignedInUser()}); }, [] );
+
+  useEffect(() => { scrollToFormHeader(); }, []);
 
 
   return (
     <>
       <GradientFlexi>
         <Container className='px-10'>
-          <GradientHeader text='LOG IN' className='md:translate-y-10 translate-y-7 translate-x-10 lg:-translate-x-10' />
-          <GradientDescription 
-            text={`Log in to your account so you can join trips and invite people to yours.`} 
-            className='drop-shadow-lg text-center'
-          />
+          <GradientHeader text='LOG IN' className='text-center' />
         </Container>
       </GradientFlexi>
 
