@@ -12,8 +12,7 @@ import InputText from '@/components/InputText'
 import InputSelect from '@/components/InputSelect'
 import InputTextarea from '@/components/InputTextarea'
 import ContentSectionButton from '@/components/ContentSectionButton'
-import PrivatePageRouteGuard from '@/components/RouteGuardPrivate'
-import { getNext14Days, isValidTimeFormat} from '@/utils/dates'
+import { getNext14Days, isValidTimeFormat, isAtLeast4HoursFromNow } from '@/utils/dates'
 import { useToast } from '@/context/toastContext'
 import { apiCalls } from '@/utils/apiCalls'
 import { useRouter } from 'next/navigation'
@@ -33,6 +32,7 @@ const PostTripPage = () => {
     if (!departureDate) { showToast('Please enter departure date (What day will you be leaving)'); return false }
     if (!departureTime) { showToast('Please enter departure time (What time will you be leaving)'); return false }
     if (!isValidTimeFormat(departureTime)) { showToast('Please enter time in this format: hh:mm (E.g.: 07:30 or 19:15)'); return false }
+    if (!isAtLeast4HoursFromNow(departureDate, departureTime)) { showToast('Departure date & time must be at least 4 hours from now'); return false }
     if (!departureFrom) { showToast('Please enter departure from (Where will you be leaving from)'); return false }
     if (!destination) { showToast('Please enter destination (What you are going to see)'); return false }
     if (!description) { showToast('Please enter description (So people know what to expect)'); return false }
@@ -75,8 +75,6 @@ const PostTripPage = () => {
 
   return (
     <>
-      <PrivatePageRouteGuard />
-
       <GradientFlexi>
         <Container className='px-10'>
           <GradientHeader text='POST A TRIP' className='md:translate-y-10 translate-y-7 translate-x-10 lg:-translate-x-10' />

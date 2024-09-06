@@ -8,8 +8,11 @@ import { useAuth } from '@/context/authContext';
 
 
 const NavbarSigninButton = () => {
-  const { user, logout } = useAuth();
+  const { user, checkingAuth, logout } = useAuth();
   const { email } = user;
+
+
+  if (checkingAuth) return <></>
 
   if (!email) return (
     <Link href="/login">

@@ -25,3 +25,13 @@ export function getNext14Days() {
   }
   return days;
 }
+
+export function isAtLeast4HoursFromNow(selectedDateISO: string, selectedTime: string): boolean {
+  const now = new Date();
+  const [selectedHours, selectedMinutes] = selectedTime.split(':').map(Number);
+  const selectedDate = new Date(selectedDateISO);
+  selectedDate.setHours(selectedHours, selectedMinutes, 0, 0);
+  const timeDifference = selectedDate.getTime() - now.getTime();
+  const timeDifferenceInHours = timeDifference / (1000 * 60 * 60);
+  return timeDifferenceInHours >= 4;
+}

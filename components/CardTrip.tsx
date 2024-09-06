@@ -63,7 +63,7 @@ const CardTrip = ({ trip, onDelete, className = '', style = {}, id }: Props) => 
           </div>
         </div>
         {
-          user.isAdmin || user.email === trip.createdBy
+          (user.isAdmin || user.email === trip.createdBy)
           &&
           <div className="---right-icons-container--- flex flex-col sm:flex-row gap-4 sm:gap-2">
             <p className='cursor-pointer' onClick={openConfirm}><FaTrashAlt /></p>
