@@ -13,7 +13,6 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/context/toastContext';
 import GradientFlexi from '@/components/GradientFlexi';
 import GradientHeader from '@/components/GradientHeader';
-import GradientDescription from '@/components/GradientDescription';
 import Link from 'next/link';
 
 

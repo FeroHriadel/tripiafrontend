@@ -89,7 +89,7 @@ export const refreshCognitoSession = async () => {
   }
 }
 
-export const handleResetPassword = async(email: string) => {
+export const cognitoResetPassword = async(email: string) => {
   try {
     const output = await resetPassword({ username: email });
     return {output, error: ''};
@@ -99,7 +99,7 @@ export const handleResetPassword = async(email: string) => {
   }
 }
 
-export const handleConfirmResetPassword = async (props: {email: string, confirmationCode: string, newPassword: string}) => {
+export const cognitoConfirmResetPassword = async (props: {email: string, confirmationCode: string, newPassword: string}) => {
   try {
     const { email, confirmationCode, newPassword } = props;
     await confirmResetPassword({ username: email, confirmationCode: confirmationCode, newPassword: newPassword});
