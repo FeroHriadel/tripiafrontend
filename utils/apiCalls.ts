@@ -1,8 +1,12 @@
 import { headers } from "next/headers";
+import { getIdToken} from "./cognito";
+
+
 
 const get = async (endpoint: string) => {
   try {
-    const res = await fetch(process.env.NEXT_PUBLIC_API_ENDPOINT! + endpoint);
+    const options = {method: 'GET', headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${await getIdToken()}`}}
+    const res = await fetch(process.env.NEXT_PUBLIC_API_ENDPOINT! + endpoint, options);
     const data = await res.json();
     return data;
   } catch (error) {
@@ -15,7 +19,7 @@ const post = async (endpoint: string, body: {[key: string]: any} = {}) => {
   try {
     const options = {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${await getIdToken()}` },
       body: JSON.stringify(body),
     };
     const res = await fetch(process.env.NEXT_PUBLIC_API_ENDPOINT! + endpoint, options);
@@ -31,7 +35,7 @@ const del = async (endpoint: string, body: {[key: string]: any} = {}) => {
   try {
     const options = {
       method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${await getIdToken()}` },
       body: JSON.stringify(body),
     };
     const res = await fetch(process.env.NEXT_PUBLIC_API_ENDPOINT! + endpoint, options);
@@ -47,7 +51,7 @@ const put = async (endpoint: string, body: {[key: string]: any} = {}) => {
   try {
     const options = {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${await getIdToken()}` },
       body: JSON.stringify(body),
     };
     const res = await fetch(process.env.NEXT_PUBLIC_API_ENDPOINT! + endpoint, options);

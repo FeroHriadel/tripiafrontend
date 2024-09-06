@@ -6,7 +6,7 @@
 
 import { Amplify } from "aws-amplify";
 import { signUp, confirmSignUp, signIn, signOut, fetchAuthSession, resetPassword, type ResetPasswordOutput, confirmResetPassword } from "aws-amplify/auth";
-import { error } from "console";
+
 
 
 
@@ -108,4 +108,29 @@ export const cognitoConfirmResetPassword = async (props: {email: string, confirm
     console.log(error);
     return {error: 'Resetting password failed'};
   }
+}
+
+export const getUserFromSession = (session: any) => {
+  const email = session.idToken?.payload?.email;
+  const groups = session.idToken?.payload['cognito:groups'];
+  const isAdmin = Array.isArray(groups) ? groups.includes('admin') : false; 
+  const expires = session.idToken?.payload.exp;
+  const idToken = session.idToken?.toString();
+  return {email, isAdmin, expires, idToken};
+}
+
+export   const getUserFromRefreshedSession = (refreshedSession: any) => { //bc why would aws ever send some data consistently or conveniently...
+  const email = refreshedSession.tokens?.idToken?.payload?.email;
+  const groups = refreshedSession.tokens?.idToken?.payload['cognito:groups'];
+  const isAdmin = Array.isArray(groups) ? groups.includes('admin') : false;
+  const expires = refreshedSession.tokens?.idToken?.payload.exp;
+  const idToken = refreshedSession.tokens?.idToken?.toString();
+  return {email, isAdmin, expires, idToken};
+}
+
+export const getIdToken = async () => {
+  const session = await getCognitoSession(); if (session.error) return '';
+  const { idToken } = session;
+  const idTokenString = idToken?.toString();
+  return idTokenString || '';
 }

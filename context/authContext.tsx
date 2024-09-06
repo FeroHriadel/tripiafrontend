@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { User } from '@/types';
-import { cognitoSignout, getCognitoSession, refreshCognitoSession } from '@/utils/cognito';
+import { cognitoSignout, getCognitoSession, refreshCognitoSession, getUserFromSession, getUserFromRefreshedSession } from '@/utils/cognito';
 
 
 
@@ -59,24 +59,6 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ childr
     const date = new Date(unixTimestamp * 1000);
     const humanReadableDate = date.toLocaleString();
     return humanReadableDate;
-  }
-
-  const getUserFromSession = (session: any) => {
-    const email = session.idToken?.payload?.email;
-    const groups = session.idToken?.payload['cognito:groups'];
-    const isAdmin = Array.isArray(groups) ? groups.includes('admin') : false; 
-    const expires = session.idToken?.payload.exp;
-    const idToken = session.idToken?.toString();
-    return {email, isAdmin, expires, idToken};
-  }
-
-  const getUserFromRefreshedSession = (refreshedSession: any) => { //bc why would aws ever send some data consistently or conveniently...
-    const email = refreshedSession.tokens?.idToken?.payload?.email;
-    const groups = refreshedSession.tokens?.idToken?.payload['cognito:groups'];
-    const isAdmin = Array.isArray(groups) ? groups.includes('admin') : false;
-    const expires = refreshedSession.tokens?.idToken?.payload.exp;
-    const idToken = refreshedSession.tokens?.idToken?.toString();
-    return {email, isAdmin, expires, idToken};
   }
 
   const refreshSession = async () => {

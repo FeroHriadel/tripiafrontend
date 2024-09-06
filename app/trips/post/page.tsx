@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import Container from '@/components/Container'
 import ContentSection from '@/components/ContentSection'
 import ContentSectionDescription from '@/components/ContentSectionDescription'
@@ -12,7 +12,7 @@ import InputText from '@/components/InputText'
 import InputSelect from '@/components/InputSelect'
 import InputTextarea from '@/components/InputTextarea'
 import ContentSectionButton from '@/components/ContentSectionButton'
-import React from 'react'
+import PrivatePageRouteGuard from '@/components/RouteGuardPrivate'
 import { getNext14Days, isValidTimeFormat} from '@/utils/dates'
 import { useToast } from '@/context/toastContext'
 import { apiCalls } from '@/utils/apiCalls'
@@ -75,6 +75,8 @@ const PostTripPage = () => {
 
   return (
     <>
+      <PrivatePageRouteGuard />
+
       <GradientFlexi>
         <Container className='px-10'>
           <GradientHeader text='POST A TRIP' className='md:translate-y-10 translate-y-7 translate-x-10 lg:-translate-x-10' />
