@@ -7,7 +7,7 @@ import Tag from './Tag';
 import ContentSectionButton from './ContentSectionButton';
 import { Trip } from '@/types';
 import ConfirmDialog from './ConfirmDialog';
-import { apiCalls } from '@/utils/apiCalls';
+import { useAuth } from '@/context/authContext';
 import { useToast } from '@/context/toastContext';
 
 
@@ -29,6 +29,7 @@ interface Props {
 const CardTrip = ({ trip, onDelete, className = '', style = {}, id }: Props) => {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const { showToast } = useToast();
+  const { user } = useAuth();
 
 
   function openConfirm() { setConfirmOpen(true); }
@@ -61,11 +62,15 @@ const CardTrip = ({ trip, onDelete, className = '', style = {}, id }: Props) => 
             {trip.category && <small>{trip.category}</small>}
           </div>
         </div>
-        <div className="---right-icons-container--- flex flex-col sm:flex-row gap-4 sm:gap-2">
-          <p className='cursor-pointer' onClick={openConfirm}><FaTrashAlt /></p>
-          <p className='cursor-pointer'><FaPenFancy /></p>
-          <p className='cursor-pointer' style={{color: '#F48957'}}><FaRegStar /></p>
-        </div>
+        {
+          user.isAdmin || user.email === trip.createdBy
+          &&
+          <div className="---right-icons-container--- flex flex-col sm:flex-row gap-4 sm:gap-2">
+            <p className='cursor-pointer' onClick={openConfirm}><FaTrashAlt /></p>
+            <p className='cursor-pointer'><FaPenFancy /></p>
+            {user.email !== trip.createdBy && <p className='cursor-pointer' style={{color: '#F48957'}}><FaRegStar /></p>}
+          </div>
+        }
       </div>
 
       {/* description */}
