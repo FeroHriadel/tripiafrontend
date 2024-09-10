@@ -8,10 +8,13 @@ import GradientDescription from '@/components/GradientDescription';
 import ContentSection from '@/components/ContentSection';
 import ContentSectionHeader from '@/components/ContentSectionHeader';
 import ContentSectionDescription from '@/components/ContentSectionDescription';
-import CardTrip from '@/components/CardTrip'; 
+import CardTrip from '@/components/CardTrip';
+import Link from 'next/link';
 import { Trip } from '@/types';
 import { apiCalls } from '@/utils/apiCalls';
 import { useToast } from '@/context/toastContext';
+import GradientButtonPurpleGray from '@/components/GradientButtonPurpleGray';
+import GradientButtonPurpleOrange from '@/components/GradientButtonPurpleOrange';
 
 
 
@@ -92,9 +95,17 @@ const TripsPage = () => {
           <GradientHeader text='LATEST TRIPS' className='md:translate-y-10 translate-y-7 translate-x-10 lg:-translate-x-10' />
           <GradientDescription 
             text={`Choose from the list of trips. Click a trip card to see more details. Add trips to favorites and choose the best one later.     
-            Filter trips to get the most relevant results.`} 
+            Search trips to find the best matches.`} 
             className='drop-shadow-lg text-center'
           />
+          <aside className='mx-auto flex gap-4 mt-8 justify-center sm:flex-row flex-col'>
+            <Link href='/trips/search' className='z-[5]'>
+              <GradientButtonPurpleGray text='Search Trips' className='sm:w-[200px] w-[100%]' />
+            </Link>
+            <Link href='/trips/favorites' className='z-[5]'>
+              <GradientButtonPurpleOrange text='My Favorites' className='sm:w-[200px] w-[100%]' />
+            </Link>
+          </aside>
         </Container>
       </GradientFlexi>
 

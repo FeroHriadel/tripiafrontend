@@ -2,7 +2,6 @@ import React from 'react';
 import GradientHeader from '@/components/GradientHeader';
 import GradientFullScreen from '@/components/GradientFullScreen';
 import GradientFlexi from '@/components/GradientFlexi';
-import GradientSubheader from '@/components/GradientSubheader';
 import GradientDescription from '@/components/GradientDescription';
 import ContentSection from '@/components/ContentSection';
 import Container from '@/components/Container';
@@ -13,7 +12,7 @@ import { leagueSpartan } from '@/app/fonts';
 import './HomePageHero.css';
 import './HomePagePromo.css';
 import './HomePageFooter.css';
-import GradientButtonBig from '@/components/GradientButtonBig';
+import GradientButtonPurpleGray from '@/components/GradientButtonPurpleGray';
 import Link from 'next/link';
 
 
@@ -51,10 +50,10 @@ const HomePage = () => {
             className='drop-shadow-lg'
           />
           <Link href='/trips'>
-            <GradientButtonBig text='Join a Trip' className='my-4' />
+            <GradientButtonPurpleGray text='Join a Trip' className='my-4' />
           </Link>
           <Link href='/trips/post'>
-            <GradientButtonBig text='Post a Trip' />
+            <GradientButtonPurpleGray text='Post a Trip' />
           </Link>
         </Container>
       </GradientFlexi>

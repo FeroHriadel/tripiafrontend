@@ -22,11 +22,12 @@ interface Props {
   className?: string;
   style?: {[key: string]: string | number};
   id?: string;
+  searchword?: string;
 }
 
 
 
-const CardTrip = ({ trip, onDelete, className = '', style = {}, id }: Props) => {
+const CardTrip = ({ trip, onDelete, className = '', style = {}, id, searchword = '' }: Props) => {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const { showToast } = useToast();
   const { user } = useAuth();
@@ -37,6 +38,23 @@ const CardTrip = ({ trip, onDelete, className = '', style = {}, id }: Props) => 
   function closeConfirm() { setConfirmOpen(false); }
 
   async function deleteTrip() { closeConfirm(); onDelete(trip.id!); }
+
+  function HighlightSearchword({ text, searchword }: { text: string; searchword: string; }) {
+    if (!searchword) return <>{text}</>;
+    const regex = new RegExp(`(${searchword})`, "gi");
+    const parts = text.split(regex);
+    return (
+      <>
+        {parts.map((part, index) =>
+          regex.test(part) 
+          ? 
+          (<span key={index} className="bg-textorange">{part}</span>) 
+          : 
+          (part)
+        )}
+      </>
+    );
+  }
 
 
   return (
@@ -58,7 +76,7 @@ const CardTrip = ({ trip, onDelete, className = '', style = {}, id }: Props) => 
             className='rounded-full max-w-[50px] max-h-[50px] sm:max-w-[100px] sm:max-h-[100px] mr-4'
           />
           <div className='---name-and-category---'>
-            <p className='font-semibold'>{trip.name}</p>
+            <p className='font-semibold'> <HighlightSearchword text={trip.name} searchword={searchword} /> </p>
             {trip.category && <small>{trip.category}</small>}
           </div>
         </div>
@@ -75,7 +93,7 @@ const CardTrip = ({ trip, onDelete, className = '', style = {}, id }: Props) => 
 
       {/* description */}
       <div className="---description-container--- mb-4">
-        <p>{trip.description}</p>
+        <p> <HighlightSearchword text={trip.description} searchword={searchword} /> </p>
       </div>
 
       {/* image */}
