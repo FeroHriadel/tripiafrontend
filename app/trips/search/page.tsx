@@ -20,6 +20,11 @@ import CardTrip from '@/components/CardTrip';
 
 
 
+export const dynamic = 'force-dynamic';
+
+const pageSize = 10;
+
+
 
 const TripsSearchPage = () => {
   const [trips, setTrips] = useState<Trip[]>([]);
@@ -28,8 +33,6 @@ const TripsSearchPage = () => {
   const [wordToHighlight, setWordToHighlight] = useState('');
   const { showToast } = useToast();
 
-  console.log(trips);
-  
 
   function isSearchwordOk() {
     if (!searchword || searchword.length < 2) { showToast('Please enter at least 2 letters'); return false }
@@ -38,7 +41,7 @@ const TripsSearchPage = () => {
 
   async function searchTrips() {
     setLoading(true);
-    const res = await apiCalls.get(`/trips?searchword=${searchword}`);
+    const res = await apiCalls.get(`/trips?searchword=${searchword}&pageSize=${pageSize}`);
     return res;
   }
 

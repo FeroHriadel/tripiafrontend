@@ -70,6 +70,15 @@ export const apiCalls = {
   post,
   del,
   put
+};
+
+
+
+//helpers:
+export const uriEncodeObj = (obj: {[key: string]: any}) => { //for encoding dynamoDB LastEvaluatedKey into uri friendly string
+  const stringified = JSON.stringify(obj);
+  const uriEncoded = encodeURIComponent(stringified);
+  return uriEncoded;
 }
 
 

@@ -14,6 +14,7 @@ import { useToast } from '@/context/toastContext';
 import GradientFlexi from '@/components/GradientFlexi';
 import GradientHeader from '@/components/GradientHeader';
 import Link from 'next/link';
+import { scrollToElement } from '@/utils/DOM';
 
 
 
@@ -71,17 +72,12 @@ const page = () => {
     return localStorage.getItem('lastSignedInUser') || '';
   }
 
-  function scrollToFormHeader() {
-    const element = document.getElementById('form-header');
-    if (element) element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }
-
 
   useEffect(() => { if (user?.email) redirectToProfilePage(1000); }, [user]);
 
   useEffect(() => { if (!user.email) setValues({...values, email: getLastSignedInUser()}); }, [] );
 
-  useEffect(() => { scrollToFormHeader(); }, []);
+  useEffect(() => { scrollToElement('form-header'); }, []);
 
 
   return (

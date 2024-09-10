@@ -1,4 +1,4 @@
-export function isValidTimeFormat(time: string): boolean {
+export function isValidTimeFormat(time: string): boolean { //is e.g.: `07:30`?
   const pattern = /^([01]\d|2[0-3]):([0-5]\d)$/;
   return pattern.test(time);
 }

@@ -12,6 +12,7 @@ import ContentSectionButton from '@/components/ContentSectionButton';
 import { useToast } from '@/context/toastContext';
 import { cognitoResetPassword, cognitoConfirmResetPassword } from '@/utils/cognito';
 import Link from 'next/link';
+import { scrollToElement } from '@/utils/DOM';
 
 
 
@@ -49,7 +50,7 @@ const ResetPasswordPage = () => {
     setLoading(true);
     const res = await cognitoResetPassword(values.email); if (res .error) return handleSubmitError(res.error);
     setEmailSent(true); setLoading(false);
-    setTimeout(() => { scrollToConfirmForm(); }, 250);
+    setTimeout(() => { scrollToElement('confirm-form'); }, 250);
   }
 
   async function changePassword(e: React.FormEvent<HTMLFormElement>) {
@@ -58,11 +59,6 @@ const ResetPasswordPage = () => {
     const res = await cognitoConfirmResetPassword({email: values.email, confirmationCode: values.code, newPassword: values.newPassword});
     if (res.error) return handleSubmitError(res.error);
     setPasswordChanged(true);
-  }
-
-  function scrollToConfirmForm() {
-    const element = document.getElementById('confirm-form');
-    if (element) element.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
 

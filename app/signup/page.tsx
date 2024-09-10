@@ -15,6 +15,7 @@ import GradientFlexi from '@/components/GradientFlexi';
 import GradientHeader from '@/components/GradientHeader';
 import GradientDescription from '@/components/GradientDescription';
 import Link from 'next/link';
+import { scrollToElement } from '@/utils/DOM';
 
 
 
@@ -31,6 +32,11 @@ const SignupPage = () => {
 
 
   //signup functions
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const { name, value } = e.target;
+    setValues({ ...values, [name]: value });
+  }
+
   function isValidEmail(email: string) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -50,7 +56,7 @@ const SignupPage = () => {
   function handleSignupSuccess() {
     setShowConfirmSignupForm(true);
     setLoading(false);
-    setTimeout(() => { scrollToConfirmForm(); }, 250);
+    setTimeout(() => { scrollToElement('confirm-form'); }, 250);
   }
 
   async function handleSignupSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -96,29 +102,12 @@ const SignupPage = () => {
     }, msDelay);
   }
 
-  useEffect(() => { if (user?.email) redirectToProfilePage(1000); }, [user]);
-
-
-  //other functions
-  function scrollToFormHeader() {
-    const element = document.getElementById('form-header');
-    if (element) element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }
-
-  function scrollToConfirmForm() {
-    const element = document.getElementById('confirm-form');
-    if (element) element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }
-
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const { name, value } = e.target;
-    setValues({ ...values, [name]: value });
-  }
-
-
+  
   //subscriptions
+  useEffect(() => { if (user?.email) redirectToProfilePage(1000); }, [user]);
+  
   useEffect(() => {
-    scrollToFormHeader();
+    scrollToElement('form-header');
   }, [])
 
 

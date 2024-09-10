@@ -11,7 +11,7 @@ import ContentSectionDescription from '@/components/ContentSectionDescription';
 import CardTrip from '@/components/CardTrip';
 import Link from 'next/link';
 import { Trip } from '@/types';
-import { apiCalls } from '@/utils/apiCalls';
+import { apiCalls, uriEncodeObj } from '@/utils/apiCalls';
 import { useToast } from '@/context/toastContext';
 import GradientButtonPurpleGray from '@/components/GradientButtonPurpleGray';
 import GradientButtonPurpleOrange from '@/components/GradientButtonPurpleOrange';
@@ -19,6 +19,8 @@ import GradientButtonPurpleOrange from '@/components/GradientButtonPurpleOrange'
 
 
 export const dynamic = 'force-dynamic';
+
+const pageSize = 10;
 
 
 
@@ -30,15 +32,9 @@ const TripsPage = () => {
   const observerRef = useRef<IntersectionObserver | null>(null);
  
 
-  function uriEncodeObj(obj: {[key: string]: any}) {
-    const stringified = JSON.stringify(obj);
-    const uriEncoded = encodeURIComponent(stringified);
-    return uriEncoded;
-  }
-
   async function fetchTripsFromAPI() {
     const encodedLastEvaluatedKey = lastEvaluatedKey ? uriEncodeObj(lastEvaluatedKey) : null;
-    const queryString = encodedLastEvaluatedKey ? `?lastEvaluatedKey=${encodedLastEvaluatedKey}` : '';
+    const queryString = encodedLastEvaluatedKey ? `?lastEvaluatedKey=${encodedLastEvaluatedKey}&pageSize=${pageSize}` : `?pageSize=${pageSize}`;
     const res = await apiCalls.get('/trips' + queryString);
     return res;
   }
