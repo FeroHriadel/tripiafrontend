@@ -92,7 +92,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ childr
 
   useEffect(() => { handleRefreshInterval(user); }, [user]); //refreshes token every hour
 
-  useEffect(() => { console.log(user); console.log(`Token expires: ${getDateFromSeconds(user.expires)}`) }, [user]); //logs user on every change
+  //useEffect(() => { console.log(user); console.log(`Token expires: ${getDateFromSeconds(user.expires)}`) }, [user]); //logs user on every change
 
 
   return (

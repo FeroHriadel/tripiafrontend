@@ -83,7 +83,7 @@ const TripsSearchPage = () => {
     <>
       <GradientFlexi>
         <Container className='px-10'>
-          <GradientHeader text='SEARCH TRIPS' className='md:translate-y-10 translate-y-7 translate-x-10 lg:-translate-x-10' />
+          <GradientHeader text='SEARCH TRIPS' className='text-center mb-4' />
           <GradientDescription 
             text={`Search trips by anything: category, keyword, author... Just write your search word and we'll find the right matches.`} 
             className='drop-shadow-lg text-center'

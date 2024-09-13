@@ -8,12 +8,13 @@ import { useRouter } from 'next/navigation'
 
 const PrivatePageRouteGuard = () => {
   const { user, checkingAuth } = useAuth();
+  const { email } = user;
   const router = useRouter();
 
 
   useEffect(() => {
     if (!checkingAuth && !user.email) { router.push('/login'); };
-  }, [user, checkingAuth])
+  }, [email, checkingAuth])
 
 
   if (checkingAuth) return (
@@ -22,7 +23,7 @@ const PrivatePageRouteGuard = () => {
     </div>
   )
 
-  if (user && !checkingAuth) return <></>
+  if (email && !checkingAuth) return <></>
 }
 
 export default PrivatePageRouteGuard

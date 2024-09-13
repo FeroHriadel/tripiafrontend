@@ -77,7 +77,7 @@ const PostTripPage = () => {
     <>
       <GradientFlexi>
         <Container className='px-10'>
-          <GradientHeader text='POST A TRIP' className='md:translate-y-10 translate-y-7 translate-x-10 lg:-translate-x-10' />
+          <GradientHeader text='POST A TRIP' className='text-center mb-4' />
           <GradientDescription text={`Are you planning on going somewhere? Would like to invite fellow travelers? Post your trip.`} className='drop-shadow-lg text-center' />
           <GradientDescription text={`Say when, where from and where to and find people to share your adventure with.`} className='drop-shadow-lg text-center' />
           <GradientDescription text={`Add more details to ensure best match.`} className='drop-shadow-lg text-center' />

@@ -88,7 +88,7 @@ const TripsPage = () => {
     <>
       <GradientFlexi>
         <Container className='px-10'>
-          <GradientHeader text='LATEST TRIPS' className='md:translate-y-10 translate-y-7 translate-x-10 lg:-translate-x-10' />
+          <GradientHeader text='LATEST TRIPS' className='text-center mb-4' />
           <GradientDescription 
             text={`Choose from the list of trips. Click a trip card to see more details. Add trips to favorites and choose the best one later.     
             Search trips to find the best matches.`} 
