@@ -90,10 +90,10 @@ const TripsSearchPage = () => {
           />
           <aside className='mx-auto flex gap-4 mt-8 justify-center sm:flex-row flex-col'>
             <Link href='/trips' className='z-[5]'>
-              <GradientButtonPurpleGray text='All Trips' className='sm:w-[200px] w-[100%]' />
+              <GradientButtonPurpleGray text='All Trips' className='sm:w-[200px] w-[100%] h-[50px]' />
             </Link>
             <Link href='/trips/favorites' className='z-[5]'>
-              <GradientButtonPurpleOrange text='My Favorites' className='sm:w-[200px] w-[100%]' />
+              <GradientButtonPurpleOrange text='My Favorites' className='sm:w-[200px] w-[100%] h-[50px]' />
             </Link>
           </aside>
         </Container>

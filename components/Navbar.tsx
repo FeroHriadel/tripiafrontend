@@ -5,6 +5,7 @@ import { FaCarAlt, FaSignInAlt } from 'react-icons/fa';
 import NavbarSigninButton from './NavbarSigninButton';
 import { CgProfile } from "react-icons/cg";
 import { BiSolidMessageRoundedAdd } from "react-icons/bi";
+import NavbarProfileButton from './NavbarProfileButton';
 
 const Navbar = () => {
   return (
@@ -27,12 +28,7 @@ const Navbar = () => {
               <span className="hidden xs:block">Post Trip</span>  {/* Text visible on larger screens */}
             </li>
           </Link>
-          <Link href="/myprofile">
-            <li className="flex items-center">
-              <CgProfile className="block xs:hidden" />  {/* Icon visible on xs */}
-              <span className="hidden xs:block">My Profile</span>  {/* Text visible on larger screens */}
-            </li>
-          </Link>
+          <NavbarProfileButton />
           <NavbarSigninButton />
         </ul>
       </Container>

@@ -78,6 +78,7 @@ const CardTrip = ({ trip, onDelete, className = '', style = {}, id, searchword =
           <div className='---name-and-category---'>
             <p className='font-semibold'> <HighlightSearchword text={trip.name} searchword={searchword} /> </p>
             {trip.category && <small>{trip.category}</small>}
+            <p className='text-xs'>by <HighlightSearchword text={trip.nickname!} searchword={searchword} /> </p>
           </div>
         </div>
         {

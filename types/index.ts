@@ -10,6 +10,7 @@ export interface Trip {
   createdAt?: string;
   updatedAt?: string;
   createdBy?: string;
+  nickname?: string;
   id?: string;
   name: string;
   departureDate: string;

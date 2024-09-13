@@ -12,6 +12,7 @@ interface Props {
   heightOptimization?: number;
   className?: string;
   style?: {[key: string]: string};
+  id?: string;
 }
 
 
@@ -22,7 +23,8 @@ const CenteredImage = ({
   height = 400,
   widthOptimization = 400,
   heightOptimization = 400,
-  className = '', 
+  className = '',
+  id,
   style = {}
 }: Props) => {
 
@@ -30,14 +32,15 @@ const CenteredImage = ({
   const convertValue = (value: number | string) => {
       if (typeof value === 'number') return value + 'px';
       else if (typeof value === 'string') return value;
-      else throw new Error('Invalid input: must be a number or a string');
+      else throw new Error('Invalid input: must be a number or a string (<CenteredImage />)');
   }
 
 
   return (
     <div 
       className={`relative flex justify-center items-center overflow-hidden rounded ` + className}
-      style={{height, width, ...style /* had to pass height & width in inline styles bc tailwind `h-[${convertValue(width)}] & w-[...]` occasionally failed, use: `max-height`, `min-width`, etc... if you need to change the height from @media@query */}} 
+      style={{height, width, ...style /* had to pass height & width in inline styles bc tailwind `h-[${convertValue(width)}] & w-[...]` occasionally failed, use: `max-height`, `min-width`, etc... if you need to change the height from @media@query */}}
+      id={id}
     >
       <Image 
         src={src} 

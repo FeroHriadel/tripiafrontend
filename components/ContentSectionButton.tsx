@@ -9,11 +9,12 @@ interface Props {
   className?: string;
   style?: {[key: string]: string | number};
   disabled?: boolean;
+  children?: React.ReactNode;
 }
 
 
 
-const ContentSectionButton = ({ text = 'Add text, Dummy', type = 'button', disabled = false, className = '', style = {} }: Props) => {
+const ContentSectionButton = ({ text = 'Add text, Dummy', type = 'button', disabled = false, className = '', style = {}, children }: Props) => {
   return (
     <button 
       type={type}
@@ -24,6 +25,7 @@ const ContentSectionButton = ({ text = 'Add text, Dummy', type = 'button', disab
       <p className='content-button-text'>
         {text}
       </p>
+      {children}
     </button>
   )
 }
