@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import CenteredImage from './CenteredImage';
 import { FaPenFancy, FaTrashAlt, FaRegStar } from 'react-icons/fa';
 import Tag from './Tag';
@@ -8,7 +8,7 @@ import ContentSectionButton from './ContentSectionButton';
 import { Trip } from '@/types';
 import ConfirmDialog from './ConfirmDialog';
 import { useAuth } from '@/context/authContext';
-import { useToast } from '@/context/toastContext';
+import { apiCalls } from '@/utils/apiCalls';
 
 
 
@@ -28,8 +28,8 @@ interface Props {
 
 
 const CardTrip = ({ trip, onDelete, className = '', style = {}, id, searchword = '' }: Props) => {
+  const [profilePicture, setProfilePicture] = useState('');
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const { showToast } = useToast();
   const { user } = useAuth();
 
 
@@ -56,6 +56,16 @@ const CardTrip = ({ trip, onDelete, className = '', style = {}, id, searchword =
     );
   }
 
+  async function getProfilePicture(email: string | undefined) {
+    if (!email) return;
+    const body = { email };
+    const res = await apiCalls.post('/users', body);
+    if (res.profilePicture) setProfilePicture(res.profilePicture); 
+  }
+
+
+  useEffect(() => { getProfilePicture(trip.createdBy); }, [])
+
 
   return (
     <div 
@@ -68,7 +78,7 @@ const CardTrip = ({ trip, onDelete, className = '', style = {}, id, searchword =
       <div className='---image-name-and-icons-container--- flex justify-between mb-4'>
         <div className="---left-image-and-text--- flex">
           <CenteredImage 
-            src='/images/user.png'
+            src={profilePicture || '/images/user.png'}
             widthOptimization={100}
             heightOptimization={100}
             width={100} 

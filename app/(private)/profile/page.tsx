@@ -16,12 +16,16 @@ import CenteredImage from '@/components/CenteredImage';
 import { useToast } from '@/context/toastContext';
 import { useAuth } from '@/context/authContext';
 import { apiCalls } from '@/utils/apiCalls';
-import { loadImage, uploadImage } from '@/utils/imageUpload';
+import { loadImage, uploadImage, resizeImage } from '@/utils/imageUpload';
 import Link from 'next/link';
 
 
 
 export const dynamic = 'force-dynamic';
+
+
+
+const profilePictureMaxSize = 300;
 
 
 
@@ -33,7 +37,7 @@ const ProfilePage = () => {
   const [fileName, setFileName] = useState<string | null>(null);
   const contentContainerRef = useRef<HTMLDivElement | null>(null);
   const { showToast } = useToast();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { nickname, profilePicture, about, email } = values;
 
   
@@ -42,9 +46,15 @@ const ProfilePage = () => {
   }
 
   const onImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const loadRes: any = await loadImage(e); 
-    if (!loadRes.base64) return showToast('File failed to load')
-    else { setPreview(loadRes.base64); setFileName(loadRes.fileName); } 
+    ////without resizing:
+    // const loadRes: any = await loadImage(e); 
+    // if (!loadRes.base64) return showToast('File failed to load');
+    // else { setPreview(loadRes.base64); setFileName(loadRes.fileName); } 
+    ////with resizing:
+      const file = e.target.files![0];
+      const resizedImage = await resizeImage(file, profilePictureMaxSize);
+      if (resizedImage.error) return showToast(resizedImage.error);
+      else { setPreview(resizedImage.base64); setFileName(file.name) };
   }
 
   async function fetchUser() {
@@ -177,13 +187,15 @@ const ProfilePage = () => {
                 <ContentSectionButton text="My Trips" className='mb-4' />
               </Link>
 
-              <Link href='/profile/trips'>
+              <Link href='/profile/groups'>
                 <ContentSectionButton text="My Groups" className='mb-4' />
               </Link>
 
               <Link href='/profile/favorites'>
                 <ContentSectionButton text="My Favorites" className='mb-4' />
               </Link>
+
+              <ContentSectionButton text="Log out" onClick={logout}  className='mb-4' />
             </Container>
 
             <GradientFlexi />

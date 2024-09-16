@@ -1,4 +1,5 @@
 import { apiCalls } from "./apiCalls";
+import Pica from 'pica';
 
 
 
@@ -15,6 +16,43 @@ export const loadImage = (e: React.ChangeEvent<HTMLInputElement>): Promise<{file
             reader.readAsDataURL(file);
         }
     })
+}
+
+const getResizedAspectRatio = (props: {maxSize: number; img: HTMLImageElement}) => {
+    const { width: originalWidth, height: originalHeight } = props.img;
+    let newWidth, newHeight;
+    if (originalWidth > originalHeight) {
+        newWidth = props.maxSize;
+        newHeight = (originalHeight / originalWidth) * props.maxSize;
+    } else {
+        newHeight = props.maxSize;
+        newWidth = (originalWidth / originalHeight) * props.maxSize;
+    }
+    return {newWidth, newHeight};
+}
+
+export const resizeImage = (file: File, maxSize: number): Promise<{error: string, base64: string}> => {
+    const pica = new Pica();
+    return new Promise((resolve) => {
+        const img = new Image();
+        const outputCanvas = document.createElement('canvas');
+        img.src = URL.createObjectURL(file);
+        img.onload = () => {
+            const { newWidth, newHeight } = getResizedAspectRatio({maxSize, img});
+            outputCanvas.width = newWidth;
+            outputCanvas.height = newHeight;
+            pica.resize(img, outputCanvas)
+                .then(() => pica.toBlob(outputCanvas, 'image/png', 0.75))
+                .then(blob => { 
+                    const reader = new FileReader;
+                    reader.onloadend = () => resolve({error: '', base64: reader.result as string});
+                    reader.onerror = () => resolve({error: 'Failed to compress image', base64: ''});
+                    reader.readAsDataURL(blob);
+                })
+                .catch(() => resolve({error: 'Failed to compress image', base64: ''}));
+        }
+        img.onerror = () => resolve({error: 'Failed to load image', base64: ''});
+    });
 }
 
 export const fileToBase64 = (file: File | Blob): Promise<string> =>

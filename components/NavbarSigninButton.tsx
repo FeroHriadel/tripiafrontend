@@ -24,10 +24,7 @@ const NavbarSigninButton = () => {
   )
 
   return (
-    <li className="flex items-center cursor-pointer" onClick={logout}>
-      <FaSignOutAlt className="block xs:hidden" />  {/* Icon visible on xs */}
-      <span className="hidden xs:block">Log out</span>  {/* Text visible on larger screens */}
-    </li>
+    <></>
   )
 }
 

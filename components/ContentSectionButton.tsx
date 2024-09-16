@@ -10,17 +10,19 @@ interface Props {
   style?: {[key: string]: string | number};
   disabled?: boolean;
   children?: React.ReactNode;
+  onClick?: () => any;
 }
 
 
 
-const ContentSectionButton = ({ text = 'Add text, Dummy', type = 'button', disabled = false, className = '', style = {}, children }: Props) => {
+const ContentSectionButton = ({ text = 'Add text, Dummy', type = 'button', disabled = false, className = '', style = {}, children, onClick }: Props) => {
   return (
     <button 
       type={type}
       className={className + ` ` + `content-button`}
       style={style}
       disabled={disabled}
+      onClick={onClick}
     >
       <p className='content-button-text'>
         {text}
