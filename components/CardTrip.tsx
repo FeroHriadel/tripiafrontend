@@ -63,6 +63,14 @@ const CardTrip = ({ trip, onDelete, className = '', style = {}, id, searchword =
     if (res.profilePicture) setProfilePicture(res.profilePicture); 
   }
 
+  async function addToFavorites() {
+    //
+    //
+    //
+    //
+    //
+  }
+
 
   useEffect(() => { getProfilePicture(trip.createdBy); }, [])
 
@@ -85,19 +93,21 @@ const CardTrip = ({ trip, onDelete, className = '', style = {}, id, searchword =
             height={100} 
             className='rounded-full max-w-[50px] max-h-[50px] sm:max-w-[100px] sm:max-h-[100px] mr-4'
           />
+
           <div className='---name-and-category---'>
             <p className='font-semibold'> <HighlightSearchword text={trip.name} searchword={searchword} /> </p>
             {trip.category && <small>{trip.category}</small>}
             <p className='text-xs'>by <HighlightSearchword text={trip.nickname!} searchword={searchword} /> </p>
           </div>
         </div>
+
         {
-          (user.isAdmin || user.email === trip.createdBy)
+          user.email
           &&
           <div className="---right-icons-container--- flex flex-col sm:flex-row gap-4 sm:gap-2">
-            <p className='cursor-pointer' onClick={openConfirm}><FaTrashAlt /></p>
-            <p className='cursor-pointer'><FaPenFancy /></p>
-            {user.email !== trip.createdBy && <p className='cursor-pointer' style={{color: '#F48957'}}><FaRegStar /></p>}
+            {(user.isAdmin || user.email === trip.createdBy) && <p className='cursor-pointer' onClick={openConfirm}><FaTrashAlt /></p>}
+            {(user.isAdmin || user.email === trip.createdBy) && <p className='cursor-pointer'><FaPenFancy /></p>}
+            {user.email !== trip.createdBy && <p className='cursor-pointer' style={{color: '#F48957'}} onClick={addToFavorites}><FaRegStar /></p>}
           </div>
         }
       </div>

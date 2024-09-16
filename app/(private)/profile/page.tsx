@@ -163,7 +163,7 @@ const ProfilePage = () => {
                   heightOptimization={imageSize}
                   width={imageSize} 
                   height={imageSize} 
-                  className='mb-10 rounded-full'
+                  className='mb-10 rounded-full shadow-xl'
                 />
                 :
                 /* user doesn't have a profile picture and either a)loaded one (shows preview); or b) hasn't loaded one (shows default) */
@@ -173,7 +173,7 @@ const ProfilePage = () => {
                   heightOptimization={imageSize}
                   width={imageSize} 
                   height={imageSize} 
-                  className='mb-10 rounded-full'
+                  className='mb-10 rounded-full shadow-xl'
                 />
               }
               <form onSubmit={handleSubmit} className='mb-10'>

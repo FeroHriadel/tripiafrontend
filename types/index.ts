@@ -1,3 +1,5 @@
+import { Interface } from "readline";
+
 export interface Category {
   createdAt: string;
   id: string;
