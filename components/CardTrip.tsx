@@ -2,13 +2,15 @@
 
 import React, { useEffect, useState } from 'react'
 import CenteredImage from './CenteredImage';
-import { FaPenFancy, FaTrashAlt, FaRegStar } from 'react-icons/fa';
+import { FaPenFancy, FaTrashAlt, FaRegStar, FaStar } from 'react-icons/fa';
 import Tag from './Tag';
 import ContentSectionButton from './ContentSectionButton';
 import { Trip } from '@/types';
 import ConfirmDialog from './ConfirmDialog';
 import { useAuth } from '@/context/authContext';
 import { apiCalls } from '@/utils/apiCalls';
+import { setFavoriteTrips } from '@/redux/slices/favoriteTripsSlice';
+import { useAppDispatch, useAppSelector } from '@/redux/store';
 
 
 
@@ -18,7 +20,7 @@ export const dynamic = 'force-dynamic';
 
 interface Props {
   trip: Trip;
-  onDelete: (id: string) => void;
+  onDelete?: (id: string) => void;
   className?: string;
   style?: {[key: string]: string | number};
   id?: string;
@@ -27,10 +29,13 @@ interface Props {
 
 
 
-const CardTrip = ({ trip, onDelete, className = '', style = {}, id, searchword = '' }: Props) => {
+const CardTrip = ({ trip, className = '', style = {}, id, searchword = '', onDelete = () => {} }: Props) => {
   const [profilePicture, setProfilePicture] = useState('');
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [starClickDisabled, setStarClickDisabled] = useState(false);
   const { user } = useAuth();
+  const dispatch = useAppDispatch();
+  const favoriteTrips = useAppSelector((state) => state.favoriteTrips);
 
 
   function openConfirm() { setConfirmOpen(true); }
@@ -47,10 +52,8 @@ const CardTrip = ({ trip, onDelete, className = '', style = {}, id, searchword =
       <>
         {parts.map((part, index) =>
           regex.test(part) 
-          ? 
-          (<span key={index} className="bg-textorange">{part}</span>) 
-          : 
-          (part)
+          ? (<span key={index} className="bg-textorange">{part}</span>) 
+          : (part)
         )}
       </>
     );
@@ -64,11 +67,30 @@ const CardTrip = ({ trip, onDelete, className = '', style = {}, id, searchword =
   }
 
   async function addToFavorites() {
-    //
-    //
-    //
-    //
-    //
+    if (starClickDisabled) return;
+    setStarClickDisabled(true);
+    const newFavoriteTrips = [...favoriteTrips, trip.id!];
+    dispatch(setFavoriteTrips(newFavoriteTrips));
+    await apiCalls.post('/favoritetrips', {tripIds: newFavoriteTrips});
+    setStarClickDisabled(false);
+  }
+
+  async function removeFromFavorites() {
+    if (starClickDisabled) return;
+    setStarClickDisabled(true);
+    const newFavoriteTrips = favoriteTrips.filter(id => id !== trip.id!);
+    dispatch(setFavoriteTrips(newFavoriteTrips));
+    await apiCalls.post('/favoritetrips', {tripIds: newFavoriteTrips});
+    setStarClickDisabled(false);
+  }
+
+  function isFavorite() {
+    return favoriteTrips.includes(trip.id!);
+  }
+
+  async function toggleFavoriteTrip() {
+    if (isFavorite()) await removeFromFavorites();
+    else await addToFavorites();
   }
 
 
@@ -107,7 +129,11 @@ const CardTrip = ({ trip, onDelete, className = '', style = {}, id, searchword =
           <div className="---right-icons-container--- flex flex-col sm:flex-row gap-4 sm:gap-2">
             {(user.isAdmin || user.email === trip.createdBy) && <p className='cursor-pointer' onClick={openConfirm}><FaTrashAlt /></p>}
             {(user.isAdmin || user.email === trip.createdBy) && <p className='cursor-pointer'><FaPenFancy /></p>}
-            {user.email !== trip.createdBy && <p className='cursor-pointer' style={{color: '#F48957'}} onClick={addToFavorites}><FaRegStar /></p>}
+            {
+              user.email !== trip.createdBy && <p className='cursor-pointer' style={{color: '#F48957'}} onClick={toggleFavoriteTrip}>
+                {isFavorite() ? <FaStar /> : <FaRegStar />}
+              </p>
+            }
           </div>
         }
       </div>
