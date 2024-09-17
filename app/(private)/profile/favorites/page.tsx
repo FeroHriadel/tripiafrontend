@@ -26,14 +26,37 @@ const FavoriteTripsPage = () => {
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
   const favoriteTrips = useAppSelector((state) => state.favoriteTrips);
+  const dispatch = useAppDispatch();
   const { showToast } = useToast();
   
 
   async function getFavoriteTrips() {
     const res = await apiCalls.post('/trips/batch', {tripIds: favoriteTrips});
-    if (res.error) showToast('Failed to get your favorite trips');
-    else setTrips(res);
+    if (res.error) handleFail();
+    else await handleSuccess(res);
+  }
+
+  async function handleSuccess(gettripsResponse: Trip[]) {
+    setTrips(gettripsResponse); 
+    await removeExpiredTripsFromFavorites(gettripsResponse);
     setLoading(false);
+  }
+
+  async function handleFail() {
+    showToast('Failed to get your favorite trips');
+  }
+
+  async function removeExpiredTripsFromFavorites(getTripsResponse: Trip[]) {
+    //user's favorite trips don't ever get updated. 
+    //if a trip expires it is deleted. But nothing deletes that trip from user's favoriteTrips.
+    //batchGetTrips (getFavoriteTrips() fn above) only returns unexpired trips.
+    //this function removes expired trips from user's favoriteTrips array.
+    //this is the cheapest way to update user's favoriteTrips (in terms of db cost) - that's why backend doesn't handle it.
+    const unexpiredTripsIds = getTripsResponse.map(trip => trip.id!);
+    if (unexpiredTripsIds.length !== favoriteTrips.length) {
+      dispatch(setFavoriteTrips(unexpiredTripsIds));
+      await apiCalls.post('/favoritetrips', {tripIds: unexpiredTripsIds});
+    }
   }
 
 
