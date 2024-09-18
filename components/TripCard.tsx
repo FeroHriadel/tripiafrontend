@@ -29,7 +29,7 @@ interface Props {
 
 
 
-const CardTrip = ({ trip, className = '', style = {}, id, searchword = '', onDelete = () => {} }: Props) => {
+const TripCard = ({ trip, className = '', style = {}, id, searchword = '', onDelete = () => {} }: Props) => {
   const [profilePicture, setProfilePicture] = useState('');
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [starClickDisabled, setStarClickDisabled] = useState(false);
@@ -177,4 +177,4 @@ const CardTrip = ({ trip, className = '', style = {}, id, searchword = '', onDel
   )
 }
 
-export default CardTrip
+export default TripCard

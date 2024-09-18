@@ -8,7 +8,7 @@ import GradientDescription from '@/components/GradientDescription';
 import ContentSection from '@/components/ContentSection';
 import ContentSectionHeader from '@/components/ContentSectionHeader';
 import ContentSectionDescription from '@/components/ContentSectionDescription';
-import CardTrip from '@/components/CardTrip';
+import TripCard from '@/components/TripCard';
 import Link from 'next/link';
 import { Trip } from '@/types';
 import { apiCalls, uriEncodeObj } from '@/utils/apiCalls';
@@ -113,7 +113,7 @@ const TripsPage = () => {
             /* render trips */
             trips && trips.length > 0
             &&
-            trips.map(trip => (<CardTrip key={trip.id} trip={trip} id={trip.id} onDelete={deleteTrip} className='mb-10' />))
+            trips.map(trip => (<TripCard key={trip.id} trip={trip} id={trip.id} onDelete={deleteTrip} className='mb-10' />))
           }
           { /* if no trips */ !loading && trips.length === 0 && <p className='text-center'>No trips found</p> }
           { /* loader */ loading && <p className='text-center'>Loading...</p> }

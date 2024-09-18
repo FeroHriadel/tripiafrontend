@@ -16,7 +16,7 @@ import { apiCalls } from '@/utils/apiCalls';
 import { useAppSelector, useAppDispatch } from '@/redux/store';
 import { setFavoriteTrips } from '@/redux/slices/favoriteTripsSlice';
 import { useToast } from '@/context/toastContext';
-import CardTrip from '@/components/CardTrip';
+import TripCard from '@/components/TripCard';
 import { Trip } from '@/types';
 import Link from 'next/link';
 
@@ -81,7 +81,7 @@ const FavoriteTripsPage = () => {
       <Container className='px-4'>
         <ContentSectionHeader text='Favorite Trips' />
         <ContentSectionDescription text='Trips you added to your favorites' className='mb-20'/>
-          {trips.map(trip => (<CardTrip key={trip.id!} trip={trip} className='mb-10' />))}
+          {trips.map(trip => (<TripCard key={trip.id!} trip={trip} className='mb-10' />))}
           {loading && <p className='text-center'>Loading...</p>}
           {
             (!loading && !trips.length)

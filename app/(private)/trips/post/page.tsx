@@ -16,15 +16,26 @@ import { getNext14Days, isValidTimeFormat, isAtLeast4HoursFromNow } from '@/util
 import { useToast } from '@/context/toastContext'
 import { apiCalls } from '@/utils/apiCalls'
 import { useRouter } from 'next/navigation'
+import Collapse from '@/components/Collapse'
+import TripDetails from '@/components/TripDetails'
+import { TripInput } from '@/types'
+import { resizeImage } from '@/utils/imageUpload'
+
+
+
+const defaultTripState = {name: '', departureDate: '', departureTime: '',  departureFrom: '', destination: '', description: '', image: '', requirements: '', category: '', keyWords: ''};
 
 
 
 const PostTripPage = () => {
-  const [trip, setTrip] = useState({name: '', departureDate: '', departureTime: '',  departureFrom: '', destination: '', description: ''});
+  const [trip, setTrip] = useState<TripInput>({...defaultTripState});
   const { name, departureDate, departureTime, departureFrom, destination, description } = trip;
+  const [fileName, setFileName] = useState('');
+  const [preview, setPreview] = useState('');
   const { showToast } = useToast();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [moreDetailsOpen, setMoreDetailsOpen] = useState(false);
 
 
   function isTripOk() {
@@ -45,7 +56,7 @@ const PostTripPage = () => {
   }
 
   function handleSuccess() {
-    setTrip({name: '', departureDate: '', departureTime: '',  departureFrom: '', destination: '', description: ''});
+    setTrip({...defaultTripState});
     setLoading(false);
     showToast('Trip posted successfully. Redirecting...');
     setTimeout(() => router.push('/trips'), 1000);
@@ -68,8 +79,15 @@ const PostTripPage = () => {
     setTrip({ ...trip, [e.target.name]: e.target.value });
   }
 
-  function handleDate(e: any) {
-    setTrip({...trip, departureDate: e});
+
+  // function handleDate(e: any) {
+  //   console.log(e);
+  //   setTrip({...trip, departureDate: e});
+  // }
+
+  function toggleMoreDetails() {
+    setMoreDetailsOpen(!moreDetailsOpen);
+    setTrip({...trip, requirements: '', category: '', image: '', keyWords: ''})
   }
 
 
@@ -92,13 +110,16 @@ const PostTripPage = () => {
         <Container className='max-w-[500px] px-4'>
           <form onSubmit={handleSubmit}>
             <InputText inputName='name' labelText='trip name' value={name} onChange={handleChange} disabled={loading} className='mb-4' />
-            <InputSelect inputName='departureDate' labelText='departure date' value={departureDate} onChange={handleDate} options={getNext14Days()} disabled={loading} className='mb-4' />
+            <InputSelect inputName='departureDate' labelText='departure date' value={departureDate} onChange={handleChange} options={getNext14Days()} disabled={loading} className='mb-4' />
             <InputText inputName='departureTime' labelText='departure time (hh:mm)' value={departureTime} onChange={handleChange} disabled={loading} className='mb-4' />
             <InputText inputName='departureFrom' labelText='departure from' value={departureFrom} onChange={handleChange} disabled={loading} className='mb-4' />
             <InputText inputName='destination' labelText='destination' value={destination} onChange={handleChange} disabled={loading} className='mb-4' />
             <InputTextarea inputName='description' labelText='description' value={description} onChange={handleChange} disabled={loading} className='mb-4'/>
-            <ContentSectionButton type="button" text="Add More Details" disabled={loading} className='mb-4' />
-            <ContentSectionButton type="submit" text="Post Trip" disabled={loading} className='mb-4' />
+            <ContentSectionButton type='button' text={moreDetailsOpen ? 'Close Details' : 'Add More Details'} disabled={loading} onClick={toggleMoreDetails} className='mb-4' />
+            <Collapse isOpen={moreDetailsOpen} className='rounded-2xl'>
+              <TripDetails loading={loading} handleChange={handleChange} trip={trip} />
+            </Collapse>
+            <ContentSectionButton type='submit' text='Post Trip' disabled={loading} className='mb-4' />
           </form>
         </Container>
       </ContentSection>

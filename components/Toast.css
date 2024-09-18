@@ -9,7 +9,7 @@
   min-height: 75px;
   background: linear-gradient(to right, #FCB045 75%, #966929 100%);
   box-shadow: -2px 4px 6px rgba(0, 0, 0, 0.1);
-  z-index: 3;
+  z-index: 6;
   border-radius: 16px;
   transition: 0.2s right linear;
   padding: 1rem;

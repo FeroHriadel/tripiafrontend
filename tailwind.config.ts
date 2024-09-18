@@ -9,7 +9,11 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        textorange: '#F48957'
+        textorange: '#F48957',
+        lightgray: '#F0F0F0',
+        lightgrey: '#F0F0F0',
+        darkgray: '#787878',
+        darkgrey: '#787878',
       },
       screens: {
         'xs': '500px',

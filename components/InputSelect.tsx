@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react';
+import React, { DOMElement, useRef } from 'react';
 import './InputSelect.css';
 
 
@@ -29,7 +29,7 @@ const InputSelect = ({inputName, options = [], labelText, value, onChange, class
   }
 
   function handleSelection(option: any) {
-    onChange(option.value);
+    onChange({target: {name: inputName, value: option.value}});
     setselectedOptionLabel(option.label);
     if (option.extraInfo) setSelectedOptionExtraInfo(option.extraInfo);
     setIsFocused(false);

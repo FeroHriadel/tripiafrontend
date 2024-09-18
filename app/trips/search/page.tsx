@@ -16,7 +16,7 @@ import InputText from '@/components/InputText';
 import { useToast } from '@/context/toastContext';
 import { apiCalls } from '@/utils/apiCalls';
 import { Trip } from '@/types';
-import CardTrip from '@/components/CardTrip';
+import TripCard from '@/components/TripCard';
 
 
 
@@ -115,7 +115,7 @@ const TripsSearchPage = () => {
             ?
             <p className='text-center'>searching...</p>
             :
-            trips.map(trip => (<CardTrip key={trip.id} trip={trip} id={trip.id} onDelete={deleteTrip} className='mb-10' searchword={wordToHighlight} />))
+            trips.map(trip => (<TripCard key={trip.id} trip={trip} id={trip.id} onDelete={deleteTrip} className='mb-10' searchword={wordToHighlight} />))
           }
         </Container>
       </ContentSection>
