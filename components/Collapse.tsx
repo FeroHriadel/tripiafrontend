@@ -1,8 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef} from 'react'
-
-
+import React, { useEffect, useRef } from 'react';
 
 interface Props {
   children: React.ReactNode;
@@ -15,10 +13,12 @@ interface Props {
 const Collapse = ({ children, className = '', style = {}, isOpen = false, id='collapse-component' }: Props) => {
   const collapseComponent = useRef<HTMLDivElement>(null);
 
-
   function openCollapse() {
     if (collapseComponent.current) {
-      collapseComponent.current.style.height = `${getChildrenHeight()}px`;
+      const newHeight = `${getChildrenHeight()}px`;
+      if (collapseComponent.current.style.height !== newHeight) {
+        collapseComponent.current.style.height = newHeight;
+      }
     }
   }
 
@@ -41,7 +41,6 @@ const Collapse = ({ children, className = '', style = {}, isOpen = false, id='co
     return totalHeight;
   }
 
-
   useEffect(() => {
     if (isOpen) {
       openCollapse();
@@ -50,6 +49,30 @@ const Collapse = ({ children, className = '', style = {}, isOpen = false, id='co
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver(() => {
+      if (isOpen) {
+        openCollapse(); // Recalculate height when children change
+      }
+    });
+
+    // Observe changes in children sizes
+    const observeChildren = () => {
+      if (collapseComponent.current) {
+        Array.from(collapseComponent.current.children).forEach((child) => {
+          resizeObserver.observe(child);
+        });
+      }
+    };
+
+    observeChildren(); // Start observing children
+
+    return () => {
+      if (collapseComponent.current) {
+        resizeObserver.disconnect(); // Cleanup observer
+      }
+    };
+  }, [isOpen, children]); // Also observe the children prop for changes
 
   return (
     <div
@@ -60,7 +83,7 @@ const Collapse = ({ children, className = '', style = {}, isOpen = false, id='co
     >
       {children}
     </div>
-  )
+  );
 }
 
-export default Collapse
+export default Collapse;

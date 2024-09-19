@@ -41,7 +41,9 @@ export interface TripInput {
   category?: string;
   keyWords?: string;
   image?: string;
-  requirements?: string; 
+  requirements?: string;
+  meetingLat?: number | null | undefined;
+  meetingLng?: number | null | undefined;
 }
 
 export interface User {

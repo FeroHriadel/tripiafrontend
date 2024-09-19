@@ -23,21 +23,22 @@ import { resizeImage } from '@/utils/imageUpload'
 
 
 
-const defaultTripState = {name: '', departureDate: '', departureTime: '',  departureFrom: '', destination: '', description: '', image: '', requirements: '', category: '', keyWords: ''};
+type CustomChangeEvent = any
+
+
+const defaultTripState: TripInput = {name: '', departureDate: '', departureTime: '',  departureFrom: '', destination: '', description: '', image: '', requirements: '', category: '', keyWords: '', meetingLat: null, meetingLng: null};
 
 
 
 const PostTripPage = () => {
   const [trip, setTrip] = useState<TripInput>({...defaultTripState});
-  const { name, departureDate, departureTime, departureFrom, destination, description } = trip;
-  const [fileName, setFileName] = useState('');
-  const [preview, setPreview] = useState('');
+  const { name, departureDate, departureTime, departureFrom, destination, description, image, requirements, category, keyWords, meetingLat, meetingLng } = trip;
   const { showToast } = useToast();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [moreDetailsOpen, setMoreDetailsOpen] = useState(false);
 
-
+  
   function isTripOk() {
     if (!name) { showToast('Please enter trip name'); return false }
     if (!departureDate) { showToast('Please enter departure date (What day will you be leaving)'); return false }
@@ -75,15 +76,14 @@ const PostTripPage = () => {
     else handleSuccess();
   }
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) {
-    setTrip({ ...trip, [e.target.name]: e.target.value });
+  function handleChange(e:  CustomChangeEvent) {
+    if (e.name === 'coords') {
+      const { meetingLat, meetingLng } = e.value;
+      setTrip({ ...trip, meetingLat: Number(meetingLat), meetingLng: Number(meetingLng) });
+    } else {
+      setTrip({ ...trip, [e.target.name]: e.target.value });
+    }
   }
-
-
-  // function handleDate(e: any) {
-  //   console.log(e);
-  //   setTrip({...trip, departureDate: e});
-  // }
 
   function toggleMoreDetails() {
     setMoreDetailsOpen(!moreDetailsOpen);
