@@ -38,7 +38,7 @@ const PostTripPage = () => {
   const [loading, setLoading] = useState(false);
   const [moreDetailsOpen, setMoreDetailsOpen] = useState(false);
 
-  
+
   function isTripOk() {
     if (!name) { showToast('Please enter trip name'); return false }
     if (!departureDate) { showToast('Please enter departure date (What day will you be leaving)'); return false }

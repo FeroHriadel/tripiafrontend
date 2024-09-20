@@ -12,8 +12,9 @@ import { TripInput } from '@/types';
 import { useAppSelector } from '@/redux/store';
 import { resizeImage } from '@/utils/imageUpload';
 import { useToast } from '@/context/toastContext';
-import mapboxgl from 'mapbox-gl/dist/mapbox-gl.js';
-import 'mapbox-gl/dist/mapbox-gl.css';
+import  { useMap } from '@/hooks/useMap';
+// import mapboxgl from 'mapbox-gl/dist/mapbox-gl.js';
+// import 'mapbox-gl/dist/mapbox-gl.css';
 
 
 
@@ -26,7 +27,7 @@ interface Props {
 
 
 
-mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!;
+// mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!;
 
 const tripImageMaxSize = 800;
 const coords: [number, number] = [17.124620012584664, 48.12800397232297]; //long, lat  (Sustekova - Bratislava, SK)
@@ -40,10 +41,22 @@ const TripDetails = ({ trip, loading, handleChange }: Props) => {
   const [meetingMapShown, setMeetingMapShown] = useState(false);
   const categories = useAppSelector((state) => state.categories);
   const { showToast } = useToast();
-  const meetingMapContainer = useRef<HTMLDivElement | null>(null);
-  const meetingMap = useRef<mapboxgl.Map | null>(null);
-  const meetingMarker = useRef<mapboxgl.Marker | null>(null);
+  const meetingMapContainerRef = useRef<HTMLDivElement | null>(null);
+  const meetingMapRef = useRef<mapboxgl.Map | null>(null);
+  const meetingMarkerRef = useRef<mapboxgl.Marker | null>(null);
+  const { renderMap, removeMap } = useMap({
+    initialCoords: [17.124620012584664, 48.12800397232297],
+    onMapClick,
+    meetingMapRef,
+    meetingMarkerRef,
+    meetingMapContainerRef,
+  }) 
 
+
+  async function onMapClick(event: any) {
+    const { lng, lat } = event;
+    handleChange({ name: 'coords', value: { meetingLat: lat, meetingLng: lng } });
+  }
 
   function mapCategoriesToOptions() {
     const options = [];
@@ -61,42 +74,16 @@ const TripDetails = ({ trip, loading, handleChange }: Props) => {
   }
 
   function toggleMeetingMap() {
-    setMeetingMapShown(!meetingMapShown);
-    if (meetingMapShown) { //when closing the state is still meetingMapShown = true. So in human terms this line says: if (closingMeetingMap)
-      if (meetingMarker.current) {
-        meetingMarker.current.remove();
-        meetingMarker.current = null;
-      }
-      if (meetingMap.current) {
-        meetingMap.current.remove();
-        meetingMap.current = null;
-      }
+    if (!meetingMapShown) {
+      setMeetingMapShown(true);
+    } else {
+      removeMap();
+      setMeetingMapShown(false);
     }
   }
 
-    async function renderMeetingMap() {
-      if (!meetingMap.current) {
-        meetingMap.current = new mapboxgl.Map({
-          container: meetingMapContainer.current!,
-          style: 'mapbox://styles/mapbox/streets-v11',
-          center: [17.124620012584664, 48.12800397232297],
-          zoom: 12,
-        });
-        meetingMap.current.on('click', (event) => {
-          const { lng, lat } = event.lngLat;
-          if (meetingMarker.current) {
-            meetingMarker.current.remove();
-          }
-          meetingMarker.current = new mapboxgl.Marker()
-            .setLngLat([lng, lat])
-            .addTo(meetingMap.current!);
-          handleChange({ name: 'coords', value: { meetingLat: lat, meetingLng: lng } });
-        });
-      }
-    }
 
-
-  useEffect(() => { if (meetingMapShown) renderMeetingMap(); }, [meetingMapShown]);
+  useEffect(() => { if (meetingMapShown && meetingMapContainerRef.current) { renderMap(); } }, [meetingMapShown, meetingMapContainerRef.current]);
 
 
   return (
@@ -129,7 +116,7 @@ const TripDetails = ({ trip, loading, handleChange }: Props) => {
         && 
         <>
           <ContentSectionDescription text={`Click the meeting place on the map or type address into the 'meeting address' input under the map`} className='text-lg xs:text-lg md:text-lg font-normal mb-4'/>
-          <div id="meeting-point-map" className='w-[100%] min-h-[20rem] mb-4 z-10' ref={meetingMapContainer} />
+          <div id="meeting-point-map" className='w-[100%] min-h-[20rem] mb-4 z-10' ref={meetingMapContainerRef} />
         </>
       }
     </aside>
