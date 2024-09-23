@@ -18,7 +18,7 @@ import { apiCalls } from '@/utils/apiCalls'
 import { useRouter } from 'next/navigation'
 import Collapse from '@/components/Collapse'
 import TripDetails from '@/components/TripDetails'
-import { TripInput } from '@/types'
+import { Trip } from '@/types'
 import { resizeImage, uploadImage } from '@/utils/imageUpload'
 import { useAuth } from '@/context/authContext'
 
@@ -28,14 +28,14 @@ type CustomChangeEvent = any
 
 
 
-const defaultTripState: TripInput = {name: '', departureDate: '', departureTime: '',  departureFrom: '', destination: '', description: '', image: '', requirements: '', category: '', keyWords: '', meetingLat: null, meetingLng: null, destinationLat: null, destinationLng: null};
+const defaultTripState: Trip = {name: '', departureDate: '', departureTime: '',  departureFrom: '', destination: '', description: '', image: '', requirements: '', category: '', keyWords: '', meetingLat: null, meetingLng: null, destinationLat: null, destinationLng: null};
 
 const tripImageMaxSize = 800;
 
 
 
 const PostTripPage = () => {
-  const [trip, setTrip] = useState<TripInput>({...defaultTripState});
+  const [trip, setTrip] = useState<Trip>({...defaultTripState});
   const { name, departureDate, departureTime, departureFrom, destination, description, image, requirements, category, keyWords, meetingLat, meetingLng } = trip;
   const [loading, setLoading] = useState(false);
   const [moreDetailsOpen, setMoreDetailsOpen] = useState(false);
@@ -55,11 +55,30 @@ const PostTripPage = () => {
     if (!departureFrom) { showToast('Please enter departure from (Where will you be leaving from)'); return false }
     if (!destination) { showToast('Please enter destination (What you are going to see)'); return false }
     if (!description) { showToast('Please enter description (So people know what to expect)'); return false }
+    if (keyWords && !checkKeyWords(keyWords)) { showToast('keywords should be 2 - 10 chars each'); return false }
     return true;
   }
 
-  async function addTrip() {
-    const res = apiCalls.post(`/trips`, {...trip});
+  function checkKeyWords(keywords: string): boolean {
+    const trimmed = keywords.trim();
+    if (trimmed.includes(',')) {
+      const parts = trimmed.split(',').map(part => part.trim());
+      return parts.every(part => part.length > 0 && part.length <= 10);
+    } else {
+      return trimmed.length >= 2 && trimmed.length <= 10;
+    }
+  }
+
+  function trimAndRemoveTrailingComma(input: string): string {
+    let trimmed = input.trim();
+    if (trimmed.endsWith(',')) { trimmed = trimmed.slice(0, -1).trim(); }
+    return trimmed;
+  }
+  
+  async function addTrip(trip: Trip) {
+    setLoading(true); showToast('Saving trip...');
+    const body = {...trip, keyWords: trimAndRemoveTrailingComma(keyWords || '')};
+    const res = apiCalls.post(`/trips`, body);
     return res;
   }
 
@@ -77,14 +96,21 @@ const PostTripPage = () => {
     showToast(message);
   }
 
+  async function uploadPreview() {
+    setLoading(true);
+    showToast('Uploading image...');
+    const res = await uploadImage(fileName, preview, idToken); 
+    return res;
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault(); setLoading(true);
-    if (!isTripOk()) return setLoading(false);
+    e.preventDefault(); if (!isTripOk()) return;
+    let updatedTrip = { ...trip };
     if (preview) {
-      const res = await uploadImage(fileName, preview, idToken); if (res.error) return handleFail(res.error);
-      setTrip({...trip, image: res.imageUrl});
+      const res = await uploadPreview(); if (res.error) return handleFail('Failed to upload image');
+      updatedTrip.image = res.imageUrl;
     }
-    const res = await addTrip();
+    const res = await addTrip(updatedTrip);
     if (!res.id) return handleFail(res.error || 'Something went wrong');
     else handleSuccess();
   }
