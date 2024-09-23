@@ -81,7 +81,7 @@ const PostTripPage = () => {
       setTrip({ ...trip, meetingLat: Number(meetingLat), meetingLng: Number(meetingLng) });
     } else if (e.name === 'destinationCoords') {
       const { destinationLat, destinationLng } = e.value;
-      setTrip({ ...trip, meetingLat: Number(destinationLat), destinationLng: Number(meetingLng) });
+      setTrip({ ...trip, destinationLat: Number(destinationLat), destinationLng: Number(destinationLng) });
     } else {
       setTrip({ ...trip, [e.target.name]: e.target.value });
     }
