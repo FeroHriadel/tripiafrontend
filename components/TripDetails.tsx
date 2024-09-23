@@ -18,21 +18,20 @@ import  { useMap } from '@/hooks/useMap';
 
 interface Props {
   handleChange: (event: any) => void;
+  handleImageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  imagePreview: string;
   trip: TripInput;
   loading: boolean;
 }
 
 
 
-const tripImageMaxSize = 800;
 const initialCoords: [number, number] = [17.124620012584664, 48.12800397232297]; //long, lat  (Sustekova - Bratislava, SK)
 
 
 
-const TripDetails = ({ trip, loading, handleChange }: Props) => {
+const TripDetails = ({ trip, loading, imagePreview, handleChange, handleImageChange }: Props) => {
   //non-map related values:
-  const [preview, setPreview] = React.useState<string>('');
-  const [fileName, setFileName] = React.useState<string>('');
   const categories = useAppSelector((state) => state.categories);
   const { showToast } = useToast();
   
@@ -152,13 +151,6 @@ const TripDetails = ({ trip, loading, handleChange }: Props) => {
     return options
   }
 
-  async function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files![0];
-    const resizedImage = await resizeImage(file, tripImageMaxSize);
-    if (resizedImage.error) return showToast(resizedImage.error);
-    else { setPreview(resizedImage.base64); setFileName(file.name) };
-  }
-
 
   //render:
   return (
@@ -172,10 +164,10 @@ const TripDetails = ({ trip, loading, handleChange }: Props) => {
       {/* image preview */}
       <div 
         className='rounded-2xl bg-lightgray w-[100%] h-[20rem] mb-4 relative cursor-pointer'
-        style = {preview ? {backgroundImage: `url(${preview})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat'} : {}}
+        style = {imagePreview ? {backgroundImage: `url(${imagePreview})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat'} : {}}
       >
         <p className='absolute top-4 right-4 text-darkgray text-2xl cursor-pointer'> <LuImagePlus /> </p>
-        {!preview && <span className='absolute top-4 left-8 text-darkgray font-semibold text-xl'>upload image</span>}
+        {!imagePreview && <span className='absolute top-4 left-8 text-darkgray font-semibold text-xl'>upload image</span>}
         <input type="file" max={1} multiple={false} accept='image/*' className="w-[100%] h-[100%] absolute left-0 top-0 opacity-0 cursor-pointer" onChange={handleImageChange} />
       </div>
 

@@ -19,23 +19,31 @@ import { useRouter } from 'next/navigation'
 import Collapse from '@/components/Collapse'
 import TripDetails from '@/components/TripDetails'
 import { TripInput } from '@/types'
+import { resizeImage, uploadImage } from '@/utils/imageUpload'
+import { useAuth } from '@/context/authContext'
 
 
 
 type CustomChangeEvent = any
 
 
+
 const defaultTripState: TripInput = {name: '', departureDate: '', departureTime: '',  departureFrom: '', destination: '', description: '', image: '', requirements: '', category: '', keyWords: '', meetingLat: null, meetingLng: null, destinationLat: null, destinationLng: null};
+
+const tripImageMaxSize = 800;
 
 
 
 const PostTripPage = () => {
   const [trip, setTrip] = useState<TripInput>({...defaultTripState});
   const { name, departureDate, departureTime, departureFrom, destination, description, image, requirements, category, keyWords, meetingLat, meetingLng } = trip;
-  const { showToast } = useToast();
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [moreDetailsOpen, setMoreDetailsOpen] = useState(false);
+  const [preview, setPreview] = React.useState<string>('');
+  const [fileName, setFileName] = React.useState<string>('');
+  const { showToast } = useToast();
+  const router = useRouter();
+  const { user } = useAuth(); const { idToken } = user;
 
 
   function isTripOk() {
@@ -57,6 +65,8 @@ const PostTripPage = () => {
 
   function handleSuccess() {
     setTrip({...defaultTripState});
+    setPreview('');
+    setFileName('');
     setLoading(false);
     showToast('Trip posted successfully. Redirecting...');
     setTimeout(() => router.push('/trips'), 1000);
@@ -70,6 +80,10 @@ const PostTripPage = () => {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault(); setLoading(true);
     if (!isTripOk()) return setLoading(false);
+    if (preview) {
+      const res = await uploadImage(fileName, preview, idToken); if (res.error) return handleFail(res.error);
+      setTrip({...trip, image: res.imageUrl});
+    }
     const res = await addTrip();
     if (!res.id) return handleFail(res.error || 'Something went wrong');
     else handleSuccess();
@@ -87,9 +101,16 @@ const PostTripPage = () => {
     }
   }
 
+  async function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files![0];
+    const resizedImage = await resizeImage(file, tripImageMaxSize);
+    if (resizedImage.error) return showToast(resizedImage.error);
+    else { setPreview(resizedImage.base64); setFileName(file.name) };
+  }
+
   function toggleMoreDetails() {
     setMoreDetailsOpen(!moreDetailsOpen);
-    setTrip({...trip, requirements: '', category: '', image: '', keyWords: ''})
+    setTrip({...trip, requirements: '', category: '', image: '', keyWords: ''});
   }
 
 
@@ -119,7 +140,7 @@ const PostTripPage = () => {
             <InputTextarea inputName='description' labelText='description' value={description} onChange={handleChange} disabled={loading} className='mb-4'/>
             <ContentSectionButton type='button' text={moreDetailsOpen ? 'Close Details' : 'Add More Details'} disabled={loading} onClick={toggleMoreDetails} className='mb-4' />
             <Collapse isOpen={moreDetailsOpen} className='rounded-2xl'>
-              <TripDetails loading={loading} handleChange={handleChange} trip={trip} />
+              <TripDetails loading={loading} handleChange={handleChange} handleImageChange={handleImageChange} imagePreview={preview} trip={trip} />
             </Collapse>
             <ContentSectionButton type='submit' text='Post Trip' disabled={loading} className='mb-4' />
           </form>
