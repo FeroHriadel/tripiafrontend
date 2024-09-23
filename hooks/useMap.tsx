@@ -38,7 +38,7 @@ export const useMap = ({
       });
       meetingMapRef.current.on('click', (event) => {
         const { lng, lat } = event.lngLat;
-        placeMarker(event);
+        placeMarker({lng, lat});
         onMapClick({ lng, lat });  //passed from parent - so it can do stuff with lng & lat
       });
       setMapLoaded(true);
@@ -53,12 +53,13 @@ export const useMap = ({
     }
   };
 
-  function placeMarker(event: MapMouseEvent) {
-    const { lng, lat } = event.lngLat;
+  function placeMarker(coords: {lng: number, lat: number}) {
+    const { lng, lat } = coords;
     if (meetingMarkerRef.current) { meetingMarkerRef.current.remove(); }
     meetingMarkerRef.current = new mapboxgl.Marker()
       .setLngLat([lng, lat])
       .addTo(meetingMapRef.current!);
+    meetingMapRef.current!.setCenter([lng, lat]);
   }
 
   async function getAddressFromCoords(coords: { lng: number, lat: number }) {
@@ -94,6 +95,7 @@ export const useMap = ({
   return {
     renderMap,
     removeMap,
+    placeMarker,
     mapLoaded,
     getAddressFromCoords,
     getCoordsFromAddress
