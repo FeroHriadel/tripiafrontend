@@ -13,10 +13,6 @@ import { useAppSelector } from '@/redux/store';
 import { resizeImage } from '@/utils/imageUpload';
 import { useToast } from '@/context/toastContext';
 import  { useMap } from '@/hooks/useMap';
-import { shallowEqual } from 'react-redux';
-// import mapboxgl from 'mapbox-gl/dist/mapbox-gl.js';
-// import 'mapbox-gl/dist/mapbox-gl.css';
-
 
 
 
@@ -28,39 +24,126 @@ interface Props {
 
 
 
-// mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!;
-
 const tripImageMaxSize = 800;
 const initialCoords: [number, number] = [17.124620012584664, 48.12800397232297]; //long, lat  (Sustekova - Bratislava, SK)
 
 
 
-
 const TripDetails = ({ trip, loading, handleChange }: Props) => {
+  //non-map related values:
   const [preview, setPreview] = React.useState<string>('');
   const [fileName, setFileName] = React.useState<string>('');
-  const [meetingMapShown, setMeetingMapShown] = useState(false);
-  const [meetingAddress, setMeetingAddress] = useState('');
   const categories = useAppSelector((state) => state.categories);
   const { showToast } = useToast();
+  
+
+  //meeting point map values & functions:
+  const [meetingMapShown, setMeetingMapShown] = useState(false);
+  const [meetingAddress, setMeetingAddress] = useState('');
   const meetingMapContainerRef = useRef<HTMLDivElement | null>(null);
   const meetingMapRef = useRef<mapboxgl.Map | null>(null);
   const meetingMarkerRef = useRef<mapboxgl.Marker | null>(null);
-  const { renderMap, removeMap, getCoordsFromAddress, placeMarker } = useMap({
+  const { renderMap: renderMeetingMap, removeMap: removeMeetingMap, getCoordsFromAddress, placeMarker: placeMeetingMarker } = useMap({
     initialCoords: initialCoords,
-    onMapClick,
+    onMapClick: onMeetingMapClick,
     meetingMapRef,
     meetingMarkerRef,
     meetingMapContainerRef,
   });
 
-
-  async function onMapClick(event: any) {
+  async function onMeetingMapClick(event: any) {
     const { lng, lat } = event;
-    handleChange({ name: 'coords', value: { meetingLat: lat, meetingLng: lng } });
+    handleChange({ name: 'meetingCoords', value: { meetingLat: lat, meetingLng: lng } });
     clearMeetingAddressInput()
   }
 
+  function toggleMeetingMap() {
+    if (!meetingMapShown) {
+      setMeetingMapShown(true);
+    } else {
+      removeMeetingMap();
+      setMeetingMapShown(false);
+      clearMeetingAddressInput()
+    }
+  }
+  
+  function handleMeetingAddressChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setMeetingAddress(e.target.value);
+  }
+
+  function clearMeetingAddressInput() {
+    setMeetingAddress('');
+  }
+
+  async function meetingAddressToCoords(address: string) {
+    try {
+      if (!address || address.length < 6) return showToast('Please enter a valid address');
+      const res = await getCoordsFromAddress(address); if (!res.coords?.lat) throw new Error('Coords not found');
+      const { lat, lng } = res.coords!;
+      handleChange({ name: 'meetingCoords', value: {lat, lng} });
+      placeMeetingMarker({lng, lat});
+    } catch (error) {
+      return showToast('Failed to find address, try clicking the map');
+    }
+  }
+
+  useEffect(() => { if (meetingMapShown && meetingMapContainerRef.current) { renderMeetingMap(); } }, [meetingMapShown, meetingMapContainerRef.current]);
+
+
+  //destination map values & functions:
+  const [destinationMapShown, setDestinationMapShown] = useState(false);
+  const [destinationAddress, setDestinationAddress] = useState('');
+  const destinationMapContainerRef = useRef<HTMLDivElement | null>(null);
+  const destinationMapRef = useRef<mapboxgl.Map | null>(null);
+  const destinationMarkerRef = useRef<mapboxgl.Marker | null>(null);
+  const { renderMap: renderDestinationMap, removeMap: removeDestinationMap, getCoordsFromAddress: getDestinationCoords, placeMarker: placeDestinationMarker } = useMap({
+    initialCoords: initialCoords,
+    onMapClick: onDestinationMapClick,
+    meetingMapRef: destinationMapRef,
+    meetingMarkerRef: destinationMarkerRef,
+    meetingMapContainerRef: destinationMapContainerRef,
+  });
+
+  async function onDestinationMapClick(event: any) {
+    const { lng, lat } = event;
+    handleChange({ name: 'destinationCoords', value: { destinationLat: lat, destinationLng: lng } });
+    clearDestinationAddressInput()
+  }
+
+  function handleDestinationAddressChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setDestinationAddress(e.target.value);
+  }
+
+  function toggleDestinationMap() {
+    if (!destinationMapShown) {
+      setDestinationMapShown(true);
+    } else {
+      removeDestinationMap();
+      setDestinationMapShown(false);
+      clearDestinationAddressInput()
+    }
+  }
+
+  function clearDestinationAddressInput() {
+    setDestinationAddress('');
+  }
+
+  async function destinationAddressToCoords(address: string) {
+    try {
+      if (!address || address.length < 6) return showToast('Please enter a valid address');
+      const res = await getCoordsFromAddress(address); if (!res.coords?.lat) throw new Error('Coords not found');
+      const { lat, lng } = res.coords!;
+      handleChange({ name: 'destinationCoords', value: {lat, lng} });
+      placeDestinationMarker({lng, lat});
+    } catch (error) {
+      return showToast('Failed to find address, try clicking the map');
+    }
+  }
+
+  useEffect(() => { if (destinationMapShown && destinationMapContainerRef.current) { renderDestinationMap(); } }, [destinationMapShown, destinationMapContainerRef.current]);
+
+
+  //other functions
   function mapCategoriesToOptions() {
     const options = [];
     for (const category of categories) {
@@ -76,42 +159,8 @@ const TripDetails = ({ trip, loading, handleChange }: Props) => {
     else { setPreview(resizedImage.base64); setFileName(file.name) };
   }
 
-  
-  function toggleMeetingMap() {
-    if (!meetingMapShown) {
-      setMeetingMapShown(true);
-    } else {
-      removeMap();
-      setMeetingMapShown(false);
-      clearMeetingAddressInput()
-    }
-  }
-  
-  function handleMeetingAddressChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setMeetingAddress(e.target.value);
-  }
 
-  function clearMeetingAddressInput() {
-    setMeetingAddress('');
-  }
-
-  async function addressToCoords(address: string) {
-    try {
-      if (!address || address.length < 6) return showToast('Please enter a valid address');
-      const res = await getCoordsFromAddress(address); if (!res.coords?.lat) throw new Error('Coords not found');
-      const lat = res.coords?.lat; const lng = res.coords.lng;
-      handleChange({ name: 'coords', value: {lat, lng} });
-      placeMarker({lng, lat});
-    } catch (error) {
-      return showToast('Failed to find address, try clicking the map');
-    }
-
-  }
-
-
-  useEffect(() => { if (meetingMapShown && meetingMapContainerRef.current) { renderMap(); } }, [meetingMapShown, meetingMapContainerRef.current]);
-
-
+  //render:
   return (
     <aside className='w-[100%] flex flex-col my-4'>
 
@@ -143,9 +192,28 @@ const TripDetails = ({ trip, loading, handleChange }: Props) => {
         <>
           <ContentSectionDescription text={`Click the meeting place on the map or type address into the 'meeting address' input under the map`} className='text-lg xs:text-lg md:text-lg font-normal mb-4'/>
           <div id="meeting-point-map" className='w-[100%] min-h-[20rem] mb-4 z-10' ref={meetingMapContainerRef} />
-          <ContentSectionDescription text={`Or enter meeting address:`} className='text-lg xs:text-lg md:text-lg font-normal mb-4'/>
+          <ContentSectionDescription text={`Enter meeting address (or click the map above) :`} className='text-lg xs:text-lg md:text-lg font-normal mb-4'/>
           <InputText inputName='meetingAddress' labelText='meeting address' value={meetingAddress} onChange={handleMeetingAddressChange} disabled={loading} className='mb-4'>
-            <button type='button' onClick={() => addressToCoords(meetingAddress)} className='absolute top-[50%] right-1 -translate-y-[50%] bg-textorange text-white text-xs font-semibold rounded-full w-[3rem] h-[3rem] shadow-md'>FIND</button>
+            <button type='button' onClick={() => meetingAddressToCoords(meetingAddress)} className='absolute top-[50%] right-1 -translate-y-[50%] bg-textorange text-white text-xs font-semibold rounded-full w-[3rem] h-[3rem] shadow-md'>
+              FIND
+            </button>
+          </InputText>
+        </>
+      }
+
+      {/* destination on map */}
+      <ContentSectionButton text='Destination Map' onClick={toggleDestinationMap} className='mb-4' />
+      {
+        destinationMapShown
+        &&
+        <>
+          <ContentSectionDescription text={`Click where you are going on the map or type address into the 'destination address' input under the map`} className='text-lg xs:text-lg md:text-lg font-normal mb-4'/>
+          <div id="destination-map" className='w-[100%] min-h-[20rem] mb-4 z-10' ref={destinationMapContainerRef} />
+          <ContentSectionDescription text={`Enter destination address (or click the map above) :`} className='text-lg xs:text-lg md:text-lg font-normal mb-4'/>
+          <InputText inputName='destinationAddress' labelText='destination address' value={destinationAddress} onChange={handleDestinationAddressChange} disabled={loading} className='mb-4'>
+            <button type='button' onClick={() => destinationAddressToCoords(destinationAddress)} className='absolute top-[50%] right-1 -translate-y-[50%] bg-textorange text-white text-xs font-semibold rounded-full w-[3rem] h-[3rem] shadow-md'>
+              FIND
+            </button>
           </InputText>
         </>
       }

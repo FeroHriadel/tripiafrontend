@@ -10,11 +10,11 @@ mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!;
 
 
 interface UseMapProps {
-  initialCoords: [number, number]; // Initial coordinates [longitude, latitude]
-  onMapClick: (coords: { lng: number, lat: number }) => void; // Callback when the map is clicked
-  meetingMapContainerRef: React.MutableRefObject<HTMLDivElement | null>; // Meeting map container ref
-  meetingMapRef: React.MutableRefObject<mapboxgl.Map | null>; // Meeting map ref
-  meetingMarkerRef: React.MutableRefObject<mapboxgl.Marker | null>; // Meeting marker ref
+  initialCoords: [number, number];
+  onMapClick: (coords: { lng: number, lat: number }) => void;
+  meetingMapContainerRef: React.MutableRefObject<HTMLDivElement | null>;
+  meetingMapRef: React.MutableRefObject<mapboxgl.Map | null>;
+  meetingMarkerRef: React.MutableRefObject<mapboxgl.Marker | null>;
 }
 
 

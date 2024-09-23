@@ -19,14 +19,13 @@ import { useRouter } from 'next/navigation'
 import Collapse from '@/components/Collapse'
 import TripDetails from '@/components/TripDetails'
 import { TripInput } from '@/types'
-import { resizeImage } from '@/utils/imageUpload'
 
 
 
 type CustomChangeEvent = any
 
 
-const defaultTripState: TripInput = {name: '', departureDate: '', departureTime: '',  departureFrom: '', destination: '', description: '', image: '', requirements: '', category: '', keyWords: '', meetingLat: null, meetingLng: null};
+const defaultTripState: TripInput = {name: '', departureDate: '', departureTime: '',  departureFrom: '', destination: '', description: '', image: '', requirements: '', category: '', keyWords: '', meetingLat: null, meetingLng: null, destinationLat: null, destinationLng: null};
 
 
 
@@ -77,9 +76,12 @@ const PostTripPage = () => {
   }
 
   function handleChange(e:  CustomChangeEvent) {
-    if (e.name === 'coords') {
+    if (e.name === 'meetingCoords') {
       const { meetingLat, meetingLng } = e.value;
       setTrip({ ...trip, meetingLat: Number(meetingLat), meetingLng: Number(meetingLng) });
+    } else if (e.name === 'destinationCoords') {
+      const { destinationLat, destinationLng } = e.value;
+      setTrip({ ...trip, meetingLat: Number(destinationLat), destinationLng: Number(meetingLng) });
     } else {
       setTrip({ ...trip, [e.target.name]: e.target.value });
     }

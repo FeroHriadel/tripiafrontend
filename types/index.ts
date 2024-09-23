@@ -44,6 +44,8 @@ export interface TripInput {
   requirements?: string;
   meetingLat?: number | null | undefined;
   meetingLng?: number | null | undefined;
+  destinationLat?: number | null | undefined;
+  destinationLng?: number | null | undefined;
 }
 
 export interface User {
