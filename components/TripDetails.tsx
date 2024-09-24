@@ -8,7 +8,7 @@ import ContentSectionDescription from '@/components/ContentSectionDescription'
 import ContentSectionHeader from '@/components/ContentSectionHeader'
 import ContentSectionButton from './ContentSectionButton';
 import { LuImagePlus } from "react-icons/lu";
-import { TripInput } from '@/types';
+import { Trip } from '@/types';
 import { useAppSelector } from '@/redux/store';
 import { resizeImage } from '@/utils/imageUpload';
 import { useToast } from '@/context/toastContext';
@@ -20,7 +20,7 @@ interface Props {
   handleChange: (event: any) => void;
   handleImageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   imagePreview: string;
-  trip: TripInput;
+  trip: Trip;
   loading: boolean;
 }
 
@@ -183,8 +183,8 @@ const TripDetails = ({ trip, loading, imagePreview, handleChange, handleImageCha
         && 
         <>
           <ContentSectionDescription text={`Click the meeting place on the map or type address into the 'meeting address' input under the map`} className='text-lg xs:text-lg md:text-lg font-normal mb-4'/>
-          <div id="meeting-point-map" className='w-[100%] min-h-[20rem] mb-4 z-10' ref={meetingMapContainerRef} />
-          <ContentSectionDescription text={`Enter meeting address (or click the map above) :`} className='text-lg xs:text-lg md:text-lg font-normal mb-4'/>
+          <div id="meeting-point-map" className='w-[100%] min-h-[20rem] mb-4' ref={meetingMapContainerRef} />
+          <ContentSectionDescription text={`Enter meeting address (or click the map above)`} className='text-lg xs:text-lg md:text-lg font-normal mb-4'/>
           <InputText inputName='meetingAddress' labelText='meeting address' value={meetingAddress} onChange={handleMeetingAddressChange} disabled={loading} className='mb-4'>
             <button type='button' onClick={() => meetingAddressToCoords(meetingAddress)} className='absolute top-[50%] right-1 -translate-y-[50%] bg-textorange text-white text-xs font-semibold rounded-full w-[3rem] h-[3rem] shadow-md'>
               FIND
@@ -200,8 +200,8 @@ const TripDetails = ({ trip, loading, imagePreview, handleChange, handleImageCha
         &&
         <>
           <ContentSectionDescription text={`Click where you are going on the map or type address into the 'destination address' input under the map`} className='text-lg xs:text-lg md:text-lg font-normal mb-4'/>
-          <div id="destination-map" className='w-[100%] min-h-[20rem] mb-4 z-10' ref={destinationMapContainerRef} />
-          <ContentSectionDescription text={`Enter destination address (or click the map above) :`} className='text-lg xs:text-lg md:text-lg font-normal mb-4'/>
+          <div id="destination-map" className='w-[100%] min-h-[20rem] mb-4' ref={destinationMapContainerRef} />
+          <ContentSectionDescription text={`Enter destination address (or click the map above)`} className='text-lg xs:text-lg md:text-lg font-normal mb-4'/>
           <InputText inputName='destinationAddress' labelText='destination address' value={destinationAddress} onChange={handleDestinationAddressChange} disabled={loading} className='mb-4'>
             <button type='button' onClick={() => destinationAddressToCoords(destinationAddress)} className='absolute top-[50%] right-1 -translate-y-[50%] bg-textorange text-white text-xs font-semibold rounded-full w-[3rem] h-[3rem] shadow-md'>
               FIND

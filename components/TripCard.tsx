@@ -36,6 +36,7 @@ const TripCard = ({ trip, className = '', style = {}, id, searchword = '', onDel
   const { user } = useAuth();
   const dispatch = useAppDispatch();
   const favoriteTrips = useAppSelector((state) => state.favoriteTrips);
+  const categories = useAppSelector(state => state.categories);
 
 
   function openConfirm() { setConfirmOpen(true); }
@@ -84,14 +85,19 @@ const TripCard = ({ trip, className = '', style = {}, id, searchword = '', onDel
     setStarClickDisabled(false);
   }
 
-  function isFavorite() {
-    return favoriteTrips.includes(trip.id!);
-  }
+  function isFavorite() { return favoriteTrips.includes(trip.id!); }
 
   async function toggleFavoriteTrip() {
     if (isFavorite()) await removeFromFavorites();
     else await addToFavorites();
   }
+
+  function getCategoryName(categoryId: string) {
+    const category = categories.find(category => category.id === categoryId);
+    return category ? category.name : '';
+  }
+
+  function tagsFromKeywords() { return trip.keyWords?.split(',') || []; }
 
 
   useEffect(() => { getProfilePicture(trip.createdBy); }, [])
@@ -118,7 +124,7 @@ const TripCard = ({ trip, className = '', style = {}, id, searchword = '', onDel
 
           <div className='---name-and-category---'>
             <p className='font-semibold'> <HighlightSearchword text={trip.name} searchword={searchword} /> </p>
-            {trip.category && <small>{trip.category}</small>}
+            {trip.category && <small>{getCategoryName(trip.category)}</small>}
             <p className='text-xs'>by <HighlightSearchword text={trip.nickname!} searchword={searchword} /> </p>
           </div>
         </div>
@@ -149,7 +155,7 @@ const TripCard = ({ trip, className = '', style = {}, id, searchword = '', onDel
         &&
         <div className="---image-container--- mb-4">
           <CenteredImage 
-            src='/images/user.png'
+            src={trip.image}
             width={'100%'} 
             height={500} 
             className='rounded-2xl mr-4 max-h-[300px] xs:max-h-[500px]'
@@ -159,11 +165,11 @@ const TripCard = ({ trip, className = '', style = {}, id, searchword = '', onDel
 
       {/* keyWords (tags) */}
       {
-        trip.keyWords && trip.keyWords.length >= 1
+        trip.keyWords
         &&
         <div className="---key-words--- flex gap-2 mb-4">
           {
-            trip.keyWords.map((keyWord, idx) => (
+            tagsFromKeywords().map((keyWord, idx) => (
               <Tag text={keyWord} key={keyWord + idx} />
             ))
           }

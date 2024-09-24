@@ -30,7 +30,7 @@ type CustomChangeEvent = any
 
 const defaultTripState: Trip = {name: '', departureDate: '', departureTime: '',  departureFrom: '', destination: '', description: '', image: '', requirements: '', category: '', keyWords: '', meetingLat: null, meetingLng: null, destinationLat: null, destinationLng: null};
 
-const tripImageMaxSize = 800;
+const tripImageMaxSize = 900;
 
 
 
@@ -55,17 +55,17 @@ const PostTripPage = () => {
     if (!departureFrom) { showToast('Please enter departure from (Where will you be leaving from)'); return false }
     if (!destination) { showToast('Please enter destination (What you are going to see)'); return false }
     if (!description) { showToast('Please enter description (So people know what to expect)'); return false }
-    if (keyWords && !checkKeyWords(keyWords)) { showToast('keywords should be 2 - 10 chars each'); return false }
+    if (keyWords && !checkKeyWords(keyWords)) { showToast('keywords should be 2 - 15 chars each'); return false }
     return true;
   }
 
   function checkKeyWords(keywords: string): boolean {
-    const trimmed = keywords.trim();
+    let trimmed = trimAndRemoveTrailingComma(keywords);
     if (trimmed.includes(',')) {
       const parts = trimmed.split(',').map(part => part.trim());
-      return parts.every(part => part.length > 0 && part.length <= 10);
+      return parts.every(part => part.length >= 2 && part.length <= 15);
     } else {
-      return trimmed.length >= 2 && trimmed.length <= 10;
+      return trimmed.length >= 2 && trimmed.length <= 15;
     }
   }
 
