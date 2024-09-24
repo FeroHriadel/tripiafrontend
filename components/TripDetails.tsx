@@ -60,10 +60,14 @@ const TripDetails = ({ trip, loading, imagePreview, handleChange, handleImageCha
     if (!meetingMapShown) {
       setMeetingMapShown(true);
     } else {
-      removeMeetingMap();
-      setMeetingMapShown(false);
-      clearMeetingAddressInput()
+      closeMeetingMap();
     }
+  }
+
+  function closeMeetingMap() {
+    removeMeetingMap();
+    setMeetingMapShown(false);
+    clearMeetingAddressInput();
   }
   
   function handleMeetingAddressChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -117,10 +121,14 @@ const TripDetails = ({ trip, loading, imagePreview, handleChange, handleImageCha
     if (!destinationMapShown) {
       setDestinationMapShown(true);
     } else {
-      removeDestinationMap();
-      setDestinationMapShown(false);
-      clearDestinationAddressInput()
+      closeDestinationMap();
     }
+  }
+
+  function closeDestinationMap() {
+    removeDestinationMap();
+    setDestinationMapShown(false);
+    clearDestinationAddressInput();
   }
 
   function clearDestinationAddressInput() {
@@ -151,6 +159,10 @@ const TripDetails = ({ trip, loading, imagePreview, handleChange, handleImageCha
     return options
   }
 
+  useEffect(() => { 
+    if (loading) { closeDestinationMap(); closeMeetingMap();  }
+   }, [loading])
+
 
   //render:
   return (
@@ -177,7 +189,7 @@ const TripDetails = ({ trip, loading, imagePreview, handleChange, handleImageCha
       <InputSelect inputName='category' labelText='category' value={trip.category!} onChange={handleChange} options={mapCategoriesToOptions()} disabled={loading} className='mb-4' />
 
       {/* meeting point on map */}
-      <ContentSectionButton text='Meeting Point Map' onClick={toggleMeetingMap} className='mb-4' />
+      <ContentSectionButton text='Meeting Point Map' onClick={toggleMeetingMap} disabled={loading} className='mb-4' />
       {
         meetingMapShown
         && 
@@ -194,7 +206,7 @@ const TripDetails = ({ trip, loading, imagePreview, handleChange, handleImageCha
       }
 
       {/* destination on map */}
-      <ContentSectionButton text='Destination Map' onClick={toggleDestinationMap} className='mb-4' />
+      <ContentSectionButton text='Destination Map' disabled={loading} onClick={toggleDestinationMap} className='mb-4' />
       {
         destinationMapShown
         &&
