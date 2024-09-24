@@ -144,11 +144,6 @@ const TripCard = ({ trip, className = '', style = {}, id, searchword = '', onDel
         }
       </div>
 
-      {/* description */}
-      <div className="---description-container--- mb-4">
-        <p> <HighlightSearchword text={trip.description} searchword={searchword} /> </p>
-      </div>
-
       {/* image */}
       {
         trip.image
@@ -162,6 +157,11 @@ const TripCard = ({ trip, className = '', style = {}, id, searchword = '', onDel
           />
         </div>
       }
+
+      {/* description */}
+      <div className="---description-container--- mb-4">
+        <p> <HighlightSearchword text={trip.description} searchword={searchword} /> </p>
+      </div>
 
       {/* keyWords (tags) */}
       {

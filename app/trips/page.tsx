@@ -98,7 +98,7 @@ const TripsPage = () => {
             <Link href='/trips/search' className='z-[5]'>
               <GradientButtonPurpleGray text='Search Trips' className='sm:w-[200px] w-[100%]' />
             </Link>
-            <Link href='/trips/favorites' className='z-[5]'>
+            <Link href='/profile/favorites' className='z-[5]'>
               <GradientButtonPurpleOrange text='My Favorites' className='sm:w-[200px] w-[100%]' />
             </Link>
           </aside>
