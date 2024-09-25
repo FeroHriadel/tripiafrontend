@@ -10,7 +10,6 @@ import ContentSectionButton from './ContentSectionButton';
 import { LuImagePlus } from "react-icons/lu";
 import { Trip } from '@/types';
 import { useAppSelector } from '@/redux/store';
-import { resizeImage } from '@/utils/imageUpload';
 import { useToast } from '@/context/toastContext';
 import  { useMap } from '@/hooks/useMap';
 
@@ -34,6 +33,9 @@ const TripDetails = ({ trip, loading, imagePreview, handleChange, handleImageCha
   //non-map related values:
   const categories = useAppSelector((state) => state.categories);
   const { showToast } = useToast();
+
+  console.log('TRIP CATEGORY ************')
+  console.log(trip.category)
   
 
   //meeting point map values & functions:

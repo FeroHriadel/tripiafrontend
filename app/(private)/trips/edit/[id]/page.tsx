@@ -49,9 +49,6 @@ const PostTripPage = () => {
   const { id } = useParams();
 
 
-  console.log(trip)
-
-
   function isTripOk() {
     if (!name) { showToast('Please enter trip name'); return false }
     if (!departureDate) { showToast('Please enter departure date (What day will you be leaving)'); return false }
@@ -142,7 +139,7 @@ const PostTripPage = () => {
 
   function toggleMoreDetails() {
     setMoreDetailsOpen(!moreDetailsOpen);
-    setTrip({...trip, requirements: '', category: '', image: '', keyWords: ''});
+    // if (moreDetailsOpen) setTrip({...trip, requirements: '', category: '', image: '', keyWords: ''}); //clear moreDetails when user closes moreDetails section
   }
 
   function canBeEdited(trip: Trip) { 

@@ -23,7 +23,6 @@ export function getNext14Days() {
     else extraInfo = date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
     days.push({ value, label, extraInfo });
   }
-  console.log(days)
   return days;
 }
 

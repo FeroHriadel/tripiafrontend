@@ -1,6 +1,6 @@
 'use client'
 
-import React, { DOMElement, useRef } from 'react';
+import React from 'react';
 import './InputSelect.css';
 
 
@@ -22,6 +22,10 @@ const InputSelect = ({inputName, options = [], labelText, value, onChange, class
   const [isFocused, setIsFocused] = React.useState(false);
   const [selectedOptionLabel, setselectedOptionLabel] = React.useState('');
   const [selectedOptionExtraInfo, setSelectedOptionExtraInfo] = React.useState('');
+
+
+  console.log(value);
+  console.log(options);
 
 
   function handleFocus() {
@@ -74,8 +78,6 @@ const InputSelect = ({inputName, options = [], labelText, value, onChange, class
     }
       
   }, [value]);
-
-  console.log(value)
 
   
   return (
