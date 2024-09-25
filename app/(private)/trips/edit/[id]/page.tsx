@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Container from '@/components/Container'
 import ContentSection from '@/components/ContentSection'
 import ContentSectionDescription from '@/components/ContentSectionDescription'
@@ -12,15 +12,17 @@ import InputText from '@/components/InputText'
 import InputSelect from '@/components/InputSelect'
 import InputTextarea from '@/components/InputTextarea'
 import ContentSectionButton from '@/components/ContentSectionButton'
-import { isValidTimeFormat, isAtLeast4HoursFromNow, getNext14Days } from '@/utils/dates'
-import { useToast } from '@/context/toastContext'
-import { apiCalls } from '@/utils/apiCalls'
-import { useRouter } from 'next/navigation'
+import { getNext14Days, isValidTimeFormat, isAtLeast4HoursFromNow } from '@/utils/dates'
 import Collapse from '@/components/Collapse'
 import TripDetails from '@/components/TripDetails'
 import { Trip } from '@/types'
 import { resizeImage, uploadImage } from '@/utils/imageUpload'
 import { useAuth } from '@/context/authContext'
+import { useToast } from '@/context/toastContext'
+import { apiCalls } from '@/utils/apiCalls'
+import { useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
+
 
 
 
@@ -37,13 +39,17 @@ const tripImageMaxSize = 900;
 const PostTripPage = () => {
   const [trip, setTrip] = useState<Trip>({...defaultTripState});
   const { name, departureDate, departureTime, departureFrom, destination, description, image, requirements, category, keyWords, meetingLat, meetingLng } = trip;
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [moreDetailsOpen, setMoreDetailsOpen] = useState(false);
   const [preview, setPreview] = React.useState<string>('');
   const [fileName, setFileName] = React.useState<string>('');
   const { showToast } = useToast();
   const router = useRouter();
   const { user } = useAuth(); const { idToken } = user;
+  const { id } = useParams();
+
+
+  console.log(trip)
 
 
   function isTripOk() {
@@ -106,7 +112,6 @@ const PostTripPage = () => {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault(); if (!isTripOk()) return;
     let updatedTrip = { ...trip };
-    console.log(updatedTrip)
     if (preview) {
       const res = await uploadPreview(); if (res.error) return handleFail('Failed to upload image');
       updatedTrip.image = res.imageUrl;
@@ -140,39 +145,64 @@ const PostTripPage = () => {
     setTrip({...trip, requirements: '', category: '', image: '', keyWords: ''});
   }
 
+  function canBeEdited(trip: Trip) { 
+    if (!user.isAdmin) { if (user.email !== trip.createdBy) return router.push('/'); }
+    if (!isAtLeast4HoursFromNow(trip.departureDate, trip.departureTime)) { 
+      showToast('Trip cannot be edited less than 4 hourse before departure'); 
+      return router.push('/trips');
+    }
+  };
+
+  async function getTripById() {
+    const res = await apiCalls.get(`/trips?id=${id}`);
+    if (res.error) { showToast('Failed to fetch trip. Redirecting...'); return router.push('/trips') }
+    else {
+      // canBeEdited(res);
+      setTrip(res);
+      setLoading(false);
+    }
+  }
+
+
+  useEffect(() => { getTripById(); }, []);
+
+
+  if (loading) return <p className='mt-20 text-center'>Loading...</p>
 
   return (
     <>
       <GradientFlexi>
         <Container className='px-10'>
-          <GradientHeader text='POST A TRIP' className='text-center mb-4' />
-          <GradientDescription text={`Are you planning on going somewhere? Would like to invite fellow travelers? Post your trip.`} className='drop-shadow-lg text-center' />
-          <GradientDescription text={`Say when, where from and where to and find people to share your adventure with.`} className='drop-shadow-lg text-center' />
-          <GradientDescription text={`Add more details to ensure best match.`} className='drop-shadow-lg text-center' />
+          <GradientHeader text='EDIT TRIP' className='text-center mb-4' />
+          <GradientDescription text={`Need to change some details? Edit your Trip here.`} className='drop-shadow-lg text-center' />
         </Container>
       </GradientFlexi>
 
-      <ContentSection>
-        <Container className='px-4'>
-          <ContentSectionHeader text='Post Your Trip' />
-          <ContentSectionDescription text='Fill in the details before you post' className='mb-20'/>
-        </Container>
-        <Container className='max-w-[500px] px-4'>
-          <form onSubmit={handleSubmit}>
-            <InputText inputName='name' labelText='trip name' value={name} onChange={handleChange} disabled={loading} className='mb-4' />
-            <InputSelect inputName='departureDate' labelText='departure date' value={departureDate} onChange={handleChange} options={getNext14Days()} disabled={loading} className='mb-4' />
-            <InputText inputName='departureTime' labelText='departure time (hh:mm)' value={departureTime} onChange={handleChange} disabled={loading} className='mb-4' />
-            <InputText inputName='departureFrom' labelText='departure from' value={departureFrom} onChange={handleChange} disabled={loading} className='mb-4' />
-            <InputText inputName='destination' labelText='destination' value={destination} onChange={handleChange} disabled={loading} className='mb-4' />
-            <InputTextarea inputName='description' labelText='description' value={description} onChange={handleChange} disabled={loading} className='mb-4'/>
-            <ContentSectionButton type='button' text={moreDetailsOpen ? 'Close Details' : 'Add More Details'} disabled={loading} onClick={toggleMoreDetails} className='mb-4' />
-            <Collapse isOpen={moreDetailsOpen} className='rounded-2xl'>
-              <TripDetails loading={loading} handleChange={handleChange} handleImageChange={handleImageChange} imagePreview={preview} trip={trip} />
-            </Collapse>
-            <ContentSectionButton type='submit' text='Post Trip' disabled={loading} className='mb-4' />
-          </form>
-        </Container>
-      </ContentSection>
+      {
+        trip?.id
+        &&
+        <ContentSection>
+          <Container className='px-4'>
+            <ContentSectionHeader text='Edit Your Trip' />
+            <ContentSectionDescription text='Change any details and re-submit' className='mb-20'/>
+          </Container>
+          <Container className='max-w-[500px] px-4'>
+            <form onSubmit={handleSubmit}>
+              <InputText inputName='name' labelText='trip name' value={name} onChange={handleChange} disabled={loading} className='mb-4' />
+              <InputSelect inputName='departureDate' labelText='departure date' value={departureDate} onChange={handleChange} options={getNext14Days()} disabled={loading} className='mb-4' />
+              <InputText inputName='departureTime' labelText='departure time (hh:mm)' value={departureTime} onChange={handleChange} disabled={loading} className='mb-4' />
+              <InputText inputName='departureFrom' labelText='departure from' value={departureFrom} onChange={handleChange} disabled={loading} className='mb-4' />
+              <InputText inputName='destination' labelText='destination' value={destination} onChange={handleChange} disabled={loading} className='mb-4' />
+              <InputTextarea inputName='description' labelText='description' value={description} onChange={handleChange} disabled={loading} className='mb-4'/>
+              <ContentSectionButton type='button' text={moreDetailsOpen ? 'Close Details' : 'Add More Details'} disabled={loading} onClick={toggleMoreDetails} className='mb-4' />
+              <Collapse isOpen={moreDetailsOpen} className='rounded-2xl'>
+                <TripDetails loading={loading} handleChange={handleChange} handleImageChange={handleImageChange} imagePreview={preview} trip={trip} />
+              </Collapse>
+              <ContentSectionButton type='submit' text='Submit' disabled={loading} className='mb-4' />
+            </form>
+          </Container>
+        </ContentSection>
+      }
 
       <GradientFlexi />
     </>

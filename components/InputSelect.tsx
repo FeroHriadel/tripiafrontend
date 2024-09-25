@@ -62,8 +62,20 @@ const InputSelect = ({inputName, options = [], labelText, value, onChange, class
   }, []);
 
   React.useEffect(() => {
-    if (!value) { setselectedOptionLabel(''); setSelectedOptionExtraInfo(''); }
+    if (!value) { 
+      setselectedOptionLabel(''); 
+      setSelectedOptionExtraInfo('') 
+    } else {
+      const option = options.find(option => option.value === value);
+      if (option) {
+        setselectedOptionLabel(option.label);
+        if (option.extraInfo) setSelectedOptionExtraInfo(option.extraInfo);
+      }
+    }
+      
   }, [value]);
+
+  console.log(value)
 
   
   return (

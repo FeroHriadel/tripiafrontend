@@ -7,7 +7,7 @@ export function replaceTimeInISO(departureDate: string, departureTime: string) {
   if (!isValidTimeFormat(departureTime)) throw new Error('departureTime invalid time format');
   let dateObj = new Date(departureDate);
   const [hours, minutes] = departureTime.split(':').map(Number);
-  dateObj.setUTCHours(hours, minutes);
+  dateObj.setUTCHours(hours, minutes); dateObj.setUTCSeconds(0); dateObj.setUTCMilliseconds(0);
   return dateObj.toISOString();
 }
 
@@ -23,6 +23,7 @@ export function getNext14Days() {
     else extraInfo = date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
     days.push({ value, label, extraInfo });
   }
+  console.log(days)
   return days;
 }
 

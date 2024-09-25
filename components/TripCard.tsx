@@ -11,6 +11,7 @@ import { useAuth } from '@/context/authContext';
 import { apiCalls } from '@/utils/apiCalls';
 import { setFavoriteTrips } from '@/redux/slices/favoriteTripsSlice';
 import { useAppDispatch, useAppSelector } from '@/redux/store';
+import Link from 'next/link';
 
 
 
@@ -134,7 +135,7 @@ const TripCard = ({ trip, className = '', style = {}, id, searchword = '', onDel
           &&
           <div className="---right-icons-container--- flex flex-col sm:flex-row gap-4 sm:gap-2">
             {(user.isAdmin || user.email === trip.createdBy) && <p className='cursor-pointer' onClick={openConfirm}><FaTrashAlt /></p>}
-            {(user.isAdmin || user.email === trip.createdBy) && <p className='cursor-pointer'><FaPenFancy /></p>}
+            {(user.isAdmin || user.email === trip.createdBy) && <Link href={`/trips/edit/${trip.id}`}> <p className='cursor-pointer'><FaPenFancy /></p> </Link>}
             {
               user.email !== trip.createdBy && <p className='cursor-pointer' style={{color: '#F48957'}} onClick={toggleFavoriteTrip}>
                 {isFavorite() ? <FaStar /> : <FaRegStar />}
