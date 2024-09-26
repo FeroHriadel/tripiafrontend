@@ -26,7 +26,7 @@ import { useParams } from 'next/navigation'
 
 
 
-type CustomChangeEvent = any
+type CustomChangeEvent = any;
 
 
 
@@ -38,7 +38,7 @@ const tripImageMaxSize = 900;
 
 const PostTripPage = () => {
   const [trip, setTrip] = useState<Trip>({...defaultTripState});
-  const { name, departureDate, departureTime, departureFrom, destination, description, image, requirements, category, keyWords, meetingLat, meetingLng } = trip;
+  const { name, departureDate, departureTime, departureFrom, destination, description, image, requirements, category, keyWords, meetingLat, meetingLng, destinationLat, destinationLng } = trip;
   const [loading, setLoading] = useState(true);
   const [moreDetailsOpen, setMoreDetailsOpen] = useState(false);
   const [preview, setPreview] = React.useState<string>('');
@@ -47,6 +47,12 @@ const PostTripPage = () => {
   const router = useRouter();
   const { user } = useAuth(); const { idToken } = user;
   const { id } = useParams();
+
+
+  console.log('MEET')
+  console.log(meetingLat, meetingLng)
+  console.log('DEST')
+  console.log(destinationLat, destinationLng)
 
 
   function isTripOk() {
@@ -78,20 +84,19 @@ const PostTripPage = () => {
     return trimmed;
   }
   
-  async function addTrip(trip: Trip) {
-    setLoading(true); showToast('Saving trip...');
+  async function updateTrip(trip: Trip) {
+    setLoading(true); showToast('Saving changes...');
     const body = {...trip, keyWords: trimAndRemoveTrailingComma(keyWords || '')};
-    const res = apiCalls.post(`/trips`, body);
+    const res = apiCalls.put(`/trips/${trip.id}`, body);
     return res;
   }
 
   function handleSuccess() {
-    setTrip({...defaultTripState});
     setPreview('');
     setFileName('');
     setLoading(false);
-    showToast('Trip posted successfully. Redirecting...');
-    setTimeout(() => router.push('/trips'), 1000);
+    showToast('Trip saved successfully. Redirecting...');
+    setTimeout(() => router.push('/profile/trips'), 1000);
   }
 
   function handleFail(message: string) {
@@ -106,14 +111,20 @@ const PostTripPage = () => {
     return res;
   }
 
+  function handlePreSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault(); 
+    if (!isTripOk()) return; 
+    setLoading(true);
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault(); if (!isTripOk()) return;
+    handlePreSubmit(e);
     let updatedTrip = { ...trip };
-    if (preview) {
+    if (preview && preview !== trip.image) {
       const res = await uploadPreview(); if (res.error) return handleFail('Failed to upload image');
       updatedTrip.image = res.imageUrl;
     }
-    const res = await addTrip(updatedTrip);
+    const res = await updateTrip(updatedTrip);
     if (!res.id) return handleFail(res.error || 'Something went wrong');
     else handleSuccess();
   }

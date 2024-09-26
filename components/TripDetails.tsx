@@ -34,6 +34,9 @@ const TripDetails = ({ trip, loading, imagePreview, handleChange, handleImageCha
   const categories = useAppSelector((state) => state.categories);
   const { showToast } = useToast();
   const { meetingLat, meetingLng, destinationLat, destinationLng } = trip;
+
+
+  console.log(meetingLat, meetingLng)
   
 
   //meeting point map values & functions:
@@ -83,7 +86,7 @@ const TripDetails = ({ trip, loading, imagePreview, handleChange, handleImageCha
       if (!address || address.length < 6) return showToast('Please enter a valid address');
       const res = await getCoordsFromAddress(address); if (!res.coords?.lat) throw new Error('Coords not found');
       const { lat, lng } = res.coords!;
-      handleChange({ name: 'meetingCoords', value: {lat, lng} });
+      handleChange( { name: 'meetingCoords', value: {meetingLat: Number(lat), meetingLng: Number(lng)} });
       placeMeetingMarker({lng, lat});
     } catch (error) {
       return showToast('Failed to find address, try clicking the map');
@@ -146,7 +149,7 @@ const TripDetails = ({ trip, loading, imagePreview, handleChange, handleImageCha
       if (!address || address.length < 6) return showToast('Please enter a valid address');
       const res = await getCoordsFromAddress(address); if (!res.coords?.lat) throw new Error('Coords not found');
       const { lat, lng } = res.coords!;
-      handleChange({ name: 'destinationCoords', value: {lat, lng} });
+      handleChange({ name: 'destinationCoords', value: {destinationLat: Number(lat), destinationLng: Number(lng)} });
       placeDestinationMarker({lng, lat});
     } catch (error) {
       return showToast('Failed to find address, try clicking the map');

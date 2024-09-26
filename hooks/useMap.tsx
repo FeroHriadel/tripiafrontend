@@ -77,7 +77,9 @@ export const useMap = ({
   async function getCoordsFromAddress(address: string) {
     try {
       const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_TOKEN}`);
-      const data = await response.json(); if (data.features.length === 0) throw new Error("No coordinates found for this address"); 
+      const data = await response.json(); 
+      console.log(data)
+      if (data.features.length === 0) throw new Error("No coordinates found for this address"); 
       const { center } = data.features[0]; // center contains [lng, lat]
       return { coords: { lng: center[0], lat: center[1] }, error: '' };
     } catch (error) {
