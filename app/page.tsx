@@ -46,7 +46,7 @@ const HomePage = () => {
         <Container className='px-10' style={{zIndex: '2'}}>
           <GradientHeader text='TRIPIA' className='text-center mb-4' />
           <GradientDescription 
-            text={`Welcome to Tripia, the perfect platform for car trips and hikes! Whether you're planning a road trip or a weekend hike, you can invite others to join or find a trip to hop on. Share the journey, split the costs of gas, accommodation, and more, while making new friends along the way. Say goodbye to solo trips and enjoy the company of like-minded adventurers.`}
+            text={`Welcome to Tripia, the perfect platform for car trips and hikes! Whether you're planning a road trip or a weekend hike, you can invite others to join or find a trip to hop on. Share the journey, split the costs of gas, accommodation while making new friends along the way. Say goodbye to solo trips and enjoy the company of like-minded adventurers.`}
             className='drop-shadow-lg'
           />
           <Link href='/trips'>

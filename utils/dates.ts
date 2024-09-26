@@ -35,3 +35,13 @@ export function isAtLeast4HoursFromNow(selectedDateISO: string, selectedTime: st
   const timeDifferenceInHours = timeDifference / (1000 * 60 * 60);
   return timeDifferenceInHours >= 4;
 }
+
+export function formatUTCToHumanreadable(utcDateString: string): string {
+  const date = new Date(utcDateString);
+  const dayOfWeek = new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(date);
+  const day = date.getUTCDate();
+  const month = date.getUTCMonth() + 1; // getUTCMonth() returns 0-based month, so add 1
+  const year = date.getUTCFullYear();
+  return `${dayOfWeek}, ${day}.${month} ${year}`;
+}
+

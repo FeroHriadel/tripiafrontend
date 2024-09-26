@@ -36,9 +36,6 @@ const TripDetails = ({ trip, loading, imagePreview, handleChange, handleImageCha
   const { meetingLat, meetingLng, destinationLat, destinationLng } = trip;
 
 
-  console.log(meetingLat, meetingLng)
-  
-
   //meeting point map values & functions:
   const [meetingMapShown, setMeetingMapShown] = useState(false);
   const [meetingAddress, setMeetingAddress] = useState('');
@@ -48,9 +45,9 @@ const TripDetails = ({ trip, loading, imagePreview, handleChange, handleImageCha
   const { renderMap: renderMeetingMap, removeMap: removeMeetingMap, getCoordsFromAddress, placeMarker: placeMeetingMarker } = useMap({
     initialCoords: initialCoords,
     onMapClick: onMeetingMapClick,
-    meetingMapRef,
-    meetingMarkerRef,
-    meetingMapContainerRef,
+    mapRef: meetingMapRef,
+    markerRef: meetingMarkerRef,
+    mapContainerRef: meetingMapContainerRef,
   });
 
   async function onMeetingMapClick(event: any) {
@@ -111,9 +108,9 @@ const TripDetails = ({ trip, loading, imagePreview, handleChange, handleImageCha
   const { renderMap: renderDestinationMap, removeMap: removeDestinationMap, getCoordsFromAddress: getDestinationCoords, placeMarker: placeDestinationMarker } = useMap({
     initialCoords: initialCoords,
     onMapClick: onDestinationMapClick,
-    meetingMapRef: destinationMapRef,
-    meetingMarkerRef: destinationMarkerRef,
-    meetingMapContainerRef: destinationMapContainerRef,
+    mapRef: destinationMapRef,
+    markerRef: destinationMarkerRef,
+    mapContainerRef: destinationMapContainerRef,
   });
 
   async function onDestinationMapClick(event: any) {

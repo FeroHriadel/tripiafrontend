@@ -12,9 +12,10 @@ mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!;
 interface UseMapProps {
   initialCoords: [number, number];
   onMapClick: (coords: { lng: number, lat: number }) => void;
-  meetingMapContainerRef: React.MutableRefObject<HTMLDivElement | null>;
-  meetingMapRef: React.MutableRefObject<mapboxgl.Map | null>;
-  meetingMarkerRef: React.MutableRefObject<mapboxgl.Marker | null>;
+  mapContainerRef: React.MutableRefObject<HTMLDivElement | null>;
+  mapRef: React.MutableRefObject<mapboxgl.Map | null>;
+  markerRef: React.MutableRefObject<mapboxgl.Marker | null>;
+  interactive?: boolean;
 }
 
 
@@ -22,21 +23,24 @@ interface UseMapProps {
 export const useMap = ({
   initialCoords,
   onMapClick,
-  meetingMapRef,
-  meetingMarkerRef,
-  meetingMapContainerRef,
+  mapRef,
+  markerRef,
+  mapContainerRef,
+  interactive = true
 }: UseMapProps) => {
   const [mapLoaded, setMapLoaded] = useState(false);
 
+
   function renderMap() {
-    if (!meetingMapRef.current && meetingMapContainerRef.current) {
-      meetingMapRef.current = new mapboxgl.Map({
-        container: meetingMapContainerRef.current,
+    if (!mapRef.current && mapContainerRef.current) {
+      mapRef.current = new mapboxgl.Map({
+        container: mapContainerRef.current,
         style: 'mapbox://styles/mapbox/streets-v11',
         center: initialCoords,
         zoom: 12,
       });
-      meetingMapRef.current.on('click', (event) => {
+      mapRef.current.on('click', (event) => {
+        if (!interactive) return;
         const { lng, lat } = event.lngLat;
         placeMarker({lng, lat});
         onMapClick({ lng, lat });  //passed from parent - so it can do stuff with lng & lat
@@ -46,20 +50,20 @@ export const useMap = ({
   };
 
   function removeMap() {
-    if (meetingMapRef.current) {
-      meetingMapRef.current.remove();
-      meetingMapRef.current = null;
+    if (mapRef.current) {
+      mapRef.current.remove();
+      mapRef.current = null;
       setMapLoaded(false);
     }
   };
 
   function placeMarker(coords: {lng: number, lat: number}) {
     const { lng, lat } = coords;
-    if (meetingMarkerRef.current) { meetingMarkerRef.current.remove(); }
-    meetingMarkerRef.current = new mapboxgl.Marker()
+    if (markerRef.current) { markerRef.current.remove(); }
+    markerRef.current = new mapboxgl.Marker()
       .setLngLat([lng, lat])
-      .addTo(meetingMapRef.current!);
-    meetingMapRef.current!.setCenter([lng, lat]);
+      .addTo(mapRef.current!);
+    mapRef.current!.setCenter([lng, lat]);
   }
 
   async function getAddressFromCoords(coords: { lng: number, lat: number }) {
