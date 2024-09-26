@@ -32,7 +32,7 @@ type CustomChangeEvent = any;
 
 const defaultTripState: Trip = {name: '', departureDate: '', departureTime: '',  departureFrom: '', destination: '', description: '', image: '', requirements: '', category: '', keyWords: '', meetingLat: null, meetingLng: null, destinationLat: null, destinationLng: null};
 
-const tripImageMaxSize = 900;
+const tripImageMaxSize = 1000;
 
 
 
@@ -47,12 +47,6 @@ const PostTripPage = () => {
   const router = useRouter();
   const { user } = useAuth(); const { idToken } = user;
   const { id } = useParams();
-
-
-  console.log('MEET')
-  console.log(meetingLat, meetingLng)
-  console.log('DEST')
-  console.log(destinationLat, destinationLng)
 
 
   function isTripOk() {
@@ -154,18 +148,24 @@ const PostTripPage = () => {
   }
 
   function canBeEdited(trip: Trip) { 
-    if (!user.isAdmin) { if (user.email !== trip.createdBy) return router.push('/'); }
-    if (!isAtLeast4HoursFromNow(trip.departureDate, trip.departureTime)) { 
-      showToast('Trip cannot be edited less than 4 hourse before departure'); 
-      return router.push('/trips');
+    if (!user.isAdmin) { 
+      if (user.email !== trip.createdBy) {
+        //no toast shown
+        return false;
+      }
     }
+    if (!isAtLeast4HoursFromNow(trip.departureDate, trip.departureTime)) {
+      showToast('Cannot edit trip that is less than 4 hours away');
+      return false;
+    }
+    return true;
   };
 
   async function getTripById() {
     const res = await apiCalls.get(`/trips?id=${id}`);
-    if (res.error) { showToast('Failed to fetch trip. Redirecting...'); return router.push('/trips') }
+    if (res.error) { showToast('Failed to fetch trip. Redirecting...'); return router.push('/profile/trips') }
     else {
-      // canBeEdited(res);
+      if (!canBeEdited(res)) return router.push('/profile/trips');
       setTrip(res);
       setLoading(false);
     }

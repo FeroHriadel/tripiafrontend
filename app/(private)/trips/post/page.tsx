@@ -30,7 +30,7 @@ type CustomChangeEvent = any
 
 const defaultTripState: Trip = {name: '', departureDate: '', departureTime: '',  departureFrom: '', destination: '', description: '', image: '', requirements: '', category: '', keyWords: '', meetingLat: null, meetingLng: null, destinationLat: null, destinationLng: null};
 
-const tripImageMaxSize = 900;
+const tripImageMaxSize = 1000;
 
 
 
