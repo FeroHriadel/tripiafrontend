@@ -24,10 +24,6 @@ const InputSelect = ({inputName, options = [], labelText, value, onChange, class
   const [selectedOptionExtraInfo, setSelectedOptionExtraInfo] = React.useState('');
 
 
-  console.log(value);
-  console.log(options);
-
-
   function handleFocus() {
     setIsFocused(!isFocused);
   }

@@ -33,9 +33,7 @@ const TripDetails = ({ trip, loading, imagePreview, handleChange, handleImageCha
   //non-map related values:
   const categories = useAppSelector((state) => state.categories);
   const { showToast } = useToast();
-
-  console.log('TRIP CATEGORY ************')
-  console.log(trip.category)
+  const { meetingLat, meetingLng, destinationLat, destinationLng } = trip;
   
 
   //meeting point map values & functions:
@@ -92,7 +90,13 @@ const TripDetails = ({ trip, loading, imagePreview, handleChange, handleImageCha
     }
   }
 
-  useEffect(() => { if (meetingMapShown && meetingMapContainerRef.current) { renderMeetingMap(); } }, [meetingMapShown, meetingMapContainerRef.current]);
+  useEffect(() => { if (meetingMapShown && meetingMapContainerRef.current) { renderMeetingMap(); } }, [meetingMapShown, meetingMapContainerRef.current]); //render map on meetingMap open
+
+  useEffect(() => { 
+    if (meetingMapShown && meetingMapContainerRef.current) { //put marker on meetingMap if this component used in trips edit page
+      if (meetingLat && meetingLng) { placeMeetingMarker({ lng: meetingLng, lat: meetingLat }); }
+    } 
+  }, [meetingLat, meetingLng, meetingMapShown, meetingMapContainerRef.current]);
 
 
   //destination map values & functions:
@@ -149,7 +153,13 @@ const TripDetails = ({ trip, loading, imagePreview, handleChange, handleImageCha
     }
   }
 
-  useEffect(() => { if (destinationMapShown && destinationMapContainerRef.current) { renderDestinationMap(); } }, [destinationMapShown, destinationMapContainerRef.current]);
+  useEffect(() => { if (destinationMapShown && destinationMapContainerRef.current) { renderDestinationMap(); } }, [destinationMapShown, destinationMapContainerRef.current]); //render map on destinMap open
+
+  useEffect(() => { 
+    if (destinationMapShown && destinationMapContainerRef.current) { //put marker on destinationMap if this component used in trips edit page
+      if (destinationLat && destinationLng) { placeDestinationMarker({ lng: destinationLng, lat: destinationLat }); }
+    } 
+  }, [destinationLat, destinationLng, destinationMapShown, destinationMapContainerRef.current]);
 
 
   //other functions

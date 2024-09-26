@@ -161,7 +161,9 @@ const PostTripPage = () => {
   }
 
 
-  useEffect(() => { getTripById(); }, []);
+  useEffect(() => { getTripById(); }, []); //get trip on page load
+
+  useEffect(() => { if (image) setPreview(image)  }, [image]); //populate imagePreview in <TripDetails />
 
 
   if (loading) return <p className='mt-20 text-center'>Loading...</p>
