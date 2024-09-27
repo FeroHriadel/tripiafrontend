@@ -15,17 +15,13 @@ import GradientFlexi from '@/components/GradientFlexi';
 import GradientHeader from '@/components/GradientHeader';
 import CenteredImage from '@/components/CenteredImage';
 import Tag from '@/components/Tag';
-import { Trip } from '@/types';
+import { Trip, Category } from '@/types';
 import { apiCalls } from '@/utils/apiCalls';
 import { formatUTCToHumanreadable } from '@/utils/dates';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
-
-
 const initialCoords: [number, number] = [17.124620012584664, 48.12800397232297]; //long, lat  (Sustekova - Bratislava, SK)
-
-
 
 const TripDetailsPage = () => {
   const [trip, setTrip] = useState<Trip | null>(null);
@@ -33,7 +29,7 @@ const TripDetailsPage = () => {
   const { showToast } = useToast();
   const { id } = useParams();
   const router = useRouter();
-  const categories = useAppSelector(state => state.categories);
+  const categories: Category[] = useAppSelector(state => state.categories);
   const meetingMapContainerRef = useRef<HTMLDivElement | null>(null);
   const meetingMapRef = useRef<mapboxgl.Map | null>(null);
   const meetingMarkerRef = useRef<mapboxgl.Marker | null>(null);
@@ -57,8 +53,6 @@ const TripDetailsPage = () => {
     interactive: false
   });
 
-
-
   function tagsFromKeywords() { return trip?.keyWords?.split(',') || []; }
 
   function getCategoryName(categoryId: string) {
@@ -72,198 +66,131 @@ const TripDetailsPage = () => {
     setTrip(res); setLoading(false);
   }
 
-  
+  async function waitForMapLoad(mapRef: React.MutableRefObject<mapboxgl.Map | null>): Promise<void> {
+    return new Promise<void>((resolve) => {
+      if (mapRef.current) {
+        const map = mapRef.current;
+        if (map.loaded()) {
+          resolve();
+        } else {
+          map.on('load', () => resolve());
+        }
+      } else {
+        console.error('Map reference is null');
+        resolve();
+      }
+    });
+  }
 
-  // const handleDownload = () => {
-  //   console.log('handleDownload function triggered');
-  //   const input = document.getElementById('printable');
-  //   if (input) {
-  //     console.log('Printable element found');
-      
-  //     const waitForMapLoad = (mapRef) => {
-  //       return new Promise((resolve) => {
-  //         if (mapRef.current) {
-  //           const map = mapRef.current;
-  //           if (map.loaded()) {
-  //             resolve();
-  //           } else {
-  //             map.on('load', () => {
-  //               resolve();
-  //             });
-  //           }
-  //         } else {
-  //           console.error('Map reference is null');
-  //           resolve(); // Resolve immediately if the map ref is null
-  //         }
-  //       });
-  //     };
-  
-  //     const destinationMapCanvasPromise = waitForMapLoad(destinationMapRef).then(() => {
-  //       return new Promise<void>((resolve) => {
-  //         if (destinationMapContainerRef.current) {
-  //           html2canvas(destinationMapContainerRef.current).then(canvas => {
-  //             const imgData = canvas.toDataURL('image/png');
-  //             const imgElement = document.createElement('img');
-  //             imgElement.src = imgData;
-  //             destinationMapContainerRef.current.innerHTML = ''; // Clear existing content
-  //             destinationMapContainerRef.current.appendChild(imgElement);
-  //             resolve();
-  //           });
-  //         }
-  //       });
-  //     });
-  
-  //     const meetingMapCanvasPromise = waitForMapLoad(meetingMapRef).then(() => {
-  //       return new Promise<void>((resolve) => {
-  //         if (meetingMapContainerRef.current) {
-  //           html2canvas(meetingMapContainerRef.current).then(canvas => {
-  //             const imgData = canvas.toDataURL('image/png');
-  //             const imgElement = document.createElement('img');
-  //             imgElement.src = imgData;
-  //             meetingMapContainerRef.current.innerHTML = ''; // Clear existing content
-  //             meetingMapContainerRef.current.appendChild(imgElement);
-  //             resolve();
-  //           });
-  //         }
-  //       });
-  //     });
-  
-  //     Promise.all([destinationMapCanvasPromise, meetingMapCanvasPromise])
-  //       .then(() => {
-  //         console.log('All map canvases created');
-  
-  //         // Now create the final PDF using html2canvas and jsPDF
-  //         html2canvas(input).then((canvas) => {
-  //           const imgData = canvas.toDataURL('image/png');
-  //           const pdf = new jsPDF({
-  //             orientation: 'portrait',
-  //             unit: 'px',
-  //             format: [canvas.width, canvas.height]
-  //           });
-  //           pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
-  //           pdf.save('trip-details.pdf');
-  //         });
-  
-  //       }).catch(error => {
-  //         console.error('Error capturing map images:', error);
-  //       });
-  //   } else {
-  //     console.error('Printable element not found');
-  //   }
-  // };
-  
-  const handleDownload = () => {
-    console.log('handleDownload function triggered');
+  async function destinationMapToImg(): Promise<void> { //converts destinationMap to <img />
+    await waitForMapLoad(destinationMapRef);
+    if (destinationMapContainerRef.current) {
+      const destinationMap = destinationMapRef.current;
+      if (destinationMap) {
+        const canvas = await html2canvas(destinationMapContainerRef.current);
+        const imgData = canvas.toDataURL('image/png');
+        const imgElement = document.createElement('img');
+        imgElement.src = imgData;
+        destinationMapContainerRef.current.innerHTML = ''; // clear the map
+        destinationMapContainerRef.current.appendChild(imgElement); // insert the image instead
+        destinationMapRef.current = null;
+      } else {
+        console.error('Destination map not found');
+      }
+    }
+  }
+
+  async function meetingMapToImg(): Promise<void> { //converts meetingMap to <img />
+    await waitForMapLoad(meetingMapRef);
+    if (meetingMapContainerRef.current) {
+      const meetingMap = meetingMapRef.current;
+      if (meetingMap) {
+        const canvas = await html2canvas(meetingMapContainerRef.current);
+        const imgData = canvas.toDataURL('image/png');
+        const imgElement = document.createElement('img');
+        imgElement.src = imgData;
+        meetingMapContainerRef.current.innerHTML = ''; // clear the map
+        meetingMapContainerRef.current.appendChild(imgElement); // insert the image
+        meetingMapRef.current = null;
+      } else {
+        console.error('Meeting map not found');
+      }
+    }
+  }
+
+  function destinationMapExists() {
+    if (trip?.destinationLng && trip?.destinationLat) return true;
+    else return false;
+  }
+
+  function meetingMapExists() {
+    if (trip?.meetingLng && trip?.meetingLat) return true;
+    else return false;
+  }
+
+  const handleDownload = async () => {
     const input = document.getElementById('printable');
     if (input) {
-      console.log('Printable element found');
+      showToast('Downloading...');
+      try {
+        // convert maps to images only if the maps exist
+        if (destinationMapExists()) await destinationMapToImg();
+        if (meetingMapExists()) await meetingMapToImg();
   
-      const waitForMapLoad = (mapRef) => {
-        return new Promise((resolve) => {
-          if (mapRef.current) {
-            const map = mapRef.current;
-            if (map.loaded()) {
-              resolve();
-            } else {
-              map.on('load', () => {
-                resolve();
-              });
-            }
-          } else {
-            console.error('Map reference is null');
-            resolve(); // Resolve if the map ref is null
-          }
-        });
-      };
+        // generate the PDF
+        const doc = new jsPDF('p', 'mm', 'a4'); // A4 page size (210x297 mm)
+        const canvas = await html2canvas(input);
+        const imgData = canvas.toDataURL('image/png');
+        
+        const imgWidth = 190; // width of the image in mm
+        const pageHeight = 280; // height of the page in mm (leaving margins)
+        const imgHeight = (canvas.height * imgWidth) / canvas.width; // scale the height proportionally
+
+        let heightLeft = imgHeight;
+        let position = 10; // starting position on first page
+
+        doc.addImage(imgData, 'PNG', 10, position, imgWidth, Math.min(imgHeight, pageHeight)); // add the first image to the first page
+        heightLeft -= pageHeight;
+
+        while (heightLeft > 0) { // add additional pages as needed
+          position = 0; // reset position for new pages
+          doc.addPage();
+          doc.addImage(imgData, 'PNG', 10, position, imgWidth, Math.min(heightLeft, pageHeight));
+          heightLeft -= pageHeight;
+        }
+        doc.save(`${trip!.name}-trip-details.pdf`);
   
-      const destinationMapCanvasPromise = waitForMapLoad(destinationMapRef).then(() => {
-        return new Promise<void>((resolve) => {
-          if (destinationMapContainerRef.current) {
-            const destinationMap = destinationMapRef.current;
-            if (destinationMap) {
-              html2canvas(destinationMapContainerRef.current).then((canvas) => {
-                const imgData = canvas.toDataURL('image/png');
-                const imgElement = document.createElement('img');
-                imgElement.src = imgData;
-                destinationMapContainerRef.current.innerHTML = ''; destinationMapRef.current = null; // Clear existing content
-                destinationMapContainerRef.current.appendChild(imgElement);
-                resolve();
-              });
-            } else {
-              console.error('Destination map not found');
-            }
-          }
-        });
-      });
+        // restore the maps after PDF generation
+        if (destinationMapExists()) {
+          destinationMapContainerRef.current!.innerHTML = '';
+          renderDestinationMap();
+          placeDestinationMarker({ lng: trip!.destinationLng!, lat: trip!.destinationLat! });
+        }
+        if (meetingMapExists()) {
+          meetingMapContainerRef.current!.innerHTML = '';
+          renderMeetingMap();
+          placeMeetingMarker({ lng: trip!.meetingLng!, lat: trip!.meetingLat! });
+        }
   
-      const meetingMapCanvasPromise = waitForMapLoad(meetingMapRef).then(() => {
-        return new Promise<void>((resolve) => {
-          if (meetingMapContainerRef.current) {
-            const meetingMap = meetingMapRef.current;
-            if (meetingMap) {
-              setTimeout(() => {
-                html2canvas(meetingMapContainerRef.current).then((canvas) => {
-                  const imgData = canvas.toDataURL('image/png');
-                  const imgElement = document.createElement('img');
-                  imgElement.src = imgData;
-                  meetingMapContainerRef.current.innerHTML = ''; meetingMapRef.current = null // Clear existing content
-                  meetingMapContainerRef.current.appendChild(imgElement);
-                  resolve();
-                });
-              }, 2000);
-            } else {
-              console.error('Meeting map not found');
-            }
-          }
-        });
-      });
-  
-      Promise.all([destinationMapCanvasPromise, meetingMapCanvasPromise])
-        .then(() => {
-          console.log('All map canvases created');
-          // Proceed with generating the PDF
-          const doc = new jsPDF('p', 'mm', 'a4');
-          html2canvas(input).then((canvas) => {
-            const imgData = canvas.toDataURL('image/png');
-            doc.addImage(imgData, 'PNG', 10, 10, 190, 280);
-            doc.save('trip-details.pdf');
-            
-            // Restore the maps after the PDF is downloaded
-            renderDestinationMap();
-            renderMeetingMap();
-            placeDestinationMarker({ lng: trip.destinationLng, lat: trip.destinationLat });
-            placeMeetingMarker({ lng: trip.meetingLng, lat: trip.meetingLat });
-          });
-        })
-        .catch((error) => {
-          console.error('Error capturing map images:', error);
-        });
+      } catch (error) {
+        console.error('Error capturing map images or generating PDF:', error);
+        showToast('Failed to download');
+      }
     } else {
       console.error('Printable element not found');
+      showToast('Failed to download');
     }
   };
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  useEffect(() => { getTripById(); }, []); //fetch trip on page load
 
-  useEffect(() => { //render destination map if any
+  useEffect(() => { getTripById(); }, []); // fetch trip on page load
+
+  useEffect(() => { // render destination map if any
     if (trip?.destinationLng && trip?.destinationLat && destinationMapContainerRef.current) { 
       renderDestinationMap(); placeDestinationMarker({ lng: trip.destinationLng, lat: trip.destinationLat }); }
   }, [trip, destinationMapContainerRef.current]);
 
-  useEffect(() => { //render meeting point map if any
+  useEffect(() => { // render meeting point map if any
     if (trip?.meetingLng && trip?.meetingLat && meetingMapContainerRef.current) {
       renderMeetingMap(); placeMeetingMarker({ lng: trip.meetingLng, lat: trip.meetingLat }); }
   }, [trip, meetingMapContainerRef.current]);
@@ -295,16 +222,12 @@ const TripDetailsPage = () => {
               {/* name */}
               <ContentSectionHeader text={trip.name.toUpperCase()} style={{lineHeight: '2rem', fontSize: '2rem'}} className='mb-4' />
 
+              {/* keyWords (tags) */}
               {
-                /* keyWords (tags) */
                 trip.keyWords
                 &&
                 <div className="w-[100%] flex justify-center gap-2 mb-4">
-                  {
-                    tagsFromKeywords().map((keyWord, idx) => (
-                      <Tag text={keyWord} key={keyWord + idx} />
-                    ))
-                  }
+                  {tagsFromKeywords().map((keyWord, idx) => (<Tag text={keyWord} key={keyWord + idx} />))}
                 </div>
               }
 
@@ -318,7 +241,7 @@ const TripDetailsPage = () => {
                 <span className='font-normal'>{trip.destination}</span>
               </h4>
               {
-                trip.destinationLng && trip.destinationLat
+                destinationMapExists()
                 &&
                 <div className='w-[100%] h-[400px] mb-4 rounded-2xl' ref={destinationMapContainerRef} />
               }
@@ -330,8 +253,8 @@ const TripDetailsPage = () => {
                 <span className='font-normal'>{trip.description}</span>
               </h4>
 
+              {/* requirements */}
               {
-                /* requirements */
                 trip.requirements
                 &&
                 <h4 className='font-semibold text-xl xs:text-xl md:text-xl mb-4'>
@@ -357,7 +280,7 @@ const TripDetailsPage = () => {
                 <span className='font-normal'>{trip.departureFrom}</span>
               </h4>
               {
-                trip.meetingLng && trip.meetingLat
+                meetingMapExists()
                 &&
                 <div className='w-[100%] h-[400px] mb-10 rounded-2xl' ref={meetingMapContainerRef} />
               }
@@ -383,4 +306,4 @@ const TripDetailsPage = () => {
   )
 }
 
-export default TripDetailsPage
+export default TripDetailsPage;
