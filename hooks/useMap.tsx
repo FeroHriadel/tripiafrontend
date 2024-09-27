@@ -38,6 +38,7 @@ export const useMap = ({
         style: 'mapbox://styles/mapbox/streets-v11',
         center: initialCoords,
         zoom: 12,
+        preserveDrawingBuffer: !interactive, //this is only importnat if you want to create a canvas and image from the mapbox map. I do it in /trips/[id]/page.tsx/handleDownload(). Else don't even use preserveDrawingBuffer - it's automatically set to false
       });
       mapRef.current.on('click', (event) => {
         if (!interactive) return;

@@ -13,6 +13,8 @@
     "@types/pica": "^9.0.4",
     "aws-amplify": "^6.5.4",
     "dotenv": "^16.4.5",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.2",
     "mapbox-gl": "^3.6.0",
     "next": "14.2.5",
     "pica": "^9.0.1",

@@ -9,6 +9,7 @@ import Container from '@/components/Container';
 import ContentSection from '@/components/ContentSection';
 import ContentSectionDescription from '@/components/ContentSectionDescription';
 import ContentSectionHeader from '@/components/ContentSectionHeader';
+import ContentSectionButton from '@/components/ContentSectionButton';
 import GradientDescription from '@/components/GradientDescription';
 import GradientFlexi from '@/components/GradientFlexi';
 import GradientHeader from '@/components/GradientHeader';
@@ -17,6 +18,8 @@ import Tag from '@/components/Tag';
 import { Trip } from '@/types';
 import { apiCalls } from '@/utils/apiCalls';
 import { formatUTCToHumanreadable } from '@/utils/dates';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 
 
@@ -69,15 +72,198 @@ const TripDetailsPage = () => {
     setTrip(res); setLoading(false);
   }
 
+  
 
+  // const handleDownload = () => {
+  //   console.log('handleDownload function triggered');
+  //   const input = document.getElementById('printable');
+  //   if (input) {
+  //     console.log('Printable element found');
+      
+  //     const waitForMapLoad = (mapRef) => {
+  //       return new Promise((resolve) => {
+  //         if (mapRef.current) {
+  //           const map = mapRef.current;
+  //           if (map.loaded()) {
+  //             resolve();
+  //           } else {
+  //             map.on('load', () => {
+  //               resolve();
+  //             });
+  //           }
+  //         } else {
+  //           console.error('Map reference is null');
+  //           resolve(); // Resolve immediately if the map ref is null
+  //         }
+  //       });
+  //     };
+  
+  //     const destinationMapCanvasPromise = waitForMapLoad(destinationMapRef).then(() => {
+  //       return new Promise<void>((resolve) => {
+  //         if (destinationMapContainerRef.current) {
+  //           html2canvas(destinationMapContainerRef.current).then(canvas => {
+  //             const imgData = canvas.toDataURL('image/png');
+  //             const imgElement = document.createElement('img');
+  //             imgElement.src = imgData;
+  //             destinationMapContainerRef.current.innerHTML = ''; // Clear existing content
+  //             destinationMapContainerRef.current.appendChild(imgElement);
+  //             resolve();
+  //           });
+  //         }
+  //       });
+  //     });
+  
+  //     const meetingMapCanvasPromise = waitForMapLoad(meetingMapRef).then(() => {
+  //       return new Promise<void>((resolve) => {
+  //         if (meetingMapContainerRef.current) {
+  //           html2canvas(meetingMapContainerRef.current).then(canvas => {
+  //             const imgData = canvas.toDataURL('image/png');
+  //             const imgElement = document.createElement('img');
+  //             imgElement.src = imgData;
+  //             meetingMapContainerRef.current.innerHTML = ''; // Clear existing content
+  //             meetingMapContainerRef.current.appendChild(imgElement);
+  //             resolve();
+  //           });
+  //         }
+  //       });
+  //     });
+  
+  //     Promise.all([destinationMapCanvasPromise, meetingMapCanvasPromise])
+  //       .then(() => {
+  //         console.log('All map canvases created');
+  
+  //         // Now create the final PDF using html2canvas and jsPDF
+  //         html2canvas(input).then((canvas) => {
+  //           const imgData = canvas.toDataURL('image/png');
+  //           const pdf = new jsPDF({
+  //             orientation: 'portrait',
+  //             unit: 'px',
+  //             format: [canvas.width, canvas.height]
+  //           });
+  //           pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+  //           pdf.save('trip-details.pdf');
+  //         });
+  
+  //       }).catch(error => {
+  //         console.error('Error capturing map images:', error);
+  //       });
+  //   } else {
+  //     console.error('Printable element not found');
+  //   }
+  // };
+  
+  const handleDownload = () => {
+    console.log('handleDownload function triggered');
+    const input = document.getElementById('printable');
+    if (input) {
+      console.log('Printable element found');
+  
+      const waitForMapLoad = (mapRef) => {
+        return new Promise((resolve) => {
+          if (mapRef.current) {
+            const map = mapRef.current;
+            if (map.loaded()) {
+              resolve();
+            } else {
+              map.on('load', () => {
+                resolve();
+              });
+            }
+          } else {
+            console.error('Map reference is null');
+            resolve(); // Resolve if the map ref is null
+          }
+        });
+      };
+  
+      const destinationMapCanvasPromise = waitForMapLoad(destinationMapRef).then(() => {
+        return new Promise<void>((resolve) => {
+          if (destinationMapContainerRef.current) {
+            const destinationMap = destinationMapRef.current;
+            if (destinationMap) {
+              html2canvas(destinationMapContainerRef.current).then((canvas) => {
+                const imgData = canvas.toDataURL('image/png');
+                const imgElement = document.createElement('img');
+                imgElement.src = imgData;
+                destinationMapContainerRef.current.innerHTML = ''; destinationMapRef.current = null; // Clear existing content
+                destinationMapContainerRef.current.appendChild(imgElement);
+                resolve();
+              });
+            } else {
+              console.error('Destination map not found');
+            }
+          }
+        });
+      });
+  
+      const meetingMapCanvasPromise = waitForMapLoad(meetingMapRef).then(() => {
+        return new Promise<void>((resolve) => {
+          if (meetingMapContainerRef.current) {
+            const meetingMap = meetingMapRef.current;
+            if (meetingMap) {
+              setTimeout(() => {
+                html2canvas(meetingMapContainerRef.current).then((canvas) => {
+                  const imgData = canvas.toDataURL('image/png');
+                  const imgElement = document.createElement('img');
+                  imgElement.src = imgData;
+                  meetingMapContainerRef.current.innerHTML = ''; meetingMapRef.current = null // Clear existing content
+                  meetingMapContainerRef.current.appendChild(imgElement);
+                  resolve();
+                });
+              }, 2000);
+            } else {
+              console.error('Meeting map not found');
+            }
+          }
+        });
+      });
+  
+      Promise.all([destinationMapCanvasPromise, meetingMapCanvasPromise])
+        .then(() => {
+          console.log('All map canvases created');
+          // Proceed with generating the PDF
+          const doc = new jsPDF('p', 'mm', 'a4');
+          html2canvas(input).then((canvas) => {
+            const imgData = canvas.toDataURL('image/png');
+            doc.addImage(imgData, 'PNG', 10, 10, 190, 280);
+            doc.save('trip-details.pdf');
+            
+            // Restore the maps after the PDF is downloaded
+            renderDestinationMap();
+            renderMeetingMap();
+            placeDestinationMarker({ lng: trip.destinationLng, lat: trip.destinationLat });
+            placeMeetingMarker({ lng: trip.meetingLng, lat: trip.meetingLat });
+          });
+        })
+        .catch((error) => {
+          console.error('Error capturing map images:', error);
+        });
+    } else {
+      console.error('Printable element not found');
+    }
+  };
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   useEffect(() => { getTripById(); }, []); //fetch trip on page load
 
-  useEffect(() => {
+  useEffect(() => { //render destination map if any
     if (trip?.destinationLng && trip?.destinationLat && destinationMapContainerRef.current) { 
       renderDestinationMap(); placeDestinationMarker({ lng: trip.destinationLng, lat: trip.destinationLat }); }
   }, [trip, destinationMapContainerRef.current]);
 
-  useEffect(() => {
+  useEffect(() => { //render meeting point map if any
     if (trip?.meetingLng && trip?.meetingLat && meetingMapContainerRef.current) {
       renderMeetingMap(); placeMeetingMarker({ lng: trip.meetingLng, lat: trip.meetingLat }); }
   }, [trip, meetingMapContainerRef.current]);
@@ -105,7 +291,7 @@ const TripDetailsPage = () => {
             {trip.image && <CenteredImage src={trip.image} width={'100%'} height={500} className='rounded-2xl mb-10' />}
 
             {/* printable content */}
-            <Container className='px-x mb-4 printable'>
+            <Container className='px-x mb-20' id='printable'>
               {/* name */}
               <ContentSectionHeader text={trip.name.toUpperCase()} style={{lineHeight: '2rem', fontSize: '2rem'}} className='mb-4' />
 
@@ -131,11 +317,11 @@ const TripDetailsPage = () => {
                 {' '}
                 <span className='font-normal'>{trip.destination}</span>
               </h4>
-              {/*
+              {
                 trip.destinationLng && trip.destinationLat
                 &&
                 <div className='w-[100%] h-[400px] mb-4 rounded-2xl' ref={destinationMapContainerRef} />
-              */}
+              }
 
               {/* description */}
               <h4 className='font-semibold text-xl xs:text-xl md:text-xl mb-4'>
@@ -170,12 +356,26 @@ const TripDetailsPage = () => {
                 {' '}
                 <span className='font-normal'>{trip.departureFrom}</span>
               </h4>
-              {/*
+              {
                 trip.meetingLng && trip.meetingLat
                 &&
                 <div className='w-[100%] h-[400px] mb-10 rounded-2xl' ref={meetingMapContainerRef} />
-              */}
+              }
             </Container>
+
+            <ContentSectionButton text='Download as PDF' className='printable' onClick={handleDownload} />
+          </Container>
+        </ContentSection>
+      }
+
+      {
+        trip?.id
+        &&
+        <ContentSection>
+          <Container className='px-4'>
+            <ContentSectionHeader text='Chat' />
+            <ContentSectionDescription text='Talk with the organizer' className='mb-20' />
+            {/* chat section */}
           </Container>
         </ContentSection>
       }
