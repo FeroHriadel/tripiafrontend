@@ -18,18 +18,27 @@ import Tag from '@/components/Tag';
 import { Trip, Category } from '@/types';
 import { apiCalls } from '@/utils/apiCalls';
 import { formatUTCToHumanreadable } from '@/utils/dates';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+import { pdf } from '@react-pdf/renderer';
+import { saveAs } from 'file-saver';
+import TripPdf from '@/components/TripPdf';
+
+
+
 
 const initialCoords: [number, number] = [17.124620012584664, 48.12800397232297]; //long, lat  (Sustekova - Bratislava, SK)
 
+const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+
+
+
 const TripDetailsPage = () => {
   const [trip, setTrip] = useState<Trip | null>(null);
+  const [mapImages, setMapImages] = useState({ meeting: '', destination: '' });
   const [loading, setLoading] = useState(true);
   const { showToast } = useToast();
   const { id } = useParams();
   const router = useRouter();
-  const categories: Category[] = useAppSelector(state => state.categories);
+  const categories = useAppSelector(state => state.categories);
   const meetingMapContainerRef = useRef<HTMLDivElement | null>(null);
   const meetingMapRef = useRef<mapboxgl.Map | null>(null);
   const meetingMarkerRef = useRef<mapboxgl.Marker | null>(null);
@@ -53,9 +62,11 @@ const TripDetailsPage = () => {
     interactive: false
   });
 
+  
   function tagsFromKeywords() { return trip?.keyWords?.split(',') || []; }
 
-  function getCategoryName(categoryId: string) {
+  function getCategoryName(categoryId: string | null | undefined) {
+    if (!categoryId) return '';
     const category = categories.find(category => category.id === categoryId);
     return category ? category.name : '';
   }
@@ -64,58 +75,6 @@ const TripDetailsPage = () => {
     const res = await apiCalls.get(`/trips?id=${id}`);
     if (res.error) { showToast('Failed to fetch trip. Redirecting...'); return router.push('/trips'); }
     setTrip(res); setLoading(false);
-  }
-
-  async function waitForMapLoad(mapRef: React.MutableRefObject<mapboxgl.Map | null>): Promise<void> {
-    return new Promise<void>((resolve) => {
-      if (mapRef.current) {
-        const map = mapRef.current;
-        if (map.loaded()) {
-          resolve();
-        } else {
-          map.on('load', () => resolve());
-        }
-      } else {
-        console.error('Map reference is null');
-        resolve();
-      }
-    });
-  }
-
-  async function destinationMapToImg(): Promise<void> { //converts destinationMap to <img />
-    await waitForMapLoad(destinationMapRef);
-    if (destinationMapContainerRef.current) {
-      const destinationMap = destinationMapRef.current;
-      if (destinationMap) {
-        const canvas = await html2canvas(destinationMapContainerRef.current);
-        const imgData = canvas.toDataURL('image/png');
-        const imgElement = document.createElement('img');
-        imgElement.src = imgData;
-        destinationMapContainerRef.current.innerHTML = ''; // clear the map
-        destinationMapContainerRef.current.appendChild(imgElement); // insert the image instead
-        destinationMapRef.current = null;
-      } else {
-        console.error('Destination map not found');
-      }
-    }
-  }
-
-  async function meetingMapToImg(): Promise<void> { //converts meetingMap to <img />
-    await waitForMapLoad(meetingMapRef);
-    if (meetingMapContainerRef.current) {
-      const meetingMap = meetingMapRef.current;
-      if (meetingMap) {
-        const canvas = await html2canvas(meetingMapContainerRef.current);
-        const imgData = canvas.toDataURL('image/png');
-        const imgElement = document.createElement('img');
-        imgElement.src = imgData;
-        meetingMapContainerRef.current.innerHTML = ''; // clear the map
-        meetingMapContainerRef.current.appendChild(imgElement); // insert the image
-        meetingMapRef.current = null;
-      } else {
-        console.error('Meeting map not found');
-      }
-    }
   }
 
   function destinationMapExists() {
@@ -128,60 +87,51 @@ const TripDetailsPage = () => {
     else return false;
   }
 
-  const handleDownload = async () => {
-    const input = document.getElementById('printable');
-    if (input) {
-      showToast('Downloading...');
-      try {
-        // convert maps to images only if the maps exist
-        if (destinationMapExists()) await destinationMapToImg();
-        if (meetingMapExists()) await meetingMapToImg();
-  
-        // generate the PDF
-        const doc = new jsPDF('p', 'mm', 'a4'); // A4 page size (210x297 mm)
-        const canvas = await html2canvas(input);
-        const imgData = canvas.toDataURL('image/png');
-        
-        const imgWidth = 190; // width of the image in mm
-        const pageHeight = 280; // height of the page in mm (leaving margins)
-        const imgHeight = (canvas.height * imgWidth) / canvas.width; // scale the height proportionally
-
-        let heightLeft = imgHeight;
-        let position = 10; // starting position on first page
-
-        doc.addImage(imgData, 'PNG', 10, position, imgWidth, Math.min(imgHeight, pageHeight)); // add the first image to the first page
-        heightLeft -= pageHeight;
-
-        while (heightLeft > 0) { // add additional pages as needed
-          position = 0; // reset position for new pages
-          doc.addPage();
-          doc.addImage(imgData, 'PNG', 10, position, imgWidth, Math.min(heightLeft, pageHeight));
-          heightLeft -= pageHeight;
-        }
-        doc.save(`${trip!.name}-trip-details.pdf`);
-  
-        // restore the maps after PDF generation
-        if (destinationMapExists()) {
-          destinationMapContainerRef.current!.innerHTML = '';
-          renderDestinationMap();
-          placeDestinationMarker({ lng: trip!.destinationLng!, lat: trip!.destinationLat! });
-        }
-        if (meetingMapExists()) {
-          meetingMapContainerRef.current!.innerHTML = '';
-          renderMeetingMap();
-          placeMeetingMarker({ lng: trip!.meetingLng!, lat: trip!.meetingLat! });
-        }
-  
-      } catch (error) {
-        console.error('Error capturing map images or generating PDF:', error);
-        showToast('Failed to download');
-      }
-    } else {
-      console.error('Printable element not found');
-      showToast('Failed to download');
+  async function fetchMapImage(lat: number, lng: number): Promise<string> {
+    const width = 790;
+    const height = 400;
+    const zoom = 12;
+    const marker = `pin-l+ff0000(${lng},${lat})`;
+    const url = `https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/${marker}/${lng},${lat},${zoom}/${width}x${height}?access_token=${mapboxToken}`;
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Failed to fetch the map image');
+        const arrayBuffer = await response.arrayBuffer();
+        const base64Image = Buffer.from(arrayBuffer).toString('base64');
+        return `data:image/png;base64,${base64Image}`;
+    } catch (error) {
+        console.error('Error fetching map image:', error);
+        throw new Error('Unable to fetch map image');
     }
+  }
+
+  async function getMapImages() {
+    let mapImages = { meeting: '', destination: '' };
+    if (destinationMapExists()) {
+      const destinationImage = await fetchMapImage(trip!.destinationLat!, trip!.destinationLng!);
+      mapImages.destination = destinationImage;
+    }
+    if (meetingMapExists()) {
+      const meetingImage = await fetchMapImage(trip!.meetingLat!, trip!.meetingLng!);
+      mapImages.meeting = meetingImage;
+    }
+    return mapImages;
+  }
+
+  async function handleDownload() {
+    if (!trip) return;
+    showToast('Preparing PDF download...');
+    const mapImages = await getMapImages();
+    const blob = await pdf(
+      <TripPdf 
+        trip={trip} 
+        categoryName={getCategoryName(trip?.category)}
+        mapImages={mapImages}
+      />
+    ).toBlob();
+    saveAs(blob, `tripia-${trip.name}.pdf`);
   };
-  
+
 
   useEffect(() => { getTripById(); }, []); // fetch trip on page load
 
