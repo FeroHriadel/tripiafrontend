@@ -23,6 +23,7 @@ const imageMaxSize = 300;
 const InputComment = ({ onChange, comment, preview }: Props) => {
   const inputRef = useRef<HTMLDivElement>(null);
   const { showToast } = useToast();
+  const [isFirstClick, setIsFirstClick] = React.useState(true);
 
 
   function handleInput() {
@@ -36,6 +37,13 @@ const InputComment = ({ onChange, comment, preview }: Props) => {
     if (resizedImage.error) return showToast(resizedImage.error);
     else onChange({name: 'preview', value: {preview: resizedImage.base64, fileName: file.name}});
   }
+
+  function handleFocus() {
+    if (isFirstClick && inputRef.current) {
+      inputRef.current.innerText = ''; // Clear the comment on first click
+      setIsFirstClick(false); // Set to false to prevent clearing on subsequent clicks
+    }
+  };
   
 
   useEffect(() => { // only set the initial comment once - when the component mounts
@@ -50,7 +58,7 @@ const InputComment = ({ onChange, comment, preview }: Props) => {
 
   return (
     <div 
-      className='w-[100%] h-[20rem] flex justify-between mb-4 bg-lightgray p-4 rounded-2xl overflow-y-auto'
+      className='w-[100%] h-[10rem] flex justify-between mb-4 bg-lightgray p-4 rounded-2xl overflow-y-auto'
       style={{boxShadow: '0 4px 4px 0 rgba(0, 0, 0, 0.25)'}}
     >
       {/* comment input */}
@@ -59,6 +67,7 @@ const InputComment = ({ onChange, comment, preview }: Props) => {
         className='w-[100%] h-[100%] cursor-text border-none outline-none text-xl font-medium'
         ref={inputRef}
         suppressContentEditableWarning={true}
+        onFocus={handleFocus}
       />
 
       {/* image preview & upload*/}

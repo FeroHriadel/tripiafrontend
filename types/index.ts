@@ -30,9 +30,25 @@ export interface Trip {
   destinationLng?: number | null | undefined;
 }
 
-export interface User {
+export interface User { //auth user
   isAdmin: boolean;
   email: string;
   expires: number;
   idToken: string;
+}
+
+export interface UserProfile {
+  nickname: string;
+  profilePicture: string;
+  about: string;
+  email: string;
+}
+
+export interface Comment {
+  id: string;
+  by: string;
+  body: string;
+  image: string;
+  trip: string;
+  date: string;
 }

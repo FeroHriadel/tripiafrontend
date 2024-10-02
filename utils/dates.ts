@@ -45,3 +45,16 @@ export function formatUTCToHumanreadable(utcDateString: string): string {
   return `${dayOfWeek}, ${day}.${month} ${year}`;
 }
 
+export function formatUTCToDateAndHour(utcString: string): string {
+  const date = new Date(utcString);
+  const options: Intl.DateTimeFormatOptions = {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+  };
+  const datePart = new Intl.DateTimeFormat('en-US', options).format(date).replace(',', '');
+  const hours = date.getUTCHours().toString().padStart(2, '0'); // Format hours as 2 digits
+  const minutes = date.getUTCMinutes().toString().padStart(2, '0'); // Format minutes as 2 digits
+  
+  return `${datePart} at ${hours}:${minutes}`;
+}
