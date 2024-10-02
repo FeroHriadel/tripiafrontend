@@ -52,6 +52,7 @@ const ProfilePage = () => {
     // else { setPreview(loadRes.base64); setFileName(loadRes.fileName); } 
     ////with resizing:
       const file = e.target.files![0];
+      if (!file) return;
       const resizedImage = await resizeImage(file, profilePictureMaxSize);
       if (resizedImage.error) return showToast(resizedImage.error);
       else { setPreview(resizedImage.base64); setFileName(file.name) };

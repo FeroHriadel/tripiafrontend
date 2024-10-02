@@ -24,6 +24,7 @@ import { pdf } from '@react-pdf/renderer';
 import { saveAs } from 'file-saver';
 import TripPdf from '@/components/TripPdf';
 import Link from 'next/link';
+import TripComments from '@/components/TripComments';
 
 
 
@@ -184,7 +185,7 @@ const TripDetailsPage = () => {
 
             {trip.image && <CenteredImage src={trip.image} width={'100%'} height={500} className='rounded-2xl mb-10' />}
 
-            {/* printable content */}
+            {/* printable content start */}
             <Container className='px-x mb-20' id='printable'>
               {/* name */}
               <ContentSectionHeader text={trip.name.toUpperCase()} style={{lineHeight: '2rem', fontSize: '2rem'}} className='mb-4' />
@@ -252,6 +253,7 @@ const TripDetailsPage = () => {
                 <div className='w-[100%] h-[400px] mb-10 rounded-2xl' ref={meetingMapContainerRef} />
               }
             </Container>
+          {/* printable content end */}
 
             {/* buttons */}
             <ContentSectionButton text='Download as PDF' className='mb-4' onClick={handleDownload} />
@@ -266,18 +268,10 @@ const TripDetailsPage = () => {
               canShowAddToFavorites() && <ContentSectionButton text='Add to Favorites' className='mb-4' onClick={() => addToFavorites(trip.id!)} />
             }
           </Container>
+
+          {/* chat section */}
+          {trip?.id && user.email && <TripComments trip={trip} />}
         </ContentSection>
-      }
-
-      {/* chat section */}
-      {
-        trip?.id
-        &&
-        <Container className='px-4 mt-10'>
-          <ContentSectionHeader text='Chat' />
-          <ContentSectionDescription text='Talk with the organizer and fellow travellers' className='mb-20' />
-        </Container>
-
       }
     </>
   )

@@ -130,6 +130,7 @@ const PostTripPage = () => {
 
   async function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files![0];
+    if (!file) return;
     const resizedImage = await resizeImage(file, tripImageMaxSize);
     if (resizedImage.error) return showToast(resizedImage.error);
     else { setPreview(resizedImage.base64); setFileName(file.name) };
