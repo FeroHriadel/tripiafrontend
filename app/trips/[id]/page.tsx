@@ -3,9 +3,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useToast } from '@/context/toastContext';
-import { useAppSelector } from '@/redux/store';
+import { useAppSelector, useAppDispatch } from '@/redux/store';
 import { useMap } from '@/hooks/useMap';
+import { useAuth } from '@/context/authContext';
 import Container from '@/components/Container';
+import { setFavoriteTrips } from '@/redux/slices/favoriteTripsSlice';
 import ContentSection from '@/components/ContentSection';
 import ContentSectionDescription from '@/components/ContentSectionDescription';
 import ContentSectionHeader from '@/components/ContentSectionHeader';
@@ -15,13 +17,13 @@ import GradientFlexi from '@/components/GradientFlexi';
 import GradientHeader from '@/components/GradientHeader';
 import CenteredImage from '@/components/CenteredImage';
 import Tag from '@/components/Tag';
-import { Trip, Category } from '@/types';
+import { Trip } from '@/types';
 import { apiCalls } from '@/utils/apiCalls';
 import { formatUTCToHumanreadable } from '@/utils/dates';
 import { pdf } from '@react-pdf/renderer';
 import { saveAs } from 'file-saver';
 import TripPdf from '@/components/TripPdf';
-
+import Link from 'next/link';
 
 
 
@@ -33,12 +35,14 @@ const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
 const TripDetailsPage = () => {
   const [trip, setTrip] = useState<Trip | null>(null);
-  const [mapImages, setMapImages] = useState({ meeting: '', destination: '' });
   const [loading, setLoading] = useState(true);
   const { showToast } = useToast();
   const { id } = useParams();
   const router = useRouter();
+  const { user } = useAuth();
   const categories = useAppSelector(state => state.categories);
+  const favoriteTrips = useAppSelector((state) => state.favoriteTrips);
+  const dispatch = useAppDispatch();
   const meetingMapContainerRef = useRef<HTMLDivElement | null>(null);
   const meetingMapRef = useRef<mapboxgl.Map | null>(null);
   const meetingMarkerRef = useRef<mapboxgl.Marker | null>(null);
@@ -131,6 +135,19 @@ const TripDetailsPage = () => {
     ).toBlob();
     saveAs(blob, `tripia-${trip.name}.pdf`);
   };
+
+  async function addToFavorites(tripId: string) {
+    if (favoriteTrips.includes(tripId)) return showToast('Already in favorites');
+    showToast('Adding to favorites...');
+    let newFavoriteTrips = [...favoriteTrips, tripId];
+    dispatch(setFavoriteTrips(newFavoriteTrips));
+    await apiCalls.post('/favoritetrips', {tripIds: newFavoriteTrips});
+  }
+
+  function canShowAddToFavorites() {
+    if (user.email && user.email !== trip!.createdBy && !favoriteTrips.includes(trip!.id!)) return true
+    else return false;
+  }
 
 
   useEffect(() => { getTripById(); }, []); // fetch trip on page load
@@ -236,21 +253,31 @@ const TripDetailsPage = () => {
               }
             </Container>
 
-            <ContentSectionButton text='Download as PDF' className='printable' onClick={handleDownload} />
+            {/* buttons */}
+            <ContentSectionButton text='Download as PDF' className='mb-4' onClick={handleDownload} />
+            {
+              (user.email && user?.email === trip.createdBy)
+              &&
+              <Link href={`/trips/edit/${id}`}>
+                <ContentSectionButton text='Edit' className='mb-4' />
+              </Link>
+            }
+            {
+              canShowAddToFavorites() && <ContentSectionButton text='Add to Favorites' className='mb-4' onClick={() => addToFavorites(trip.id!)} />
+            }
           </Container>
         </ContentSection>
       }
 
+      {/* chat section */}
       {
         trip?.id
         &&
-        <ContentSection>
-          <Container className='px-4'>
-            <ContentSectionHeader text='Chat' />
-            <ContentSectionDescription text='Talk with the organizer' className='mb-20' />
-            {/* chat section */}
-          </Container>
-        </ContentSection>
+        <Container className='px-4 mt-10'>
+          <ContentSectionHeader text='Chat' />
+          <ContentSectionDescription text='Talk with the organizer and fellow travellers' className='mb-20' />
+        </Container>
+
       }
     </>
   )

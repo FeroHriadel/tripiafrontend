@@ -70,6 +70,7 @@ const TripCard = ({ trip, className = '', style = {}, id, searchword = '', onDel
 
   async function addToFavorites() {
     if (starClickDisabled) return;
+    if (favoriteTrips.includes(trip.id!)) return;
     setStarClickDisabled(true);
     const newFavoriteTrips = [...favoriteTrips, trip.id!];
     dispatch(setFavoriteTrips(newFavoriteTrips));

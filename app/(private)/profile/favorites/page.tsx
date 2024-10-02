@@ -19,6 +19,7 @@ import { useToast } from '@/context/toastContext';
 import TripCard from '@/components/TripCard';
 import { Trip } from '@/types';
 import Link from 'next/link';
+import { removeDuplicates } from '@/utils/arrays';
 
 
 
@@ -31,7 +32,7 @@ const FavoriteTripsPage = () => {
   
 
   async function getFavoriteTrips() {
-    const res = await apiCalls.post('/trips/batch', {tripIds: favoriteTrips});
+    const res = await apiCalls.post('/trips/batch', {tripIds: removeDuplicates(favoriteTrips)});
     if (res.error) handleFail();
     else await handleSuccess(res);
   }

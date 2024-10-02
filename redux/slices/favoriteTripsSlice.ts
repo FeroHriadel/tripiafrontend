@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Category } from "@/types";
-import { act } from "react";
+import { removeDuplicates } from "@/utils/arrays";
 
 
 
@@ -11,7 +10,8 @@ export const favoriteTripsSlice = createSlice({
     name: `favoriteTripsSlice`,
     reducers: {
         setFavoriteTrips: (state, action: PayloadAction<string[]>) => {
-            return action.payload
+            const newState = removeDuplicates(action.payload);
+            return newState;
         }
     }
 });
