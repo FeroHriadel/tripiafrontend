@@ -9,6 +9,8 @@ import { Trip, Comment } from '@/types';
 import { uploadImage } from '@/utils/imageUpload';
 import { useAuth } from '@/context/authContext';
 import { useToast } from '@/context/toastContext';
+import { apiCalls } from '@/utils/apiCalls';
+import { scrollToElement } from '@/utils/DOM';
 
 
 
@@ -43,13 +45,21 @@ const TripComments = ({ trip }: Props) => {
   }
 
   async function uploadImageToS3() {
-    if (!preview) return {ok: true, error: ''};
-    const res = await uploadImage(fileName, preview, user.idToken); if (res.error) return {error: res.error, ok: false};
-    return {ok: true, error: ''};
+    if (!preview) return {imageUrl: '', error: ''};
+    const res = await uploadImage(fileName, preview, user.idToken);
+    return res;
   }
 
-  async function saveCommentToDb() {
-    return {error: '', comment: {id: '123', body: 'ok', by: 'ferdinand.hriadel@gmail.com', createdAt: new Date().toISOString(), trip: 'dkd3ddoekjfpewmfpe', image: '' }};
+  async function saveCommentToDb(commentImageUrl: string) {
+    const body = {
+      by: user.email, 
+      body: comment, 
+      trip: trip.id, 
+      image: commentImageUrl,
+      createdAt: new Date().toISOString()  
+    }
+    const res = await apiCalls.post('/comments', body);
+    return res;
   }
 
   function handleFail(error?: string) { 
@@ -58,19 +68,21 @@ const TripComments = ({ trip }: Props) => {
     else showToast('Failed to save comment');
   }
 
-  function handleSuccess(comment: Comment) {
+  function handleSuccess(savedComment: Comment) {
     setIsUploading(false);
-    setComments([comment, ...comments]);
+    setComments([savedComment, ...comments]);
     setComment('Write something...');
     setPreview('');
     setFileName('');
+    setTimeout(() => scrollToElement(savedComment.id), 250)
   }
 
   async function onSubmit() {
     if (isUploading) return; setIsUploading(true);
     const imageUploadRes = await uploadImageToS3(); if (imageUploadRes.error) return handleFail('Failed to upload image');
-    const saveCommentRes = await saveCommentToDb(); if (saveCommentRes.error) return handleFail('Failed to save comment');
-    handleSuccess(saveCommentRes.comment);
+    const saveCommentRes = await saveCommentToDb(imageUploadRes.imageUrl || ''); 
+    if (saveCommentRes.error) return handleFail('Failed to save comment');
+    handleSuccess(saveCommentRes);
   }
 
 

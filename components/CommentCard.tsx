@@ -31,7 +31,7 @@ const CommentCard = ({ comment }: Props) => {
 
 
   return (
-    <section className='w-[100%] bg-gradient-to-r from-[#f0f0f0] to-white p-4 mb-4 shadow-md rounded-xl'>
+    <section className='w-[100%] bg-gradient-to-r from-[#f0f0f0] to-white p-4 mb-4 shadow-md rounded-xl' id={comment.id}>
       {/* image, postedBy & date */}
       <div className='w-[100%] flex gap-4 mb-4'>
         <CenteredImage width={50} height={50} src={postedBy.profilePicture || '/images/user.png'} className='rounded-full min-w-[50px]' />
