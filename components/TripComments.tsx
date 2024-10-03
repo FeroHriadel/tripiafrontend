@@ -19,8 +19,8 @@ interface Props {
 
 
 const sampleComments: Comment[] = [
-  {id: 'snsklnfl3pinmdf03c', by: 'ferdinand.hriadel@gmail.com', body: 'This is a sample comment', date: new Date().toISOString(), trip: 'dkd3ddoekjfpewmfpe', image: 'https://tripia-devimages-bucket-ioioioi.s3.us-east-1.amazonaws.com/2024-08NT-NaChabenci.jpg92836.png'},
-  {id: 'snsklnfl3pinmdf4,ot94c', by: 'emaletester0@gmail.com', body: 'This is a sample comment efoepfmp fmefmewkfmewk', date: new Date().toISOString(), trip: 'dkd3ddoekjfpewmfpe', image: ''},
+  {id: 'snsklnfl3pinmdf03c', by: 'ferdinand.hriadel@gmail.com', body: 'This is a sample comment', createdAt: new Date().toISOString(), trip: 'dkd3ddoekjfpewmfpe', image: 'https://tripia-devimages-bucket-ioioioi.s3.us-east-1.amazonaws.com/2024-08NT-NaChabenci.jpg92836.png'},
+  {id: 'snsklnfl3pinmdf4,ot94c', by: 'emaletester0@gmail.com', body: 'This is a sample comment efoepfmp fmefmewkfmewk', createdAt: new Date().toISOString(), trip: 'dkd3ddoekjfpewmfpe', image: ''},
 ]
 
 const hint = 'Write something...'	
@@ -49,7 +49,7 @@ const TripComments = ({ trip }: Props) => {
   }
 
   async function saveCommentToDb() {
-    return {error: '', comment: {id: '123', body: 'ok', by: 'ferdinand.hriadel@gmail.com', date: new Date().toISOString(), trip: 'dkd3ddoekjfpewmfpe', image: '' }};
+    return {error: '', comment: {id: '123', body: 'ok', by: 'ferdinand.hriadel@gmail.com', createdAt: new Date().toISOString(), trip: 'dkd3ddoekjfpewmfpe', image: '' }};
   }
 
   function handleFail(error?: string) { 

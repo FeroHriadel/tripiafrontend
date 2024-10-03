@@ -50,5 +50,5 @@ export interface Comment {
   body: string;
   image: string;
   trip: string;
-  date: string;
+  createdAt: string;
 }

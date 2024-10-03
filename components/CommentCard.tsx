@@ -41,7 +41,7 @@ const CommentCard = ({ comment }: Props) => {
             &&
             <h4 className='font-bold text-md sm:text-xl break-all'>{postedBy.nickname || postedBy.email.split('@')[0]}</h4>
           }
-          <p className='text-xs sm:text:sm font-light break-all'>{formatUTCToDateAndHour(comment.date)}</p>
+          <p className='text-xs sm:text:sm font-light break-all'>{formatUTCToDateAndHour(comment.createdAt)}</p>
         </div>
       </div>
 
