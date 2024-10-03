@@ -4,11 +4,11 @@ import React from 'react';
 import Container from '@/components/Container';
 import ContentSectionHeader from '../components/ContentSectionHeader';
 import InputComment from './InputComment';
-import { Trip, Comment } from '@/types';
-import CenteredImage from './CenteredImage';
-import { formatUTCToHumanreadable } from '@/utils/dates';
 import CommentCard from './CommentCard';
-
+import { Trip, Comment } from '@/types';
+import { uploadImage } from '@/utils/imageUpload';
+import { useAuth } from '@/context/authContext';
+import { useToast } from '@/context/toastContext';
 
 
 
@@ -23,12 +23,18 @@ const sampleComments: Comment[] = [
   {id: 'snsklnfl3pinmdf4,ot94c', by: 'emaletester0@gmail.com', body: 'This is a sample comment efoepfmp fmefmewkfmewk', date: new Date().toISOString(), trip: 'dkd3ddoekjfpewmfpe', image: ''},
 ]
 
+const hint = 'Write something...'	
+
 
 
 const TripComments = ({ trip }: Props) => {
-  const [comment, setComment] = React.useState('Write something...');
+  const [comments, setComments] = React.useState<Comment[]>([]);
+  const [comment, setComment] = React.useState(hint);
   const [preview, setPreview] = React.useState('');
   const [fileName, setFileName] = React.useState('');
+  const [isUploading, setIsUploading] = React.useState(false);
+  const { user } = useAuth();
+  const { showToast } = useToast();
 
 
   function onChange(event: {name: string, value: any}) {
@@ -36,12 +42,43 @@ const TripComments = ({ trip }: Props) => {
     if (event.name === 'preview') { setPreview(event.value.preview); setFileName(event.value.fileName); }
   }
 
+  async function uploadImageToS3() {
+    if (!preview) return {ok: true, error: ''};
+    const res = await uploadImage(fileName, preview, user.idToken); if (res.error) return {error: res.error, ok: false};
+    return {ok: true, error: ''};
+  }
+
+  async function saveCommentToDb() {
+    return {error: '', comment: {id: '123', body: 'ok', by: 'ferdinand.hriadel@gmail.com', date: new Date().toISOString(), trip: 'dkd3ddoekjfpewmfpe', image: '' }};
+  }
+
+  function handleFail(error?: string) { 
+    setIsUploading(false); 
+    if (error) showToast(error)
+    else showToast('Failed to save comment');
+  }
+
+  function handleSuccess(comment: Comment) {
+    setIsUploading(false);
+    setComments([comment, ...comments]);
+    setComment('Write something...');
+    setPreview('');
+    setFileName('');
+  }
+
+  async function onSubmit() {
+    if (isUploading) return; setIsUploading(true);
+    const imageUploadRes = await uploadImageToS3(); if (imageUploadRes.error) return handleFail('Failed to upload image');
+    const saveCommentRes = await saveCommentToDb(); if (saveCommentRes.error) return handleFail('Failed to save comment');
+    handleSuccess(saveCommentRes.comment);
+  }
+
 
   return (
     <Container className='px-4 mt-10'>
       <ContentSectionHeader text='Comments' style={{lineHeight: '2rem', fontSize: '2rem', textAlign: 'left'}} className='mb-2' />
-      <InputComment onChange={onChange} comment={comment} preview={preview} />
-      {sampleComments.map(comment => ( <CommentCard comment={comment} key={comment.id} /> ))}
+      <InputComment onChange={onChange} comment={comment} preview={preview} onSubmit={onSubmit} loading={isUploading} />
+      {comments.map(comment => ( <CommentCard comment={comment} key={comment.id} /> ))}
     </Container>
   )
 }
