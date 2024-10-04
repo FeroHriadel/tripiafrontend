@@ -11,6 +11,7 @@ import { useAuth } from '@/context/authContext';
 import { useToast } from '@/context/toastContext';
 import { apiCalls, uriEncodeObj } from '@/utils/apiCalls';
 import { scrollToElement } from '@/utils/DOM';
+import ConfirmDialog from './ConfirmDialog';
 
 
 
@@ -33,6 +34,8 @@ const TripComments = ({ trip }: Props) => {
   const [fileName, setFileName] = React.useState('');
   const [isUploading, setIsUploading] = React.useState(false);
   const [loadingComments, setLoadingComments] = useState(true);
+  const [confirmOpen, setConfirmOpen] = React.useState(false);
+  const [commentToDelete, setCommentToDelete] = React.useState<string | null>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const { user } = useAuth();
   const { showToast } = useToast();
@@ -120,6 +123,28 @@ const TripComments = ({ trip }: Props) => {
     }
   }
 
+  function removeCommentFromState(commentId: string) {
+    const updatedComments = comments.filter(comment => comment.id !== commentId);
+    setComments(updatedComments);
+  }
+
+  function closeConfirm() { 
+    setConfirmOpen(false); 
+    setCommentToDelete(null);
+  }
+
+  function confirmDelete(commentId: string) {
+    setCommentToDelete(commentId);
+    setConfirmOpen(true);
+  }
+
+  async function deleteComment() {
+    showToast('Deleting comment...');
+    const res = await apiCalls.del('/comments', {id: commentToDelete}); if (res.error) showToast('Failed to delete comment');
+    else {  removeCommentFromState(commentToDelete!); showToast('Comment deleted'); }
+    closeConfirm();
+  }
+
 
   useEffect(() => { loadMoreComments(); }, []); //fetch a couple of comments initially
 
@@ -130,8 +155,9 @@ const TripComments = ({ trip }: Props) => {
     <Container className='px-4 mt-10'>
       <ContentSectionHeader text='Comments' style={{lineHeight: '2rem', fontSize: '2rem', textAlign: 'left'}} className='mb-2' />
       <InputComment onChange={onChange} comment={comment} preview={preview} onSubmit={onSubmit} loading={isUploading} />
-      {comments.map(comment => ( <CommentCard comment={comment} key={comment.id} /> ))}
+      {comments.map(comment => ( <CommentCard comment={comment} key={comment.id} deleteComment={confirmDelete} /> ))}
       {loadingComments && <p className='my-4'>Loading...</p>}
+      <ConfirmDialog onClose={closeConfirm} open={confirmOpen} onConfirm={deleteComment} text='Delete comment?' />
     </Container>
   )
 }
