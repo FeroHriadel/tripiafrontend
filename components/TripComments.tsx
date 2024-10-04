@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Container from '@/components/Container';
 import ContentSectionHeader from '../components/ContentSectionHeader';
 import InputComment from './InputComment';
@@ -33,6 +33,7 @@ const TripComments = ({ trip }: Props) => {
   const [fileName, setFileName] = React.useState('');
   const [isUploading, setIsUploading] = React.useState(false);
   const [loadingComments, setLoadingComments] = useState(true);
+  const observerRef = useRef<IntersectionObserver | null>(null);
   const { user } = useAuth();
   const { showToast } = useToast();
 
@@ -104,10 +105,25 @@ const TripComments = ({ trip }: Props) => {
     else return false;
   }
 
-  //pick up...
+  function unobserveLastCard() { if (observerRef.current) observerRef.current.disconnect(); }
+
+  function observeLastCard() {
+    unobserveLastCard();
+    observerRef.current = new IntersectionObserver((entries) => {
+      const entry = entries[0];
+      if (entry.isIntersecting && isMoreCommentsToLoad()) loadMoreComments();
+    });
+    if (comments.length > 0) {
+      const lastTripIdx = comments.length - 1;
+      const lastCardEl = document.getElementById(`${comments[lastTripIdx].id}`);
+      if (lastCardEl) observerRef.current.observe(lastCardEl);
+    }
+  }
 
 
   useEffect(() => { loadMoreComments(); }, []); //fetch a couple of comments initially
+
+  useEffect(() => { if (comments.length) observeLastCard(); }, [comments]); //will load more comments when last comment shows in viewport
 
 
   return (
