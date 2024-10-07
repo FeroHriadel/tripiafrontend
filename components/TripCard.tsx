@@ -6,7 +6,7 @@ import { FaPenFancy, FaTrashAlt, FaRegStar, FaStar } from 'react-icons/fa';
 import Tag from './Tag';
 import ContentSectionButton from './ContentSectionButton';
 import { Trip } from '@/types';
-import ConfirmDialog from './ConfirmDialog';
+import ConfirmDialog from './ModalConfirmDialog';
 import { useAuth } from '@/context/authContext';
 import { apiCalls } from '@/utils/apiCalls';
 import { setFavoriteTrips } from '@/redux/slices/favoriteTripsSlice';

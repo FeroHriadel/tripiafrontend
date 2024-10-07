@@ -11,7 +11,7 @@ import { useAuth } from '@/context/authContext';
 import { useToast } from '@/context/toastContext';
 import { apiCalls, uriEncodeObj } from '@/utils/apiCalls';
 import { scrollToElement } from '@/utils/DOM';
-import ConfirmDialog from './ConfirmDialog';
+import ConfirmDialog from './ModalConfirmDialog';
 
 
 

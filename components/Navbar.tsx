@@ -6,6 +6,7 @@ import NavbarSigninButton from './NavbarSigninButton';
 import { CgProfile } from "react-icons/cg";
 import { BiSolidMessageRoundedAdd } from "react-icons/bi";
 import NavbarProfileButton from './NavbarProfileButton';
+import NavbarGroupsButton from './NavbarGroupsButton';
 
 const Navbar = () => {
   return (
@@ -30,6 +31,7 @@ const Navbar = () => {
           </Link>
           <NavbarProfileButton />
           <NavbarSigninButton />
+          <NavbarGroupsButton />
         </ul>
       </Container>
     </nav>

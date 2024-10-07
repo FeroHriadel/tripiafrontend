@@ -12,7 +12,7 @@ import { TableContainer, TableHeader, TableLine } from '@/components/Table';
 import { useAppSelector } from '@/redux/store';
 import { FaPenFancy, FaTrashAlt, FaPlus } from 'react-icons/fa';
 import { Category } from '@/types';
-import ConfirmDialog from '@/components/ConfirmDialog';
+import ConfirmDialog from '@/components/ModalConfirmDialog';
 import { apiCalls } from '@/utils/apiCalls';
 import { useToast } from '@/context/toastContext';
 import { removeCategory } from '@/redux/slices/categoriesSlice';

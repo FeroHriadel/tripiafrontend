@@ -1,6 +1,6 @@
 import React , { useEffect } from 'react';
 import { FaTimes } from 'react-icons/fa';
-import './ConfirmDialog.css';
+import './ModalConfirmDialog.css';
 import ButtonOrange from './ButtonOrange';
 import ModalHeader from './ModalHeader';
 import ModalDescription from './ModalDescription';
