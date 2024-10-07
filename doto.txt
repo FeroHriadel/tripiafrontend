@@ -1,0 +1,20 @@
+- favorite trips page should show only current trips
+- trip comments should update on a 2 minute basis & trips too
+- fix pdf font
+- see other ppl's profile
+- delete trips on a biweekly basis
+- create a script to populate trips
+- remove the wave line
+- redo the toast
+- redo confirm dialog
+- make font-size smaller on sm screens: all inputs
+- select : popping up/down & tabindex
+- remove img from homepage
+- favicon 
+- SEO
+- protect mapbox key
+- deploy
+- domain
+
+- tips section
+- payment section
