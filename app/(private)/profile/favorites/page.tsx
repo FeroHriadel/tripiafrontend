@@ -48,11 +48,12 @@ const FavoriteTripsPage = () => {
   }
 
   async function removeExpiredTripsFromFavorites(getTripsResponse: Trip[]) {
-    //user's favorite trips don't ever get updated. 
-    //if a trip expires it is deleted. But nothing deletes that trip from user's favoriteTrips.
-    //batchGetTrips (getFavoriteTrips() fn above) only returns unexpired trips.
-    //this function removes expired trips from user's favoriteTrips array.
-    //this is the cheapest way to update user's favoriteTrips (in terms of db cost) - that's why backend doesn't handle it.
+    /*************************************************************************************************************************
+     - if a trip expires it is deleted from db. But nothing deletes that trip from user's favoriteTrips in db.
+     - this function removes expired trips from user's favoriteTrips array.
+     - this is the cheapest way to update user's favoriteTrips (in terms of db cost) - that's why backend doesn't handle it.
+     *************************************************************************************************************************/
+    const expiredTripsIds = favoriteTrips.filter(tripId => !getTripsResponse.some(trip => trip.id === tripId));
     const unexpiredTripsIds = getTripsResponse.map(trip => trip.id!);
     if (unexpiredTripsIds.length !== favoriteTrips.length) {
       dispatch(setFavoriteTrips(unexpiredTripsIds));
