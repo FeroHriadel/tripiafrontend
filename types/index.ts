@@ -52,3 +52,12 @@ export interface Comment {
   trip: string;
   createdAt: string;
 }
+
+export interface Group {
+  id: string;
+  createdBy: string;
+  members: string[];
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+}

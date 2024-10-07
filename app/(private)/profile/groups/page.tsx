@@ -12,13 +12,19 @@ import ContentSectionButton from '@/components/ContentSectionButton';
 import InputText from '@/components/InputText';
 import Modal from '@/components/Modal';
 import { useToast } from '@/context/toastContext';
+import { useAuth } from '@/context/authContext';
+import { apiCalls } from '@/utils/apiCalls';
+import { Group } from '@/types';
+
 
 
 const GroupsPage = () => {
+  const [groups, setGroups] = useState<Group[]>([]);
   const [groupName, setGroupName] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const { showToast } = useToast();
+  const { user } = useAuth();
   
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) { setGroupName(e.target.value); }
@@ -35,25 +41,56 @@ const GroupsPage = () => {
     else return true
   }
 
+  function sortGroupsAlphabetically(groups: Group[]) { return [...groups].sort((a, b) => a.name.localeCompare(b.name)); }
+
   function handlePreSubmit() {
     if (!isGroupnameOk()) return;
     setLoading(true);
   }
 
+  async function saveGroupInDb() {
+    showToast('Saving group...');
+    const res = await apiCalls.post('/groups', { name: groupName });
+    return res;
+  }
+
+  function handleFail(text?: string) {
+    setLoading(false);
+    showToast(text || 'Something went wrong');
+  }
+
+  function handleSuccess() {
+    setLoading(false);
+    showToast('Group created successfully');
+    closeModal();
+  }
+
   async function handleCreateGroup() {
     handlePreSubmit();
+    const res = await saveGroupInDb(); 
+    if (res.error) return handleFail('Failed to save group');
+    else handleSuccess();
+  }
+
+  async function getGroups() {
+    const res = await apiCalls.get(`/groups`);
+    if (res.error) return handleFail('Failed to get groups')
+    else { setGroups(sortGroupsAlphabetically(res)); setLoading(false); };
   }
 
   function renderModalContent() {
     return (
       <div className='w-[100%]'>
-        <br />
+        <br /><br /><br />
         <InputText inputName='groupName' labelText='group name' value={groupName} onChange={handleChange} disabled={loading} className='mb-8' />
-        <ContentSectionButton text='OK' onClick={closeModal} className='mb-4' />
+        <ContentSectionButton text='OK' onClick={handleCreateGroup} disabled={loading} className='mb-4' />
         <ContentSectionButton text='Cancel' onClick={closeModal} className='mb-4' />
       </div>
     );
   }
+
+
+  useEffect(() => { if (user.email) getGroups();  }, [user.email]); //get user's groups
 
 
   return (
@@ -72,7 +109,8 @@ const GroupsPage = () => {
         <Container className='px-4'>
           <ContentSectionHeader text='My Groups' />
           <ContentSectionDescription text='Groups you created or have joined' className='mb-20'/>
-
+        </Container>
+        <Container className='px-4 max-w-[500px]'>
           <ContentSectionButton text='Create a Group' onClick={openModal} />
         </Container>
       </ContentSection>
