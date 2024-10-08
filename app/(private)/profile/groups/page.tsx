@@ -94,6 +94,21 @@ const GroupsPage = () => {
     else handleDeleteSuccess(id);
   }
 
+  function handleUpdateSuccess(props: {groupId: string; name: string}) {
+    const newGroups = groups.map((group) => group.id === props.groupId ? { ...group, name: props.name } : group);
+    setGroups(sortGroupsAlphabetically(newGroups));
+    setLoading(false);
+    showToast('Group updated');
+  }
+
+  async function updateGroup(props: {groupId: string, name: string}) {
+    setLoading(true);
+    const { groupId, name } = props;
+    const res = await apiCalls.put(`/groups/${groupId}`, { name });
+    if (res.error) return handleFail('Failed to update group');
+    else handleUpdateSuccess({groupId: groupId, name});
+  }
+
   function renderModalContent() {
     return (
       <div className='w-[100%]'>
@@ -127,7 +142,7 @@ const GroupsPage = () => {
           <ContentSectionDescription text='Groups you created or have joined' className='mb-20'/>
         </Container>
         <Container className='px-4 max-w-[500px]'>
-          {groups.map((group) => <GroupCard key={group.id} group={group} style={{marginBottom: '1rem'}} onDelete={deleteGroup} />)}
+          {groups.map((group) => <GroupCard key={group.id} group={group} style={{marginBottom: '1rem'}} onDelete={deleteGroup} onUpdate={updateGroup} />)}
           <ContentSectionButton text='Add New' onClick={openModal} className='mt-4' />
         </Container>
       </ContentSection>

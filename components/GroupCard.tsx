@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Group, UserProfile } from '@/types';
 import { apiCalls } from '@/utils/apiCalls';
-import CenteredImage from './CenteredImage';
+import CenteredImage from '@/components/CenteredImage';
 import { useAuth } from '@/context/authContext';
 import { FaTrashAlt, FaPenAlt } from 'react-icons/fa';
-import ConfirmDialog from './ModalConfirmDialog';
+import ConfirmDialog from '@/components/ModalConfirmDialog';
+import ContentSectionButton from '@/components/ContentSectionButton';
+import InputText from '@/components/InputText';
+import Modal from '@/components/Modal';
 
 
 
 interface Props {
   group: Group;
   onDelete: (groupId: string) => void;
+  onUpdate: (props: {groupId: string, name: string}) => void;
   className?: string;
   style?: React.CSSProperties;
   id?: string;
@@ -18,9 +22,11 @@ interface Props {
 
 
 
-const GroupCard = ({ className, style, id, group, onDelete }: Props) => {
+const GroupCard = ({ className, style, id, group, onDelete, onUpdate }: Props) => {
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [confirmShown, setConfirmShown] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [groupName, setGroupName] = useState(group.name);
   const { user } = useAuth();
 
 
@@ -48,6 +54,25 @@ const GroupCard = ({ className, style, id, group, onDelete }: Props) => {
 
   function closeConfirm() { setConfirmShown(false); }
 
+  function openModal() { setModalOpen(true); setGroupName(group.name); }
+
+  function closeModal() { setModalOpen(false); }
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) { setGroupName(e.target.value); }
+
+  function handleUpdate() { onUpdate({groupId: group.id, name: groupName}); closeModal(); }
+
+  function renderModalContent() {
+    return (
+      <div className='w-[100%]'>
+        <br /><br /><br />
+        <InputText inputName='groupName' labelText='group name' value={groupName} onChange={handleChange} className='mb-8' />
+        <ContentSectionButton text='OK' onClick={handleUpdate}  className='mb-4' />
+        <ContentSectionButton text='Cancel' onClick={closeModal} className='mb-4' />
+      </div>
+    );
+  }
+
 
   useEffect(() => { getUserNames(); }, []) //get group.members names to show on the card
 
@@ -67,12 +92,17 @@ const GroupCard = ({ className, style, id, group, onDelete }: Props) => {
         isOwner()
         &&
         <div className="buttons-wrapper absolute top-4 right-4 flex gap-1 sm:flex-row flex-col">
-          <p className='text-sm cursor-pointer'> <FaPenAlt /> </p>
+          <p className='text-sm cursor-pointer' onClick={openModal}> <FaPenAlt /> </p>
           <p className='text-sm cursor-pointer' onClick={openConfirm}> <FaTrashAlt /> </p>
         </div>
       }
 
       <ConfirmDialog open={confirmShown} text="Delete this Group?" onClose={closeConfirm} onConfirm={() => onDelete(group.id)} />
+
+      <Modal header='Edit Group' text='Please enter a new name and click OK' open={modalOpen} onClose={closeModal}>
+        {renderModalContent()}
+      </Modal>
+      
     </section>
   )
 }
