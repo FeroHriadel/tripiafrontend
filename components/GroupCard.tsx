@@ -4,11 +4,13 @@ import { apiCalls } from '@/utils/apiCalls';
 import CenteredImage from './CenteredImage';
 import { useAuth } from '@/context/authContext';
 import { FaTrashAlt, FaPenAlt } from 'react-icons/fa';
+import ConfirmDialog from './ModalConfirmDialog';
 
 
 
 interface Props {
   group: Group;
+  onDelete: (groupId: string) => void;
   className?: string;
   style?: React.CSSProperties;
   id?: string;
@@ -16,8 +18,9 @@ interface Props {
 
 
 
-const GroupCard = ({ className, style, id, group }: Props) => {
+const GroupCard = ({ className, style, id, group, onDelete }: Props) => {
   const [users, setUsers] = useState<UserProfile[]>([]);
+  const [confirmShown, setConfirmShown] = useState(false);
   const { user } = useAuth();
 
 
@@ -41,8 +44,12 @@ const GroupCard = ({ className, style, id, group }: Props) => {
 
   function isOwner() { console.log(group.createdBy === user?.email); return group.createdBy === user?.email; }
 
+  function openConfirm() { setConfirmShown(true); }
 
-  useEffect(() => { getUserNames(); }, [])
+  function closeConfirm() { setConfirmShown(false); }
+
+
+  useEffect(() => { getUserNames(); }, []) //get group.members names to show on the card
 
 
   return (
@@ -61,9 +68,11 @@ const GroupCard = ({ className, style, id, group }: Props) => {
         &&
         <div className="buttons-wrapper absolute top-4 right-4 flex gap-1 sm:flex-row flex-col">
           <p className='text-sm cursor-pointer'> <FaPenAlt /> </p>
-          <p className='text-sm cursor-pointer'> <FaTrashAlt /> </p>
+          <p className='text-sm cursor-pointer' onClick={openConfirm}> <FaTrashAlt /> </p>
         </div>
       }
+
+      <ConfirmDialog open={confirmShown} text="Delete this Group?" onClose={closeConfirm} onConfirm={() => onDelete(group.id)} />
     </section>
   )
 }

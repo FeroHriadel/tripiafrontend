@@ -60,7 +60,7 @@ const GroupsPage = () => {
     showToast(text || 'Something went wrong');
   }
 
-  function handleSuccess(res: Group) {
+  function handleCreateSuccess(res: Group) {
     setLoading(false);
     showToast('Group created successfully');
     setGroups(sortGroupsAlphabetically([...groups, res]));
@@ -71,13 +71,27 @@ const GroupsPage = () => {
     handlePreSubmit();
     const res = await saveGroupInDb(); 
     if (res.error) return handleFail('Failed to save group');
-    else handleSuccess(res);
+    else handleCreateSuccess(res);
   }
 
   async function getGroups() {
     const res = await apiCalls.get(`/groups`);
     if (res.error) return handleFail('Failed to get groups')
     else { setGroups(sortGroupsAlphabetically(res)); setLoading(false); };
+  }
+
+  function handleDeleteSuccess(groupId: string) {
+    setLoading(false);
+    showToast('Group deleted');
+    const newGroups = groups.filter((group) => group.id !== groupId);
+    setGroups(newGroups);
+  }
+
+  async function deleteGroup(id: string) {
+    setLoading(true);
+    const res = await apiCalls.del(`/groups/${id}`); 
+    if (res.error) return handleFail('Failed to delete group');
+    else handleDeleteSuccess(id);
   }
 
   function renderModalContent() {
@@ -113,7 +127,7 @@ const GroupsPage = () => {
           <ContentSectionDescription text='Groups you created or have joined' className='mb-20'/>
         </Container>
         <Container className='px-4 max-w-[500px]'>
-          {groups.map((group) => <GroupCard key={group.id} group={group} style={{marginBottom: '1rem'}} />)}
+          {groups.map((group) => <GroupCard key={group.id} group={group} style={{marginBottom: '1rem'}} onDelete={deleteGroup} />)}
           <ContentSectionButton text='Add New' onClick={openModal} className='mt-4' />
         </Container>
       </ContentSection>
