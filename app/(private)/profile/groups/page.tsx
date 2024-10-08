@@ -8,6 +8,7 @@ import Container from '@/components/Container';
 import ContentSection from '@/components/ContentSection';
 import ContentSectionHeader from '@/components/ContentSectionHeader';
 import ContentSectionDescription from '@/components/ContentSectionDescription';
+import GroupCard from '@/components/GroupCard';
 import ContentSectionButton from '@/components/ContentSectionButton';
 import InputText from '@/components/InputText';
 import Modal from '@/components/Modal';
@@ -59,9 +60,10 @@ const GroupsPage = () => {
     showToast(text || 'Something went wrong');
   }
 
-  function handleSuccess() {
+  function handleSuccess(res: Group) {
     setLoading(false);
     showToast('Group created successfully');
+    setGroups(sortGroupsAlphabetically([...groups, res]));
     closeModal();
   }
 
@@ -69,7 +71,7 @@ const GroupsPage = () => {
     handlePreSubmit();
     const res = await saveGroupInDb(); 
     if (res.error) return handleFail('Failed to save group');
-    else handleSuccess();
+    else handleSuccess(res);
   }
 
   async function getGroups() {
@@ -111,7 +113,8 @@ const GroupsPage = () => {
           <ContentSectionDescription text='Groups you created or have joined' className='mb-20'/>
         </Container>
         <Container className='px-4 max-w-[500px]'>
-          <ContentSectionButton text='Create a Group' onClick={openModal} />
+          {groups.map((group) => <GroupCard key={group.id} group={group} style={{marginBottom: '1rem'}} />)}
+          <ContentSectionButton text='Add New' onClick={openModal} className='mt-4' />
         </Container>
       </ContentSection>
 
