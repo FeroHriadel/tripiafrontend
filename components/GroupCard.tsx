@@ -8,6 +8,7 @@ import ConfirmDialog from '@/components/ModalConfirmDialog';
 import ContentSectionButton from '@/components/ContentSectionButton';
 import InputText from '@/components/InputText';
 import Modal from '@/components/Modal';
+import { useRouter } from 'next/navigation';
 
 
 
@@ -28,6 +29,7 @@ const GroupCard = ({ className, style, id, group, onDelete, onUpdate }: Props) =
   const [modalOpen, setModalOpen] = useState(false);
   const [groupName, setGroupName] = useState(group.name);
   const { user } = useAuth();
+  const router = useRouter();
 
 
   function joinUserNamesWithCommas() {
@@ -48,19 +50,39 @@ const GroupCard = ({ className, style, id, group, onDelete, onUpdate }: Props) =
     return img || '/images/user.png';
   }
 
-  function isOwner() { console.log(group.createdBy === user?.email); return group.createdBy === user?.email; }
+  function isOwner() { 
+    return group.createdBy === user?.email; 
+  }
 
-  function openConfirm() { setConfirmShown(true); }
+  function openConfirm(e: React.MouseEvent<HTMLParagraphElement>) { 
+    e.stopPropagation(); 
+    setConfirmShown(true); 
+  }
 
-  function closeConfirm() { setConfirmShown(false); }
+  function closeConfirm() { 
+    setConfirmShown(false); 
+  }
 
-  function openModal() { setModalOpen(true); setGroupName(group.name); }
+  function openModal(e: React.MouseEvent<HTMLParagraphElement>) { 
+    e.stopPropagation();
+    setModalOpen(true); 
+    setGroupName(group.name); 
+  }
 
-  function closeModal() { setModalOpen(false); }
+  function closeModal() { 
+    setModalOpen(false); 
+  }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) { setGroupName(e.target.value); }
 
-  function handleUpdate() { onUpdate({groupId: group.id, name: groupName}); closeModal(); }
+  function handleUpdate() { 
+    onUpdate({groupId: group.id, name: groupName}); 
+    closeModal(); 
+  }
+
+  function redirectToGroup() { 
+    router.push(`/profile/groups/${group.id}`); 
+  }
 
   function renderModalContent() {
     return (
@@ -78,32 +100,34 @@ const GroupCard = ({ className, style, id, group, onDelete, onUpdate }: Props) =
 
 
   return (
-    <section 
-      className={`w-[100%] relative flex px-4 py-4 rounded-xl bg-gradient-to-l from-gray-200 to-white ` + className}
-      style={{boxShadow: '0 4px 15px rgba(0, 0, 0, 0.25)' , ...style}}
-      id={id}
-    >
-      <CenteredImage src={getOwnerImg()} width={50} height={50} className='rounded-full min-w-[50px] mr-4' />
-      <div className="text-wrapper">
-        <h3 className='font-semibold text-xl text-textorange mb-1'>{group.name}</h3>
-        <p className='text-sm'>{joinUserNamesWithCommas()}</p>
-      </div>
-      {
-        isOwner()
-        &&
-        <div className="buttons-wrapper absolute top-4 right-4 flex gap-1 sm:flex-row flex-col">
-          <p className='text-sm cursor-pointer' onClick={openModal}> <FaPenAlt /> </p>
-          <p className='text-sm cursor-pointer' onClick={openConfirm}> <FaTrashAlt /> </p>
+    <>
+      <section 
+        className={`w-[100%] relative flex px-4 py-4 rounded-xl cursor-pointer bg-gradient-to-l from-gray-200 to-white ` + className}
+        style={{boxShadow: '0 4px 15px rgba(0, 0, 0, 0.25)' , ...style}}
+        id={id}
+        onClick={redirectToGroup}
+      >
+        <CenteredImage src={getOwnerImg()} width={50} height={50} className='rounded-full min-w-[50px] mr-4' />
+        <div className="text-wrapper">
+          <h3 className='font-semibold text-xl text-textorange mb-1'>{group.name}</h3>
+          <p className='text-sm'>{joinUserNamesWithCommas()}</p>
         </div>
-      }
+        {
+          isOwner()
+          &&
+          <div className="buttons-wrapper absolute top-4 right-4 flex gap-1 sm:flex-row flex-col">
+            <p className='text-sm cursor-pointer' onClick={openModal}> <FaPenAlt /> </p>
+            <p className='text-sm cursor-pointer' onClick={openConfirm}> <FaTrashAlt /> </p>
+          </div>
+        }      
+      </section>
 
       <ConfirmDialog open={confirmShown} text="Delete this Group?" onClose={closeConfirm} onConfirm={() => onDelete(group.id)} />
 
       <Modal header='Edit Group' text='Please enter a new name and click OK' open={modalOpen} onClose={closeModal}>
         {renderModalContent()}
       </Modal>
-      
-    </section>
+    </>
   )
 }
 
