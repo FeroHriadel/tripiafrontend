@@ -2,10 +2,28 @@ import { createContext, useContext, useState, useRef } from "react";
 
 
 
+/*************************************************************************************************************************************
+ - messages wsApi expects:
+    {action: 'getPosts', groupId: string}
+    {action: 'postCreate', post: {postedBy: string, body: string, images: string[], groupId: string}
+    {action: 'postUpdate', post: {id: string, postedBy: string, body: string, images: string[], groupId: string}
+    {action: 'postDelete', postId: string, groupId: string}
+
+ - messages ui expects:
+    {action: 'posts', posts: {id: string, postedBy: string, body: string, images: string[], groupId: string, createdAt: string}[]}
+    {action: 'postCreated', post: {id: string, postedBy: string, body: string, images: string[], groupId: string, createdAt: string}
+    {action: 'postUpdated', post: {id: string, postedBy: string, body: string, images: string[], groupId: string, updatedAt: string}
+    {action: 'postDeleted', postId: string
+    {}
+**************************************************************************************************************************************/
+
+
 interface WSContextState {
   isConnected: boolean;
   connect: (groupId: string) => void;
   disconnect: () => void;
+  sendMessage: (props: {action: string, data: any}) => void;
+  message: {[key: string]: any};
 }
 
 interface WSContextProviderProps {
@@ -20,6 +38,8 @@ const WSContext = createContext<WSContextState>({
   isConnected: false,
   connect: (groupId) => {},
   disconnect: () => {},
+  sendMessage: (props) => {},
+  message: {},
 });
 
 
@@ -27,6 +47,7 @@ const WSContext = createContext<WSContextState>({
 export const WSContextProvider: React.FC<WSContextProviderProps> = ({ children }: {children: React.ReactNode}) => {
   const ws = useRef<WebSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
+  const [message, setMessage] = useState<{[key: string]: any}>({});
 
   function connect(groupId: string) {
     if (!groupId) return console.log('No groupId provided');
@@ -61,10 +82,16 @@ export const WSContextProvider: React.FC<WSContextProviderProps> = ({ children }
 
   function handleIncomingMessage(msg: MessageEvent) {
     console.log('Message received:', msg.data);
+    setMessage(JSON.parse(msg.data));
+  }
+
+  function sendMessage(props: {action: string, data: any}) {
+    if (!isConnected) return console.log(`WS not connected, can't send message`);
+    ws.current?.send(JSON.stringify(props));
   }
 
   return (
-    <WSContext.Provider value={{ isConnected, connect, disconnect }}>
+    <WSContext.Provider value={{ isConnected, connect, disconnect, sendMessage, message }}>
       {children}
     </WSContext.Provider>
   );

@@ -61,3 +61,12 @@ export interface Group {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface Post {
+  id: string;
+  postedBy: string;
+  body: string;
+  images: string[];
+  groupId: string;
+  createdAt: string;
+}

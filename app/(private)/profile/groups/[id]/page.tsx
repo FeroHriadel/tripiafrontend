@@ -12,24 +12,29 @@ import { useWS } from '@/context/wsContext';
 const GroupPage = () => {
   const params = useParams();
   const id = params.id;
-  const { connect, disconnect, isConnected } = useWS();
+  const { connect, disconnect, isConnected, message, sendMessage } = useWS();
 
 
-  console.log('isConnected', isConnected)
+  // useEffect(() => {
+  //   if (isConnected && id) {
+  //     const post = {postedBy: 'ferdinand.hriadel@gmail.com', body: 'Hi', images: [], groupId: id};
+  //     const msg = {action: 'postCreate', post } 
+  //     sendMessage(msg);
+  //   }
+  // }, [isConnected, id]);
+  
 
   useEffect(() => {
-    // Connect WebSocket when the component mounts
     if (id && !isConnected) {
       connect(id as string);
     }
-
-    // Disconnect WebSocket when component unmounts or id changes (user navigates away)
     return () => {
       if (isConnected) {
         disconnect();
       }
     };
   }, [id, isConnected]);
+
 
   return (
     <>
