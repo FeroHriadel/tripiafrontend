@@ -4,17 +4,14 @@ import { createContext, useContext, useState, useRef } from "react";
 
 /*************************************************************************************************************************************
  - messages wsApi expects:
-    {action: 'getPosts', groupId: string}
+    {action: 'postGet', groupId: string}
     {action: 'postCreate', post: {postedBy: string, body: string, images: string[], groupId: string}
-    {action: 'postUpdate', post: {id: string, postedBy: string, body: string, images: string[], groupId: string}
     {action: 'postDelete', postId: string, groupId: string}
 
  - messages ui expects:
-    {action: 'posts', posts: {id: string, postedBy: string, body: string, images: string[], groupId: string, createdAt: string}[]}
+    {action: 'posts', posts: {id: string, postedBy: string, body: string, images: string[], groupId: string, createdAt: string}[] }
     {action: 'postCreated', post: {id: string, postedBy: string, body: string, images: string[], groupId: string, createdAt: string}
-    {action: 'postUpdated', post: {id: string, postedBy: string, body: string, images: string[], groupId: string, updatedAt: string}
     {action: 'postDeleted', postId: string
-    {}
 **************************************************************************************************************************************/
 
 

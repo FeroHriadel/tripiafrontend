@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import GradientDescription from '@/components/GradientDescription';
 import GradientFlexi from '@/components/GradientFlexi';
@@ -8,32 +8,31 @@ import GradientHeader from '@/components/GradientHeader';
 import Container from '@/components/Container';
 import ContentSection from '@/components/ContentSection';
 import { useWS } from '@/context/wsContext';
+import { Post } from '@/types';
 
 const GroupPage = () => {
   const params = useParams();
   const id = params.id;
   const { connect, disconnect, isConnected, message, sendMessage } = useWS();
+  const [posts, setPosts] = useState<Post[]>([]);
 
 
-  // useEffect(() => {
-  //   if (isConnected && id) {
-  //     const post = {postedBy: 'ferdinand.hriadel@gmail.com', body: 'Hi', images: [], groupId: id};
-  //     const msg = {action: 'postCreate', post } 
-  //     sendMessage(msg);
-  //   }
-  // }, [isConnected, id]);
-  
+  function getPosts() { sendMessage({action: 'postGet', groupId: id}); }
 
-  useEffect(() => {
-    if (id && !isConnected) {
-      connect(id as string);
-    }
-    return () => {
-      if (isConnected) {
-        disconnect();
-      }
-    };
+  function createPost(post: Post) { sendMessage({action: 'postCreate', post}); }
+
+
+  useEffect(() => { //connect/disconnect to ws when user comes to/leaves the page
+    if (id && !isConnected) { connect(id as string); }
+    return () => { if (isConnected) { disconnect(); } };
   }, [id, isConnected]);
+
+  useEffect(() => { if (id && isConnected) getPosts(); }, [id, isConnected]); //request group posts on page load
+
+  useEffect(() => { //catch and handle post messages
+    if (message?.action === 'posts') setPosts(message.posts);
+    if (message?.action === 'postCreated') setPosts(prev => [...prev, message.post]);
+  }, [message]);
 
 
   return (
@@ -42,7 +41,7 @@ const GroupPage = () => {
         <Container className='px-10'>
           <GradientHeader text='GROUP CHAT' className='text-center mb-4' />
           <GradientDescription 
-            text={`Discuss trip details, make plans together and share photos in private.`} 
+            text={`Discuss trip details, make plans and share photos. All in private - group members only.`} 
             className='drop-shadow-lg text-center'
           />
         </Container>
