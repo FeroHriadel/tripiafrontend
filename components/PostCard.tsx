@@ -17,7 +17,7 @@ const PostCard = ({ post, userProfile }: Props) => {
   const { user } = useAuth();
 
   return (
-    <section className='w-[100%] relative bg-gradient-to-r from-[#f0f0f0] to-white p-4 mb-4 shadow-md rounded-xl'>
+    <section className='w-[100%] relative bg-gradient-to-r from-[#f0f0f0] to-white p-4 mb-4 shadow-md rounded-xl' id={post.id}>
       {/* delete post btn */}
       {(user?.email === post.postedBy || user.isAdmin) && <p className='absolute top-4 right-2 cursor-pointer'> <FaTrashAlt /> </p>}
 

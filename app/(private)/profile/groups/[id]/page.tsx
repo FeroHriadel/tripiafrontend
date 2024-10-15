@@ -14,6 +14,7 @@ import { Group, Post, UserProfile } from '@/types';
 import { useToast } from '@/context/toastContext';
 import { useAuth } from '@/context/authContext';
 import { apiCalls } from '@/utils/apiCalls';
+import { scrollToElement } from '@/utils/DOM';
 import PostCard from '@/components/PostCard';
 import InputPost from '@/components/InputPost';
 
@@ -54,7 +55,7 @@ const GroupPage = () => {
 
   function getPosts() { sendMessage({action: 'postGet', groupId: id}); }
 
-  function createPost(postInput: PostInput) { sendMessage({action: 'postCreate', postInput}); }
+  function createPost(postInput: PostInput) { sendMessage({action: 'postCreate', post: postInput}); }
 
   async function getGroup() {
     const res = await apiCalls.get(`/groups?id=${id}`);
@@ -70,13 +71,29 @@ const GroupPage = () => {
 
   function handleWsMessages(message: any) {
     if (message?.action === 'posts') {
-      if (message.posts) setPosts(message.posts);
-      else if (message.error) showToast(message.error);
+      if (message.error) { console.log(message.error); return showToast('Failed to get posts'); }
+      else setPosts(message.posts);
     }
-    if (message?.action === 'postCreated') {
-      if (message.post) setPosts(prev => [...prev, message.post]);
-      else if (message.error) showToast(message.error);
+    if (message?.action === 'postCreate') {
+      if (message.error) handlePostFail(message.error); 
+      else handlePostSuccess(message.post); 
     }
+  }
+
+  function handlePostFail(error: any) {
+    console.log(error);
+    setLoading(false);
+    showToast('Failed to save post');
+  }
+
+  function handlePostSuccess(post: Post) {
+    setPosts(prev => { const updatedPosts = [post, ...prev]; return updatedPosts; });
+    setLoading(false);
+    setPost(hint);
+    setPreviews([]);
+    setImagesFileNames([]);
+    showToast('Posted');
+    setTimeout(() => { scrollToElement(post.id) }, 100);
   }
 
   function onChange(event: {name: string, value: any}) {
@@ -95,18 +112,18 @@ const GroupPage = () => {
   }
 
 
-  // useEffect(() => { //connect/disconnect to ws when user comes to/leaves the page
-  //   if (id && !isConnected) { connect(id as string); }
-  //   return () => { if (isConnected) { disconnect(); } };
-  // }, [id, isConnected]);
+  useEffect(() => { //connect/disconnect to ws when user comes to/leaves the page
+    if (id && !isConnected) { connect(id as string); }
+    return () => { if (isConnected) { disconnect(); } };
+  }, [id, isConnected]);
 
-  // useEffect(() => { if (id) getGroup(); }, [id]); //get group data
+  useEffect(() => { if (id) getGroup(); }, [id]); //get group data
 
-  // useEffect(() => { if (group) getUsers(); }, [group]); //get group users
+  useEffect(() => { if (group) getUsers(); }, [group]); //get group users
 
-  // useEffect(() => { if (id && isConnected) getPosts(); }, [id, isConnected]); //request group posts on page load
+  useEffect(() => { if (id && isConnected) getPosts(); }, [id, isConnected]); //request group posts on page load
 
-  // useEffect(() => { handleWsMessages(message) }, [message]); //catch and handle ws post messages
+  useEffect(() => { handleWsMessages(message) }, [message]); //catch and handle ws post messages
 
 
   return (
@@ -126,8 +143,8 @@ const GroupPage = () => {
           group && groupUsers.length > 0
           &&
           <Container className='px-4'>
-            <ContentSectionHeader text={group.name} />
-            <ContentSectionDescription text='Discuss within your group, share trip details, plans and images, ' className='mb-20'/>
+            <ContentSectionHeader text={group.name.toUpperCase()} />
+            <ContentSectionDescription text='Discuss in privacy of your group.' className='mb-20'/>
           </Container>
         }
         <Container className='px-4 max-w-[500px]'>
