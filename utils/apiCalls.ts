@@ -1,4 +1,3 @@
-import { headers } from "next/headers";
 import { getIdToken} from "./cognito";
 
 
