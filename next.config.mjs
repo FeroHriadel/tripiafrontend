@@ -5,6 +5,7 @@ dotenv.config();
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  reactStrictMode: false,
   publicRuntimeConfig: {
     imagesBucket: process.env.NEXT_PUBLIC_IMAGES_BUCKET,
   },

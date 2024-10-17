@@ -12,8 +12,8 @@ import { getIdToken } from "@/utils/cognito";
 
  - messages ui expects:
     {action: 'posts', posts: {id: string, postedBy: string, body: string, images: string[], groupId: string, createdAt: string}[] }
-    {action: 'postCreated', post: {id: string, postedBy: string, body: string, images: string[], groupId: string, createdAt: string}
-    {action: 'postDeleted', postId: string
+    {action: 'postCreate', post: {id: string, postedBy: string, body: string, images: string[], groupId: string, createdAt: string}
+    {action: 'postDelete', postId: string
 **************************************************************************************************************************************/
 
 
@@ -55,12 +55,20 @@ export const WSContextProvider: React.FC<WSContextProviderProps> = ({
   const [message, setMessage] = useState<{ [key: string]: any }>({});
   const { showToast } = useToast();
 
+  
+  function queueMessage(message: { action: string; data: any }) { messageQueue.current.push(message); }
 
   function sendQueuedMessages() {
-    while (messageQueue.current.length > 0) { 
-      const msg = messageQueue.current.shift();
-      if (msg) { sendMessageImmediately(msg); }
+    while (messageQueue.current.length > 0) {
+      const queuedMessage = messageQueue.current.shift();
+      ws.current?.send(JSON.stringify(queuedMessage));
     }
+  }
+
+  function clearWS() {
+    if (ws.current) ws.current.close();
+    setIsConnected(false);
+    ws.current = null;
   }
 
   async function connect(groupId: string) {
@@ -70,23 +78,19 @@ export const WSContextProvider: React.FC<WSContextProviderProps> = ({
     ws.current = new WebSocket(`${wsEndpoint}?groupId=${groupId}&token=${idToken}`);
     
     ws.current.onopen = () => {
-      console.log("WebSocket connected");
-      console.log(`Current WebSocket state: ${ws.current?.readyState}`);
       setIsConnected(true);
       sendQueuedMessages();
     };
 
     ws.current.onclose = () => {
       console.log("WebSocket disconnected");
-      setIsConnected(false);
-      ws.current = null;
+      clearWS()
     };
 
     ws.current.onerror = (err) => {
       console.error("WebSocket error:", err);
       showToast("Failed to connect to the Group");
-      setIsConnected(false);
-      ws.current = null;
+      clearWS();
     };
 
     ws.current.onmessage = (msg) => {
@@ -96,10 +100,7 @@ export const WSContextProvider: React.FC<WSContextProviderProps> = ({
 
   function disconnect() {
     if (!ws.current) return console.log("WS already disconnected");
-    ws.current.close();
-    ws.current = null;
-    console.log("WS disconnected");
-    setIsConnected(false);
+    clearWS();
   }
 
   function handleIncomingMessage(msg: MessageEvent) {
@@ -107,18 +108,8 @@ export const WSContextProvider: React.FC<WSContextProviderProps> = ({
   }
 
   function sendMessage(props: { action: string; data: any }) {
-    if (!isConnected) {
-      messageQueue.current.push(props);
-    } 
-    else {
-      if (ws.current?.readyState === WebSocket.OPEN) sendMessageImmediately(props)
-      else messageQueue.current.push(props);
-    }
-  }
-
-  function sendMessageImmediately(props: { action: string; data: any }) {
-    if (ws.current && ws.current.readyState === WebSocket.OPEN) ws.current.send(JSON.stringify(props));
-    else showToast("Failed to send message - WS not connected yet");	
+    if (ws.current && ws.current.readyState === WebSocket.OPEN) { ws.current.send(JSON.stringify(props)); } 
+    else { messageQueue.current.push(props); }
   }
 
 

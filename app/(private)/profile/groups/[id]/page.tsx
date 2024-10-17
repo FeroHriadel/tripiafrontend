@@ -124,7 +124,7 @@ const GroupPage = () => {
 
   useEffect(() => { if (group) getUsers(); }, [group]); //get group users
 
-  useEffect(() => { if (id && isConnected) getPosts(); }, [id, isConnected]); //request group posts on page load
+  useEffect(() => { setPosts([]); if (id && isConnected) getPosts(); }, [id, isConnected]); //request group posts on page load
 
   useEffect(() => { handleWsMessages(message) }, [message]); //catch and handle ws post messages
 
@@ -151,8 +151,9 @@ const GroupPage = () => {
           </Container>
         }
         <Container className='px-4 max-w-[500px]'>
-          {group?.id && <InputPost onChange={onChange} onSubmit={onSubmit} loading={loading} post={post} previews={previews} />}
-          {posts.map((post) => (<PostCard key={post.id} post={post} userProfile={emailUserPairs[post.postedBy]} />))}
+          {!isConnected && <div className='text-center'>Connecting...</div>}
+          {isConnected && <InputPost onChange={onChange} onSubmit={onSubmit} loading={loading} post={post} previews={previews} />}
+          {isConnected && posts.map((post) => (<PostCard key={post.id} post={post} userProfile={emailUserPairs[post.postedBy]} />))}
         </Container>
       </ContentSection>
 
