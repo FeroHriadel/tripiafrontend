@@ -17,6 +17,7 @@ import { apiCalls } from '@/utils/apiCalls';
 import { scrollToElement } from '@/utils/DOM';
 import PostCard from '@/components/PostCard';
 import InputPost from '@/components/InputPost';
+import { uploadImages } from '@/utils/imageUpload';
 
 
 export const dynamic = 'force-dynamic';
@@ -26,7 +27,6 @@ export const dynamic = 'force-dynamic';
 interface PostInput {
   body: string;
   groupId: string;
-  postedBy: string;
   images?: string[];
 }
 
@@ -57,6 +57,16 @@ const GroupPage = () => {
 
 
   function getPosts() { sendMessage({action: 'postGet', groupId: id}); }
+
+  async function uploadImgsToS3() {
+    if (previews.length > 0) {
+      const input: {base64: string, fileName: string, idToken: string | null}[] = [];
+      previews.forEach((preview, i) => input.push({base64: preview, fileName: imageFileNames[i], idToken: user.idToken}));
+      const res = await uploadImages(input, user.idToken);
+      if (res.error) { showToast('Failed to upload images. Saving post text only'); return [] }
+      else return res.objectUrls;
+    } else return []
+  }
 
   function createPost(postInput: PostInput) { sendMessage({action: 'postCreate', post: postInput}); }
 
@@ -104,9 +114,12 @@ const GroupPage = () => {
     if (event.name === 'previews') { setPreviews(event.value.previews); setImagesFileNames(event.value.fileNames); }
   }
 
-  function onSubmit() {
+  async function onSubmit() {
     handlePreSubmit();
-    createPost({postedBy: user.email, body: post, groupId: id, images: []});
+    const postInput: PostInput = {body: post, groupId: id, images: []};
+    const imageUrls = await uploadImgsToS3();
+    postInput.images = imageUrls;
+    createPost(postInput);
   }
 
   function handlePreSubmit() {
