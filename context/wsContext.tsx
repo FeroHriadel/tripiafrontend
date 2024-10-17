@@ -2,6 +2,8 @@ import { createContext, useContext, useState, useRef } from "react";
 import { useToast } from "./toastContext";
 import { getIdToken } from "@/utils/cognito";
 
+
+
 /*************************************************************************************************************************************
  - messages wsApi expects:
     {action: 'postGet', groupId: string}
@@ -13,6 +15,8 @@ import { getIdToken } from "@/utils/cognito";
     {action: 'postCreated', post: {id: string, postedBy: string, body: string, images: string[], groupId: string, createdAt: string}
     {action: 'postDeleted', postId: string
 **************************************************************************************************************************************/
+
+
 
 interface WSContextState {
   isConnected: boolean;
@@ -26,6 +30,8 @@ interface WSContextProviderProps {
   children: React.ReactNode;
 }
 
+
+
 const wsEndpoint = process.env.NEXT_PUBLIC_WS_ENDPOINT!;
 
 const WSContext = createContext<WSContextState>({
@@ -35,6 +41,8 @@ const WSContext = createContext<WSContextState>({
   sendMessage: (props) => {},
   message: {},
 });
+
+
 
 export const WSContextProvider: React.FC<WSContextProviderProps> = ({
   children,

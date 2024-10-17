@@ -19,6 +19,9 @@ import PostCard from '@/components/PostCard';
 import InputPost from '@/components/InputPost';
 
 
+export const dynamic = 'force-dynamic';
+
+
 
 interface PostInput {
   body: string;

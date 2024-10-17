@@ -18,6 +18,7 @@
 - protect mapbox key
 - deploy
 - domain
+- include force-dynamic in 'use-client' pages
 
 - testing
 - tips section
