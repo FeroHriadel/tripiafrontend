@@ -8,15 +8,23 @@ import { Post, UserProfile } from '../types';
 import { formatUTCToDateAndHour } from '@/utils/dates';
 import { FaDownload } from 'react-icons/fa6';
 import { useToast } from '@/context/toastContext';
+import { useWS } from '@/context/wsContext';
+
+
 
 interface Props {
   post: Post;
   userProfile: UserProfile;
+  deletePost: (id: string) => void;
 }
 
-const PostCard = ({ post, userProfile }: Props) => {
+const PostCard = ({ post, userProfile, deletePost }: Props) => {
   const { user } = useAuth();
   const { showToast } = useToast();
+  const { sendMessage, isConnected, connect } = useWS();
+
+
+  function handleDelete() { deletePost(post.id); }
 
   function downloadImage(image: string) {
     fetch(image)
@@ -128,10 +136,11 @@ const PostCard = ({ post, userProfile }: Props) => {
     }
   }
 
+  
   return (
     <section className='w-[100%] relative bg-gradient-to-r from-[#f0f0f0] to-white p-4 mb-4 shadow-md rounded-xl' id={post.id}>
       {/* delete post btn */}
-      {(user?.email === post.postedBy || user.isAdmin) && <p className='absolute top-4 right-2 cursor-pointer'> <FaTrashAlt /> </p>}
+      {(user?.email === post.postedBy || user.isAdmin) && <p onClick={handleDelete} className='absolute top-4 right-2 cursor-pointer'> <FaTrashAlt /> </p>}
 
       {/* profile image, postedBy & date */}
       {userProfile && (

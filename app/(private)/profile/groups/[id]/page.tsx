@@ -58,17 +58,9 @@ const GroupPage = () => {
 
   function getPosts() { sendMessage({action: 'postGet', groupId: id}); }
 
-  async function uploadImgsToS3() {
-    if (previews.length > 0) {
-      const input: {base64: string, fileName: string, idToken: string | null}[] = [];
-      previews.forEach((preview, i) => input.push({base64: preview, fileName: imageFileNames[i], idToken: user.idToken}));
-      const res = await uploadImages(input, user.idToken);
-      if (res.error) { showToast('Failed to upload images. Saving post text only'); return [] }
-      else return res.objectUrls;
-    } else return []
-  }
-
   function createPost(postInput: PostInput) { sendMessage({action: 'postCreate', post: postInput}); }
+
+  function deletePost(postId: string) { setLoading(true); sendMessage({action: 'postDelete', postId, groupId: id}); }
 
   async function getGroup() {
     const res = await apiCalls.get(`/groups?id=${id}`);
@@ -83,13 +75,17 @@ const GroupPage = () => {
   }
 
   function handleWsMessages(message: any) {
-    if (message?.action === 'posts') {
+    if (message?.action === 'postGet') {
       if (message.error) { console.log(message.error); return showToast('Failed to get posts'); }
       else setPosts(message.posts);
     }
-    if (message?.action === 'postCreate') {
+    else if (message?.action === 'postCreate') {
       if (message.error) handlePostFail(message.error); 
       else handlePostSuccess(message.post); 
+    }
+    else if (message.action === 'postDelete') {
+      if (message.error) handleDeleteFail();
+      else handleDeleteSuccess(message.id);
     }
   }
 
@@ -97,6 +93,11 @@ const GroupPage = () => {
     console.log(error);
     setLoading(false);
     showToast('Failed to save post');
+  }
+
+  function handleDeleteFail() {
+    setLoading(false);
+    showToast('Failed to delete post');
   }
 
   function handlePostSuccess(post: Post) {
@@ -107,6 +108,12 @@ const GroupPage = () => {
     setImagesFileNames([]);
     showToast('Posted');
     setTimeout(() => { scrollToElement(post.id) }, 100);
+  }
+
+  function handleDeleteSuccess(postId: string) {
+    setPosts(prev => [...prev].filter(post => post.id !== postId));
+    setLoading(false);
+    showToast('Post deleted');
   }
 
   function onChange(event: {name: string, value: any}) {
@@ -125,6 +132,16 @@ const GroupPage = () => {
   function handlePreSubmit() {
     if ((!post && previews.length === 0) || (post === hint)) return showToast('Please enter a post');
     setLoading(true);
+  }
+
+  async function uploadImgsToS3() {
+    if (previews.length > 0) {
+      const input: {base64: string, fileName: string, idToken: string | null}[] = [];
+      previews.forEach((preview, i) => input.push({base64: preview, fileName: imageFileNames[i], idToken: user.idToken}));
+      const res = await uploadImages(input, user.idToken);
+      if (res.error) { showToast('Failed to upload images. Saving post text only'); return [] }
+      else return res.objectUrls;
+    } else return []
   }
 
 
@@ -166,7 +183,7 @@ const GroupPage = () => {
         <Container className='px-4 max-w-[500px]'>
           {!isConnected && <div className='text-center'>Connecting...</div>}
           {isConnected && <InputPost onChange={onChange} onSubmit={onSubmit} loading={loading} post={post} previews={previews} />}
-          {isConnected && posts.map((post) => (<PostCard key={post.id} post={post} userProfile={emailUserPairs[post.postedBy]} />))}
+          {isConnected && posts.map((post) => (<PostCard key={post.id} post={post} userProfile={emailUserPairs[post.postedBy]} deletePost={deletePost} />))}
         </Container>
       </ContentSection>
 
