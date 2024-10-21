@@ -18,6 +18,8 @@ import { scrollToElement } from '@/utils/DOM';
 import PostCard from '@/components/PostCard';
 import InputPost from '@/components/InputPost';
 import { uploadImages } from '@/utils/imageUpload';
+import { BsPersonPlusFill } from "react-icons/bs";
+import Link from 'next/link';
 
 
 export const dynamic = 'force-dynamic';
@@ -48,8 +50,8 @@ const GroupPage = () => {
   const [loading, setLoading] = useState(false);
   const [post, setPost] = useState('');
   const [previews, setPreviews] = useState([]);
-  const [imageFileNames, setImagesFileNames] = useState([])
-  const emailUserPairs = groupUsers.length //{email: UserProfile};
+  const [imageFileNames, setImagesFileNames] = useState([]);
+  const emailUserPairs = groupUsers.length //{email: UserProfile}
     ?
     groupUsers.reduce((acc: {[key: string]: UserProfile}, user: UserProfile) => { acc[user.email] = user; return acc;}, {})  
     : 
@@ -145,6 +147,7 @@ const GroupPage = () => {
   }
 
 
+  
   useEffect(() => { //connect/disconnect to ws when user comes to/leaves the page
     if (id && !isConnected) { connect(id as string); }
     return () => { if (isConnected) { disconnect(); } };
@@ -186,6 +189,19 @@ const GroupPage = () => {
           {isConnected && posts.map((post) => (<PostCard key={post.id} post={post} userProfile={emailUserPairs[post.postedBy]} deletePost={deletePost} />))}
         </Container>
       </ContentSection>
+
+      {
+        ((user?.isAdmin) || (group?.createdBy === user?.email))
+        &&
+        <Link href={`/profile/groups/${id}/members`}>
+          <div 
+            className='fixed bottom-4 right-4 w-[50px] h-[50px] z-10 rounded-full flex justify-center items-center cursor-pointer bg-textorange shadow-md'
+            title='Invite people to Group'
+          >
+            <p className='text-white text-xl'> <BsPersonPlusFill /> </p>
+          </div>
+        </Link>
+      }
 
       <GradientFlexi />
     </>

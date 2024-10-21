@@ -83,7 +83,6 @@ export const WSContextProvider: React.FC<WSContextProviderProps> = ({
     };
 
     ws.current.onclose = () => {
-      console.log("WebSocket disconnected");
       clearWS()
     };
 
@@ -99,7 +98,6 @@ export const WSContextProvider: React.FC<WSContextProviderProps> = ({
   }
 
   function disconnect() {
-    if (!ws.current) return console.log("WS already disconnected");
     clearWS();
   }
 

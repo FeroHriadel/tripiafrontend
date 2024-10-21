@@ -11,7 +11,7 @@
 - redo the toast
 - redo confirm dialog
 - make font-size smaller on sm screens: all inputs
-- select : popping up/down & tabindex
+- select & InputUserSearch : popping up/down & tabindex
 - remove img from homepage
 - favicon 
 - SEO
