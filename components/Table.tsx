@@ -26,8 +26,8 @@ export const TableHeader = ({ headerText, headerContent }: TableHeaderProps) => 
   )
 }
 
-export const TableLine = ({ children }: {children: React.ReactNode}) => {
+export const TableLine = ({ children, style = {} }: {children: React.ReactNode, style?: React.CSSProperties}) => {
   return (
-    <div className='table-line'>{children}</div>
+    <div className='table-line' style={style}>{children}</div>
   )
 }

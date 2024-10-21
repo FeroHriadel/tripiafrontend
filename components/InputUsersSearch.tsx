@@ -47,18 +47,18 @@ const InputUsersSearch = ({ className, id, style, onUserSelected }: Props) => {
 
   return (
     <section className={'w-[100%] relative ' + className} id={id} style={style}>
-      {/* loader */}
-      {loading && <p className='absolute right-2 top-1/2 text-sm text-black -translate-y-1/2' style={{zIndex: '1'}}>Loading...</p>}
-
       {/* search input */}
-      <InputText labelText='search users' inputName='searchValue' value={searchValue} onChange={onChange} />
+      <InputText labelText={searchValue ? 'search users' : 'Enter first 2 letters'} inputName='searchValue' value={searchValue} onChange={onChange} />
+
+      {/* loader */}
+      {loading && <p className='text-center text-xs mt-2'>Loading...</p>}
 
       {/* search results */}
       {
         (searchResults.length > 0 && searchValue.length > 1)
         &&
         <div 
-          className='max-h-[10rem] w-[100%] absolute -top-11rem overflow-y-auto rounded flex flex-col my-4' style={{zIndex: '5'}}>
+          className='max-h-[10rem] w-[100%] overflow-y-auto rounded flex flex-col my-4' style={{zIndex: '5'}}>
           {
             searchResults.map((userProfile) => (
               <div 
@@ -71,7 +71,7 @@ const InputUsersSearch = ({ className, id, style, onUserSelected }: Props) => {
                   ?
                   <div className='w-[25px] h-[25px] rounded-full mx-2 my-1' style={{background: `url(${userProfile.profilePicture}) no-repeat center center/cover`}} />
                   :
-                  <div className='w-[25px] h-[25px] rounded-full mx-2 my-1' style={{background: `url(/images/user.png) no-repeat center center/cover`}} />
+                  <div className='w-[25px] h-[25px] rounded-full mx-2 my-1' style={{background: `url(images/user.png) no-repeat center center/cover`}} />
                 }
                 <p>{userProfile.nickname}</p>
               </div>
