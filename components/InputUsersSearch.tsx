@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import InputText from './InputText';
 import { UserProfile } from '@/types';
 import { apiCalls } from '@/utils/apiCalls';
+import { useAuth } from '@/context/authContext';
 
 
 
@@ -20,6 +21,7 @@ const InputUsersSearch = ({ className, id, style, onUserSelected }: Props) => {
   const [searchValue, setSearchValue] = useState('');
   const [searchResults, setSearchResults] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
 
 
   function onChange(e: React.ChangeEvent<HTMLInputElement>) { setSearchValue(e.target.value); }
@@ -60,22 +62,25 @@ const InputUsersSearch = ({ className, id, style, onUserSelected }: Props) => {
         <div 
           className='max-h-[10rem] w-[100%] overflow-y-auto rounded flex flex-col my-4' style={{zIndex: '5'}}>
           {
-            searchResults.map((userProfile) => (
-              <div 
-                className='w-[100%] text-xl text-darkgray bg-white hover:bg-lightgray cursor-pointer flex'
-                key={userProfile.email}
-                onClick={() => onUserSelected(userProfile)}
-              >
-                {
-                  userProfile.profilePicture
-                  ?
-                  <div className='w-[25px] h-[25px] rounded-full mx-2 my-1' style={{background: `url(${userProfile.profilePicture}) no-repeat center center/cover`}} />
-                  :
-                  <div className='w-[25px] h-[25px] rounded-full mx-2 my-1' style={{background: `url(images/user.png) no-repeat center center/cover`}} />
-                }
-                <p>{userProfile.nickname}</p>
-              </div>
-            ))
+            searchResults.map((userProfile) => {
+              if (userProfile.email === user.email) return <div key='cannotChooseYourself'></div>
+              return (
+                <div 
+                  className='w-[100%] text-xl text-darkgray bg-white hover:bg-lightgray cursor-pointer flex'
+                  key={userProfile.email}
+                  onClick={() => onUserSelected(userProfile)}
+                >
+                  {
+                    userProfile.profilePicture
+                    ?
+                    <div className='w-[25px] h-[25px] rounded-full mx-2 my-1' style={{background: `url(${userProfile.profilePicture}) no-repeat center center/cover`}} />
+                    :
+                    <div className='w-[25px] h-[25px] rounded-full mx-2 my-1' style={{background: `url(images/user.png) no-repeat center center/cover`}} />
+                  }
+                  <p>{userProfile.nickname}</p>
+                </div>
+              )
+            })
           }
         </div>
       }
