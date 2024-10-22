@@ -34,7 +34,7 @@ const GroupCard = ({ className, style, id, group, onDelete, onUpdate }: Props) =
 
   function joinUserNamesWithCommas() {
     const userNames = [...users].map(u => u.nickname);
-    return userNames;
+    return userNames.join(', ');
   }
   
   async function getUserNames() {

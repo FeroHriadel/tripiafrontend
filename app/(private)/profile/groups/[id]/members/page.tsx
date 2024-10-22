@@ -59,9 +59,9 @@ const GroupMembersPage = () => {
   async function deleteUser() {
     closeConfirm();
     showToast('Removing user from group...');
-    const res = await apiCalls.del(`/users/`);
-    if (res.error) return handleError(res.error)
-    else return handleSuccess();
+    ////////////////////////////////////////////////////////TO DO!!! remove user apiCall
+    // if (res.error) return handleError(res.error)
+    // else return handleSuccess();
   }
 
   function handleError(text: string) {

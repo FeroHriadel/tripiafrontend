@@ -1,12 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
 import categoriesSlice from "./slices/categoriesSlice";
 import favoriteTripsSlice from "./slices/favoriteTripsSlice";
+import invitationsSlice  from "./slices/invitationsSlice";
 import { useDispatch, useSelector, useStore } from "react-redux";
 
 export const makeStore = () => {
     return configureStore({reducer: {
         categories: categoriesSlice, 
         favoriteTrips: favoriteTripsSlice,
+        invitations: invitationsSlice
     }})
 }
 

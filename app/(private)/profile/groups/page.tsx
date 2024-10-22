@@ -15,7 +15,9 @@ import Modal from '@/components/Modal';
 import { useToast } from '@/context/toastContext';
 import { useAuth } from '@/context/authContext';
 import { apiCalls } from '@/utils/apiCalls';
+import { useAppSelector } from '@/redux/store';
 import { Group } from '@/types';
+import InvitationCard from '@/components/InvitationCard';
 
 
 
@@ -26,6 +28,7 @@ const GroupsPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const { showToast } = useToast();
   const { user } = useAuth();
+  const invitations = useAppSelector(state => state.invitations);
   
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) { setGroupName(e.target.value); }
@@ -109,6 +112,11 @@ const GroupsPage = () => {
     else handleUpdateSuccess({groupId: groupId, name});
   }
 
+  function onGroupJoin(joinedGroup: Group) {
+    const newGroups = [...groups, joinedGroup];
+    setGroups(sortGroupsAlphabetically(newGroups));
+  }
+
   function renderModalContent() {
     return (
       <div className='w-[100%]'>
@@ -142,8 +150,21 @@ const GroupsPage = () => {
           <ContentSectionDescription text='Groups you created or have joined' className='mb-20'/>
         </Container>
         <Container className='px-4 max-w-[500px]'>
-          {groups.map((group) => <GroupCard key={group.id} group={group} style={{marginBottom: '1rem'}} onDelete={deleteGroup} onUpdate={updateGroup} />)}
+          {
+            /* groups */
+            groups.map((group) => <GroupCard key={group.id} group={group} style={{marginBottom: '1rem'}} onDelete={deleteGroup} onUpdate={updateGroup} />)
+          }
           <ContentSectionButton text='Add New' onClick={openModal} className='mt-4' />
+          {
+            /* invitaions */
+            invitations.length > 0 
+            &&
+            <div className='w-[100%] mb-4 mt-20' id='invitations'>
+              <ContentSectionHeader text='Invitations' style={{lineHeight: '2rem', fontSize: '1.5rem'}} />
+              <ContentSectionDescription text='You have been invited to:' className='text-xl xs:text-xl md:text-xl mb-4'/>
+              {invitations.map((invitation) => <InvitationCard key={invitation.id} invitation={invitation} onAccept={onGroupJoin} className='mb-2'/>)}
+            </div>
+          }
         </Container>
       </ContentSection>
 

@@ -70,3 +70,14 @@ export interface Post {
   groupId: string;
   createdAt: string;
 }
+
+export interface Invitation {
+  id: string;
+  groupId: string;
+  groupName: string;
+  invitedByEmail: string;
+  invitedByNickname: string;
+  invitedByImage?: string;
+  invitee: string;
+  createdAt: string;
+}
