@@ -42,6 +42,7 @@ export interface UserProfile {
   profilePicture: string;
   about: string;
   email: string;
+  groups: string[];
 }
 
 export interface Comment {

@@ -62,7 +62,7 @@ const FavoriteTripsPage = () => {
   }
 
 
-  useEffect(() => { 
+  useEffect(() => { //get favoriteTrips
     if (favoriteTrips.length) getFavoriteTrips(); 
     else { setLoading(false); setTrips([])}
   }, [favoriteTrips]);

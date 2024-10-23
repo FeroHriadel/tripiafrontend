@@ -17,7 +17,10 @@ import { useToast } from '@/context/toastContext';
 import { useAuth } from '@/context/authContext';
 import { apiCalls } from '@/utils/apiCalls';
 import { loadImage, uploadImage, resizeImage } from '@/utils/imageUpload';
+import { useAppDispatch, useAppSelector } from '@/redux/store';
+import { setProfile } from '@/redux/slices/profileSlice';
 import Link from 'next/link';
+import { UserProfile } from '@/types';
 
 
 
@@ -30,7 +33,8 @@ const profilePictureMaxSize = 300;
 
 
 const ProfilePage = () => {
-  const [values, setValues] = useState({nickname: '', profilePicture: '', about: '', email: ''});
+  const [values, setValues] = useState<UserProfile>({nickname: '', profilePicture: '', about: '', email: '', groups: []});
+  const { nickname, profilePicture, about, email, groups } = values;
   const [loading, setLoading] = useState(true);
   const [imageSize, setImageSize] = useState(0);
   const [preview, setPreview] = useState<string | null>(null);
@@ -38,7 +42,8 @@ const ProfilePage = () => {
   const contentContainerRef = useRef<HTMLDivElement | null>(null);
   const { showToast } = useToast();
   const { user, logout } = useAuth();
-  const { nickname, profilePicture, about, email } = values;
+  const dispatch = useAppDispatch();
+  const profile = useAppSelector(state => state.profile);
 
   
   function handleChange(e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) {
@@ -59,6 +64,7 @@ const ProfilePage = () => {
   }
 
   async function fetchUser() {
+    if (profile.email) { setValues({...profile}); setLoading(false); return };
     setLoading(true);
     const res = await apiCalls.post('/users', {email: user.email});
     if (res.error) { showToast('Failed to get your data.'); return setLoading(false); }
@@ -68,7 +74,7 @@ const ProfilePage = () => {
 
   async function saveUserData(imageUrl?: string) {
     setValues({...values, profilePicture: imageUrl || ''});
-    const body = {email, nickname, about, profilePicture: imageUrl || ''};
+    const body = {email, nickname, about, profilePicture: imageUrl || '', groups};
     const res = await apiCalls.put('/users', body);
     return res;
   }
@@ -83,7 +89,8 @@ const ProfilePage = () => {
     setLoading(false);
   }
 
-  function handleSaveSuccess() {
+  function handleSaveSuccess(newProfile: UserProfile) {
+    dispatch(setProfile(newProfile));
     showToast('Your data has been saved');
     setPreview(null);
     setFileName(null);
@@ -95,13 +102,14 @@ const ProfilePage = () => {
     if (!isFormOk()) return;
     setLoading(true);
     showToast('Saving your data...');
+    let saveRes: any;
     if (preview && fileName) {
       const uploadedImg = await uploadImage(fileName, preview, user.idToken); if (!uploadedImg.imageUrl) return handleSaveError(uploadedImg.error);
-      const saveRes = await saveUserData(uploadedImg.imageUrl); if (saveRes.err) return handleSaveError('Saving your data failed');
+      saveRes = await saveUserData(uploadedImg.imageUrl); if (saveRes.err) return handleSaveError('Saving your data failed');
     } else {
-      const saveRes = await saveUserData(); if (saveRes.err) return handleSaveError('Saving your data failed');
+      saveRes = await saveUserData(); if (saveRes.err) return handleSaveError('Saving your data failed');
     }
-    handleSaveSuccess();
+    handleSaveSuccess(saveRes);
   }
 
 

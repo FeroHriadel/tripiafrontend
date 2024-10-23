@@ -15,9 +15,11 @@ import Modal from '@/components/Modal';
 import { useToast } from '@/context/toastContext';
 import { useAuth } from '@/context/authContext';
 import { apiCalls } from '@/utils/apiCalls';
-import { useAppSelector } from '@/redux/store';
+import { useAppSelector, useAppDispatch } from '@/redux/store';
+import { setProfile } from '@/redux/slices/profileSlice';
 import { Group } from '@/types';
 import InvitationCard from '@/components/InvitationCard';
+
 
 
 
@@ -26,10 +28,20 @@ const GroupsPage = () => {
   const [groupName, setGroupName] = useState('');
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
+  const [groupsLoaded, setGroupsLoaded] = useState(false);
   const { showToast } = useToast();
   const { user } = useAuth();
   const invitations = useAppSelector(state => state.invitations);
+  const profile = useAppSelector(state => state.profile);
+  const dispatch = useAppDispatch();
   
+
+  async function loadProfile() {
+    if (profile.email) return
+    const res = await apiCalls.post('/users', {email: user.email});
+    if (res.error) showToast('Failed to load your data');
+    else dispatch(setProfile(res));
+  };
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) { setGroupName(e.target.value); }
 
@@ -67,6 +79,7 @@ const GroupsPage = () => {
     setLoading(false);
     showToast('Group created successfully');
     setGroups(sortGroupsAlphabetically([...groups, res]));
+    dispatch(setProfile({ ...profile, groups: [...profile.groups, res.id] }));
     closeModal();
   }
 
@@ -78,9 +91,14 @@ const GroupsPage = () => {
   }
 
   async function getGroups() {
-    const res = await apiCalls.get(`/groups`);
+    if (profile.groups.length === 0) return setLoading(false);
+    const res = await apiCalls.post(`/groupsbatchget`, {ids: profile.groups});
     if (res.error) return handleFail('Failed to get groups')
-    else { setGroups(sortGroupsAlphabetically(res)); setLoading(false); };
+    else { 
+      setLoading(false);
+      setGroupsLoaded(true);
+      setGroups(sortGroupsAlphabetically(res)); setLoading(false);
+    };
   }
 
   function handleDeleteSuccess(groupId: string) {
@@ -88,6 +106,7 @@ const GroupsPage = () => {
     showToast('Group deleted');
     const newGroups = groups.filter((group) => group.id !== groupId);
     setGroups(newGroups);
+    dispatch(setProfile({ ...profile, groups: profile.groups.filter((id) => id !== groupId) }));
   }
 
   async function deleteGroup(id: string) {
@@ -115,6 +134,7 @@ const GroupsPage = () => {
   function onGroupJoin(joinedGroup: Group) {
     const newGroups = [...groups, joinedGroup];
     setGroups(sortGroupsAlphabetically(newGroups));
+    dispatch(setProfile({ ...profile, groups: [...profile.groups, joinedGroup.id] }));
   }
 
   function renderModalContent() {
@@ -129,7 +149,14 @@ const GroupsPage = () => {
   }
 
 
-  useEffect(() => { if (user.email) getGroups();  }, [user.email]); //get user's groups
+  useEffect(() => { if (user.email) loadProfile(); }, [user.email]); //load user's profile if not preloaded for some reason
+
+  useEffect(() => { //get user's groups
+    if (user.email && !groupsLoaded) { 
+      getGroups();
+    } 
+  }, [profile.groups, user.email, groupsLoaded]);
+
 
 
   return (

@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { setCategories } from "@/redux/slices/categoriesSlice";
 import { setFavoriteTrips } from "@/redux/slices/favoriteTripsSlice";
 import { setInvitations } from "@/redux/slices/invitationsSlice";
+import { setProfile } from "@/redux/slices/profileSlice";
 import { useAuth } from "@/context/authContext";
 
 
@@ -19,7 +20,6 @@ const checkInvitesInterval = 300000; //5min
 
 const AppPreloader = () => {
   const { user } = useAuth(); const { email } = user;
-  const categories = useAppSelector((state) => state.categories);
   const invitations = useAppSelector((state) => state.invitations);
   const dispatch = useAppDispatch();
   
@@ -43,6 +43,12 @@ const AppPreloader = () => {
     dispatch(setInvitations(res));
   };
 
+  async function preloadProfile() {
+    const res = await apiCalls.post('/users', {email: user.email});
+    if (res.error) return console.log(res.error);
+    else dispatch(setProfile(res));
+  };
+
 
   useEffect(() => {preloadCategories();}, []); //get categories
 
@@ -55,6 +61,8 @@ const AppPreloader = () => {
     }, checkInvitesInterval);
     return () => clearInterval(interval);
   }, [email, invitations]);
+
+  useEffect(() => {if (user.email) preloadProfile();}, [user]); //get user's profile
 
 
 
