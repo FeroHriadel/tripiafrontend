@@ -132,6 +132,12 @@ const GroupsPage = () => {
   }
 
   function onGroupJoin(joinedGroup: Group) {
+    /*********************************************************************************************************************************************
+      - function split for brevity resons:
+      - <InvitationCard />.onAccept() sends api request which: updates Group.members and User.groups & removes invitation from redux invitations
+      - this fn rerenders group (adds the accepted one) and adds the group to profile.groups in redux
+      - Please update comments in both fns if you change the functionality!
+    **********************************************************************************************************************************************/
     const newGroups = [...groups, joinedGroup];
     setGroups(sortGroupsAlphabetically(newGroups));
     dispatch(setProfile({ ...profile, groups: [...profile.groups, joinedGroup.id] }));

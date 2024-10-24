@@ -24,6 +24,12 @@ const InvitationCard = ({ className, style, id, invitation, onAccept }: Props) =
   const dispatch = useAppDispatch();
 
   async function accept() {
+    /***************************************************************************************************************************
+      - function split for brevity resons:
+      - this fn makes api call that adds group to Group.members and to User.groups, and removes invite from invitations in redux
+      - parent.onGroupJoin() rerenders groups (adds group to list) and adds adds group to profile.groups in redux
+      - Please update comments in both fns if you change the functionality!
+    ****************************************************************************************************************************/
     const res = await apiCalls.put(`/groups/${invitation.groupId}`, {invitationId: invitation.id});
     if (res.error) return showToast('Failed to accept invitation');
     showToast('Invitation accepted');
