@@ -56,12 +56,13 @@ const GroupMembersPage = () => {
     setConfirmOpen(false);
   }
 
-  async function deleteUser() {
+  async function removeUser() {
     closeConfirm();
+    if (userToDelete?.email === user.email) return showToast('Cannot remove yourself. You may delete the group, though.');
     showToast('Removing user from group...');
-    ////////////////////////////////////////////////////////TO DO!!! remove user apiCall
-    // if (res.error) return handleError(res.error)
-    // else return handleSuccess();
+    const res = await apiCalls.put(`/groups/${groupId}`, {email: userToDelete?.email});
+    if (res.error) return handleError(res.error);
+    else return handleSuccess();
   }
 
   function handleError(text: string) {
@@ -132,7 +133,7 @@ const GroupMembersPage = () => {
 
       <GradientFlexi />
       
-      <ConfirmDialog open={confirmOpen} onClose={closeConfirm} onConfirm={deleteUser} text={`Do you want to remove user '${userToDelete?.nickname}'?`} />
+      <ConfirmDialog open={confirmOpen} onClose={closeConfirm} onConfirm={removeUser} text={`Do you want to remove user '${userToDelete?.nickname}'?`} />
     </>
   )
 }
