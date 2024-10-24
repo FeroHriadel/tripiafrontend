@@ -19,6 +19,7 @@ import { useAppSelector, useAppDispatch } from '@/redux/store';
 import { setProfile } from '@/redux/slices/profileSlice';
 import { Group } from '@/types';
 import InvitationCard from '@/components/InvitationCard';
+import { setInvitations } from '@/redux/slices/invitationsSlice';
 
 
 
@@ -41,6 +42,14 @@ const GroupsPage = () => {
     const res = await apiCalls.post('/users', {email: user.email});
     if (res.error) showToast('Failed to load your data');
     else dispatch(setProfile(res));
+  };
+
+  async function loadInvitations() {
+    if (!user.email) return;
+    const res = await apiCalls.get(`/invitations`); 
+    if (res.error) console.log('Failed to get invitations: ', res.error);
+    if (JSON.stringify(res) === JSON.stringify(invitations)) return;
+    dispatch(setInvitations(res));
   };
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) { setGroupName(e.target.value); }
@@ -156,6 +165,8 @@ const GroupsPage = () => {
 
 
   useEffect(() => { if (user.email) loadProfile(); }, [user.email]); //load user's profile if not preloaded for some reason
+
+  useEffect(() => { if (user.email) loadInvitations(); }, [user.email]); //get fresh invitations 
 
   useEffect(() => { //get user's groups
     if (user.email && !groupsLoaded) { 

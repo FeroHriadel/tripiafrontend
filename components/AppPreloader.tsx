@@ -88,13 +88,7 @@ const AppPreloader = () => {
 
   useEffect(() => {if (email) preloadFavoriteTrips()}, [email]); //get favorite trips
 
-  useEffect(() => { //get invitations periodically
-    if (email) preloadInvitations();
-    const interval = setInterval(() => {
-      if (email) preloadInvitations();
-    }, checkInvitesInterval);
-    return () => clearInterval(interval);
-  }, [email, invitations]);
+  useEffect(() => { if (email) preloadInvitations(); }, [email]); //get invitations periodically
 
   useEffect(() => {if (user.email) preloadProfile();}, [user]); //get user's profile
 
