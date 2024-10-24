@@ -140,6 +140,14 @@ const GroupsPage = () => {
     else handleUpdateSuccess({groupId: groupId, name});
   }
 
+  async function leaveGroup(groupId: string) {
+    setLoading(true);
+    const res = await apiCalls.put(`/groups/${groupId}`, {email: user.email});
+    if (res.error) return handleFail('Failed to leave group');
+    else handleDeleteSuccess(groupId);
+  }
+
+
   function onGroupJoin(joinedGroup: Group) {
     /*********************************************************************************************************************************************
       - function split for brevity resons:
@@ -196,7 +204,9 @@ const GroupsPage = () => {
         <Container className='px-4 max-w-[500px]'>
           {
             /* groups */
-            groups.map((group) => <GroupCard key={group.id} group={group} style={{marginBottom: '1rem'}} onDelete={deleteGroup} onUpdate={updateGroup} />)
+            groups.map((group) => (
+              <GroupCard key={group.id} group={group} style={{marginBottom: '1rem'}} onDelete={deleteGroup} onUpdate={updateGroup} onLeave={leaveGroup} />
+            ))
           }
           <ContentSectionButton text='Add New' onClick={openModal} className='mt-4' />
           {

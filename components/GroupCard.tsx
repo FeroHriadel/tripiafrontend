@@ -4,6 +4,7 @@ import { apiCalls } from '@/utils/apiCalls';
 import CenteredImage from '@/components/CenteredImage';
 import { useAuth } from '@/context/authContext';
 import { FaTrashAlt, FaPenAlt } from 'react-icons/fa';
+import { ImExit } from 'react-icons/im';
 import ConfirmDialog from '@/components/ModalConfirmDialog';
 import ContentSectionButton from '@/components/ContentSectionButton';
 import InputText from '@/components/InputText';
@@ -16,6 +17,7 @@ interface Props {
   group: Group;
   onDelete: (groupId: string) => void;
   onUpdate: (props: {groupId: string, name: string}) => void;
+  onLeave: (groupId: string) => void;
   className?: string;
   style?: React.CSSProperties;
   id?: string;
@@ -23,9 +25,10 @@ interface Props {
 
 
 
-const GroupCard = ({ className, style, id, group, onDelete, onUpdate }: Props) => {
+const GroupCard = ({ className, style, id, group, onDelete, onUpdate, onLeave }: Props) => {
   const [users, setUsers] = useState<UserProfile[]>([]);
-  const [confirmShown, setConfirmShown] = useState(false);
+  const [deleteConfirmShown, setDeleteConfirmShown] = useState(false);
+  const [leaveConfirmShown, setLeaveConfirmShown] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [groupName, setGroupName] = useState(group.name);
   const { user } = useAuth();
@@ -54,13 +57,19 @@ const GroupCard = ({ className, style, id, group, onDelete, onUpdate }: Props) =
     return group.createdBy === user?.email; 
   }
 
-  function openConfirm(e: React.MouseEvent<HTMLParagraphElement>) { 
+  function openDeleteConfirm(e: React.MouseEvent<HTMLParagraphElement>) { 
     e.stopPropagation(); 
-    setConfirmShown(true); 
+    setDeleteConfirmShown(true); 
+  }
+
+  function openLeaveConfirm(e: React.MouseEvent<HTMLParagraphElement>) { 
+    e.stopPropagation();
+    setLeaveConfirmShown(true); 
   }
 
   function closeConfirm() { 
-    setConfirmShown(false); 
+    setDeleteConfirmShown(false);
+    setLeaveConfirmShown(false);
   }
 
   function openModal(e: React.MouseEvent<HTMLParagraphElement>) { 
@@ -114,15 +123,20 @@ const GroupCard = ({ className, style, id, group, onDelete, onUpdate }: Props) =
         </div>
         {
           isOwner()
-          &&
+          ?
           <div className="buttons-wrapper absolute top-4 right-4 flex gap-1 sm:flex-row flex-col">
-            <p className='text-sm cursor-pointer' onClick={openModal}> <FaPenAlt /> </p>
-            <p className='text-sm cursor-pointer' onClick={openConfirm}> <FaTrashAlt /> </p>
+            <p className='text-sm cursor-pointer' onClick={openModal} title='Rename'> <FaPenAlt /> </p>
+            <p className='text-sm cursor-pointer' onClick={openDeleteConfirm} title='Delete'> <FaTrashAlt /> </p>
+          </div>
+          :
+          <div className="buttons-wrapper absolute top-4 right-4 flex gap-1 sm:flex-row flex-col">
+            <p className='text-sm cursor-pointer' onClick={openLeaveConfirm} title='Leave'> <ImExit /> </p>
           </div>
         }      
       </section>
 
-      <ConfirmDialog open={confirmShown} text="Delete this Group?" onClose={closeConfirm} onConfirm={() => onDelete(group.id)} />
+      <ConfirmDialog open={deleteConfirmShown} text="Delete this Group?" onClose={closeConfirm} onConfirm={() => onDelete(group.id)} />
+      <ConfirmDialog open={leaveConfirmShown} text="Leave this group?" onClose={closeConfirm} onConfirm={() => onLeave(group.id)} />
 
       <Modal header='Edit Group' text='Please enter a new name and click OK' open={modalOpen} onClose={closeModal}>
         {renderModalContent()}
