@@ -49,10 +49,10 @@ const AppPreloader = () => {
   async function preloadProfile() {
     const res = await apiCalls.post('/users', {email: user.email});
     if (res.error) return console.log(res.error);
-    else { dispatch(setProfile(res)); await removeNonexistingGroups(res.groups); }
+    else { dispatch(setProfile(res)); await removeNonexistingGroups(res.groups, res); }
   };
 
-  async function removeNonexistingGroups(profileGroups: string[]) {
+  async function removeNonexistingGroups(profileGroups: string[], userProfile: UserProfile) {
     /******************************************************************************************************************************
       - Because of the tons of fun dynamoDB gives you during the development process:
       - The simplest way to remove from User.groups in DB any groups that were deleted from GroupsTable is from the FE ¯\(ツ)/¯
@@ -62,7 +62,7 @@ const AppPreloader = () => {
     const existingGroupsIds = await getGroupsFromProfile(profileGroups); //this should only return existing groups
     if (!existingGroupsIds) return; 
     const nonexistingGroupsIds = getNonexistingGroups(profileGroups, existingGroupsIds);
-    if (nonexistingGroupsIds.length > 0) await updateProfileGroups(existingGroupsIds);
+    if (nonexistingGroupsIds.length > 0) await updateProfileGroups(existingGroupsIds, userProfile);
   }
 
   async function getGroupsFromProfile(groupIds: string[]) {
@@ -76,8 +76,8 @@ const AppPreloader = () => {
     return profileGroups.filter(group => !existingGroups.includes(group));
   }
   
-  async function updateProfileGroups(existingGroupIds: string[]) {
-    const body: UserProfile = {...profile, groups: existingGroupIds};
+  async function updateProfileGroups(existingGroupIds: string[], userProfile: UserProfile) {
+    const body: UserProfile = {...userProfile, groups: existingGroupIds};
     const res = await apiCalls.put('/users', body);
     if (res.error) return console.log('Failed to remove nonexisting groups from user profile', res.error);
     dispatch(setProfile(res));

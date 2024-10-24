@@ -1,8 +1,12 @@
 'use client'
 
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
-import { User } from '@/types';
+import { User, UserProfile } from '@/types';
 import { cognitoSignout, getCognitoSession, refreshCognitoSession, getUserFromSession, getUserFromRefreshedSession } from '@/utils/cognito';
+import { useAppDispatch } from '@/redux/store';
+import { setProfile } from '@/redux/slices/profileSlice';
+import { setFavoriteTrips } from '@/redux/slices/favoriteTripsSlice';
+import { setInvitations } from '@/redux/slices/invitationsSlice';
 
 
 
@@ -23,6 +27,7 @@ interface AuthContextProviderProps {
 }
 
 const defaultUser: User = {email: '', expires: 0, isAdmin: false, idToken: ''};
+const defaultProfile: UserProfile = {email: '', profilePicture: '', groups: [], nickname: '', about: ''};
 const oneHour = 1000 * 60 * 60;
 
 
@@ -41,11 +46,15 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ childr
   const [user, setUser] = useState<User>({...defaultUser});
   const [checkingAuth, setCheckingAuth] = useState(true);
   const refreshTokenInterval = useRef<NodeJS.Timeout | null>(null);
+  const dispatch = useAppDispatch();
 
 
   const logout = async () => {
     setUser({...defaultUser});
     await cognitoSignout();
+    dispatch(setProfile(defaultProfile));
+    dispatch(setFavoriteTrips([]));
+    dispatch(setInvitations([]));
   }
 
   const getCurrentDate = () => {
