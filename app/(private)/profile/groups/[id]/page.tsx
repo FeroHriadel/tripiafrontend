@@ -20,6 +20,8 @@ import InputPost from '@/components/InputPost';
 import { uploadImages } from '@/utils/imageUpload';
 import { BsPersonPlusFill } from "react-icons/bs";
 import Link from 'next/link';
+import Modal from '@/components/Modal';
+import GroupModalContent from '@/components/GroupModalContent';
 
 
 export const dynamic = 'force-dynamic';
@@ -51,6 +53,7 @@ const GroupPage = () => {
   const [post, setPost] = useState('');
   const [previews, setPreviews] = useState([]);
   const [imageFileNames, setImagesFileNames] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
   const emailUserPairs = groupUsers.length //{email: UserProfile}
     ?
     groupUsers.reduce((acc: {[key: string]: UserProfile}, user: UserProfile) => { acc[user.email] = user; return acc;}, {})  
@@ -146,6 +149,10 @@ const GroupPage = () => {
     } else return []
   }
 
+  function openModal() { setModalOpen(true); }
+
+  function closeModal() { setModalOpen(false); }
+
 
   
   useEffect(() => { //connect/disconnect to ws when user comes to/leaves the page
@@ -193,17 +200,28 @@ const GroupPage = () => {
       {
         ((user?.isAdmin) || (group?.createdBy === user?.email))
         &&
-        <Link href={`/profile/groups/${id}/members`}>
-          <div 
-            className='fixed bottom-4 right-4 w-[50px] h-[50px] z-10 rounded-full flex justify-center items-center cursor-pointer bg-textorange shadow-md'
-            title='Invite people to Group'
-          >
-            <p className='text-white text-xl'> <BsPersonPlusFill /> </p>
-          </div>
-        </Link>
+        <div 
+          className='fixed bottom-4 right-4 w-[50px] h-[50px] z-10 rounded-full flex justify-center items-center cursor-pointer bg-textorange shadow-md'
+          title='Invite people to Group'
+          onClick={openModal}
+        >
+          <p className='text-white text-xl'> <BsPersonPlusFill /> </p>
+        </div>
+        // <Link href={`/profile/groups/${id}/members`}>
+        //   <div 
+        //     className='fixed bottom-4 right-4 w-[50px] h-[50px] z-10 rounded-full flex justify-center items-center cursor-pointer bg-textorange shadow-md'
+        //     title='Invite people to Group'
+        //   >
+        //     <p className='text-white text-xl'> <BsPersonPlusFill /> </p>
+        //   </div>
+        // </Link>
       }
 
       <GradientFlexi />
+
+      <Modal open={modalOpen} header='Group Members' text='Add and remove group members' onClose={closeModal}>
+        <GroupModalContent group={group} />
+      </Modal>
     </>
   );
 }
