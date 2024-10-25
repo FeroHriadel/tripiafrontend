@@ -220,7 +220,7 @@ const GroupPage = () => {
       <GradientFlexi />
 
       <Modal open={modalOpen} header='Group Members' text='Add and remove group members' onClose={closeModal}>
-        <GroupModalContent group={group} />
+        <GroupModalContent group={group} groupUsers={groupUsers} setGroupUsers={setGroupUsers} />
       </Modal>
     </>
   );

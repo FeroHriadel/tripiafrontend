@@ -18,11 +18,14 @@ import { Group, UserProfile } from '@/types';
 import { FaTimesCircle } from 'react-icons/fa';
 import { useAppSelector, useAppDispatch } from '@/redux/store';
 import { setProfile } from '@/redux/slices/profileSlice';
+import { FaTrashAlt } from 'react-icons/fa';
 
 
 
 interface Props {
   group: Group | null;
+  groupUsers: UserProfile[];
+  setGroupUsers: (user: UserProfile[]) => void;
 }
 
 
@@ -31,7 +34,7 @@ const maxUsersPerInvite = 10;
 
 
 
-const GroupModalContent = ({ group }: Props) => {
+const GroupModalContent = ({ group, groupUsers, setGroupUsers }: Props) => {
   const params = useParams();
   const groupId = params.id as string;
   const [loading, setLoading] = useState(false);
@@ -129,6 +132,22 @@ const GroupModalContent = ({ group }: Props) => {
     else handleInvitationSuccess();
   }
 
+  async function removeUserFromGroup(userToRemove: UserProfile) {
+    if (userToRemove?.email === user.email) return showToast('Cannot remove yourself. You may delete the group, though.');
+    showToast('Removing user from group...');
+    const res = await apiCalls.put(`/groups/${groupId}`, {email: userToRemove?.email});
+    if (res.error) return handleRemoveUserError(res.error);
+    else return handleRemoveUserSuccess(userToRemove);
+  }
+
+  function handleRemoveUserError(text: string) { showToast(text); }
+
+  function handleRemoveUserSuccess(userToRemove: UserProfile) {
+    const newUsers = [...groupUsers.filter(u => u.email !== userToRemove.email)]
+    showToast('User removed');
+    setGroupUsers([...groupUsers.filter(u => u.email !== userToRemove?.email)]);
+  }
+
   
   useEffect(() => { if (user.email && !profile.email) getProfile(); }, [user, profile]); //get group owner's profile just in case it was not loaded before for a reason
 
@@ -141,7 +160,8 @@ const GroupModalContent = ({ group }: Props) => {
           ?
           <p className='text-center'>Loading...</p>
           :
-          <Container className='px-4 max-w-[500px]'>
+          // add user input
+          <section className='max-w-[500px]'>
             <p className='text-xs mb-4 mt-10'>Search people by username. Enter first 2 letters to start searching. Click found users to add them to invitation </p>
             <InputUsersSearch onUserSelected={onUserSelect} className='mb-4' />
             {
@@ -160,7 +180,23 @@ const GroupModalContent = ({ group }: Props) => {
               </p>
             }
             <ContentSectionButton text='Invite' className='my-4' disabled={loading} onClick={inviteSelectedUsers} />
-          </Container>
+
+
+            {/* group members */}
+            {groupUsers.length > 1 && <p className='text-xs mb-4 mt-10'>View people in your Group.</p>}
+            {
+              groupUsers.map((groupUser: UserProfile) => (
+                groupUser.email !== user.email
+                &&
+                <div key={groupUser.email} className='w-[100%] flex text-left'>
+                  <p className='text-sm w-[100%]'>{groupUser.nickname}</p>
+                  <span className='flex gap-2 text-sm'>
+                    <FaTrashAlt className='cursor-pointer text-sm' onClick={() => removeUserFromGroup(groupUser)} />
+                  </span>
+                </div>
+              ))
+            }
+          </section>
         }
       </ContentSection>
     </>
