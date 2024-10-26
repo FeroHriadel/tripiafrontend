@@ -1,17 +1,19 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import Link from 'next/link';
 import CenteredImage from './CenteredImage';
-import { FaPenFancy, FaTrashAlt, FaRegStar, FaStar } from 'react-icons/fa';
 import Tag from './Tag';
 import ContentSectionButton from './ContentSectionButton';
-import { Trip } from '@/types';
 import ConfirmDialog from './ModalConfirmDialog';
+import Modal from './Modal';
 import { useAuth } from '@/context/authContext';
 import { apiCalls } from '@/utils/apiCalls';
 import { setFavoriteTrips } from '@/redux/slices/favoriteTripsSlice';
 import { useAppDispatch, useAppSelector } from '@/redux/store';
-import Link from 'next/link';
+import { FaPenFancy, FaTrashAlt, FaRegStar, FaStar } from 'react-icons/fa';
+import { Trip } from '@/types';
+import TripModalContent from './TripModalContent';
 
 
 
@@ -38,7 +40,12 @@ const TripCard = ({ trip, className = '', style = {}, id, searchword = '', onDel
   const dispatch = useAppDispatch();
   const favoriteTrips = useAppSelector((state) => state.favoriteTrips);
   const categories = useAppSelector(state => state.categories);
+  const [modalOpen, setModalOpen] = useState(false);
 
+
+  function openModal() { setModalOpen(true); }
+
+  function closeModal() { setModalOpen(false); }
 
   function openConfirm() { setConfirmOpen(true); }
 
@@ -178,9 +185,14 @@ const TripCard = ({ trip, className = '', style = {}, id, searchword = '', onDel
         </div>
 
       }
-      <Link href={`/trips/${trip.id}`}>
+      <ContentSectionButton text='View Details' onClick={openModal} />
+
+      <Modal open={modalOpen} onClose={closeModal}>
+        <TripModalContent trip={trip} isBeingViewed={modalOpen} />
+      </Modal>
+      {/* <Link href={`/trips/${trip.id}`}>
         <ContentSectionButton text='View Details' />
-      </Link>
+      </Link> */}
 
       <ConfirmDialog open={confirmOpen} onClose={closeConfirm} onConfirm={deleteTrip} text={`Do you want to permanently delete this trip?`} />
     </div>

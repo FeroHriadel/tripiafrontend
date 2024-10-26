@@ -9,8 +9,8 @@ import ModalDescription from './ModalDescription';
 
 interface Props {
   open: boolean;
-  header: string;
-  text: string;
+  header?: string;
+  text?: string;
   children?: React.ReactNode;
   onClose: () => void;
 }
@@ -36,8 +36,8 @@ const Modal = ({ header, text, children, open, onClose }: Props) => {
     <div className={open ? 'modal-dialog-container shown' : 'modal-dialog-container'} onClick={closeDialogOnOutsideClick}>
       <div className="modal-dialog" style={{background: 'white'}}>
         <FaTimes className='close-icon' onClick={onClose} />
-        <ModalHeader text={header} />
-        <ModalDescription text={text} />
+        {header && <ModalHeader text={header} />}
+        {text && <ModalDescription text={text} />}
         {children}
       </div>
     </div>
