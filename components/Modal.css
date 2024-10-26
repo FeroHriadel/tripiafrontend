@@ -1,4 +1,4 @@
-.confirm-dialog-container {
+.modal-dialog-container {
   width: 100vw;
   height: 100vh;
   position: fixed;
@@ -21,12 +21,11 @@
   pointer-events: all;
 }
 
-.confirm-dialog {
-  width: fit-content;
+.modal-dialog {
+  width: 95%;
   max-width: 750px;
-  height: auto;
   max-height: 95%;
-  /* min-height: 200px; */
+  min-height: 200px;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -35,7 +34,7 @@
   background: linear-gradient(to right, #f0f0f0 50%, white);
   border-radius: 16px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
-  padding: 2rem;
+  padding: 1rem;
   font-size: 1.25rem;
   text-align: center;
   overflow-y: auto;

@@ -154,20 +154,20 @@ const GroupModalContent = ({ group, groupUsers, setGroupUsers }: Props) => {
 
   return (
     <>
-      <ContentSection>
+      <div className='w-[100%]'>
         {
           (!group || !profile)
           ?
           <p className='text-center'>Loading...</p>
           :
           // add user input
-          <section className='max-w-[500px]'>
+          <section>
             <p className='text-xs mb-4 mt-10'>Search people by username. Enter first 2 letters to start searching. Click found users to add them to invitation </p>
             <InputUsersSearch onUserSelected={onUserSelect} className='mb-4' />
             {
               selectedUsers.length > 0
               &&
-              <p> 
+              <p className='text-sm'> 
                 <b>Invite:</b>
                 {selectedUsers.map((u, idx) => (
                   <span key={u.email} className='flex items-center'>
@@ -179,7 +179,12 @@ const GroupModalContent = ({ group, groupUsers, setGroupUsers }: Props) => {
                 ))}
               </p>
             }
-            <ContentSectionButton text='Invite' className='my-4' disabled={loading} onClick={inviteSelectedUsers} />
+            <ContentSectionButton 
+              text='Invite' 
+              className={`${selectedUsers.length ? 'my-4' : 'mb-4'}`} 
+              disabled={loading} 
+              onClick={inviteSelectedUsers} 
+            />
 
 
             {/* group members */}
@@ -198,7 +203,7 @@ const GroupModalContent = ({ group, groupUsers, setGroupUsers }: Props) => {
             }
           </section>
         }
-      </ContentSection>
+      </div>
     </>
   )
 }
