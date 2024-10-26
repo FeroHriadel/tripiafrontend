@@ -61,11 +61,11 @@ const PostCard = ({ post, userProfile, deletePost }: Props) => {
           className='h-auto w-full rounded-xl' 
         />
         <p 
-          className='absolute bottom-2 right-2 cursor-pointer' 
-          onClick={() => downloadImage(image)}
-        > 
-          <FaDownload style={{ boxShadow: `1px 1px 3px silver` }} /> 
-        </p>
+              className='absolute bottom-2 right-2 cursor-pointer text-white rounded-full bg-textorange shadow-xl p-2' 
+              onClick={() => downloadImage(image)}
+            > 
+              <FaDownload /> 
+            </p>
       </div>
     );
   }
@@ -87,10 +87,10 @@ const PostCard = ({ post, userProfile, deletePost }: Props) => {
               className='h-46 sm:h-72 w-full rounded-xl' 
             />
             <p 
-              className='absolute bottom-2 right-2 cursor-pointer' 
+              className='absolute bottom-2 right-2 cursor-pointer text-white rounded-full bg-textorange shadow-xl p-2' 
               onClick={() => downloadImage(image)}
             > 
-              <FaDownload style={{ boxShadow: `1px 1px 3px silver` }} /> 
+              <FaDownload /> 
             </p>
           </div>
         ))}
@@ -115,10 +115,10 @@ const PostCard = ({ post, userProfile, deletePost }: Props) => {
               className='h-28 sm:h-40 w-full rounded-xl' 
             />
             <p 
-              className='absolute bottom-2 right-2 cursor-pointer' 
+              className='absolute bottom-2 right-2 cursor-pointer text-white rounded-full bg-textorange shadow-xl p-2' 
               onClick={() => downloadImage(image)}
             > 
-              <FaDownload style={{ boxShadow: `1px 1px 3px silver` }} /> 
+              <FaDownload /> 
             </p>
           </div>
         ))}

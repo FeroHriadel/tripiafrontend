@@ -207,14 +207,6 @@ const GroupPage = () => {
         >
           <p className='text-white text-xl'> <BsPersonPlusFill /> </p>
         </div>
-        // <Link href={`/profile/groups/${id}/members`}>
-        //   <div 
-        //     className='fixed bottom-4 right-4 w-[50px] h-[50px] z-10 rounded-full flex justify-center items-center cursor-pointer bg-textorange shadow-md'
-        //     title='Invite people to Group'
-        //   >
-        //     <p className='text-white text-xl'> <BsPersonPlusFill /> </p>
-        //   </div>
-        // </Link>
       }
 
       <GradientFlexi />
