@@ -119,6 +119,7 @@ const GroupsPage = () => {
   }
 
   async function deleteGroup(id: string) {
+    if (loading) return;
     setLoading(true);
     const res = await apiCalls.del(`/groups/${id}`); 
     if (res.error) return handleFail('Failed to delete group');
@@ -141,6 +142,7 @@ const GroupsPage = () => {
   }
 
   async function leaveGroup(groupId: string) {
+    if (loading) return;
     setLoading(true);
     const res = await apiCalls.put(`/groups/${groupId}`, {email: user.email});
     if (res.error) return handleFail('Failed to leave group');
