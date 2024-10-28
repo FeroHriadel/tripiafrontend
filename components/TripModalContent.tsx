@@ -167,7 +167,7 @@ const TripModalContent = ({ trip, isBeingViewed }: Props) => {
 
   //RENDER
   return (
-    <section className='w-[100%]'>
+    <section className='w-[100%] py-4'>
       <Container className='px-4 text-left'>
 
         {/* image */}
