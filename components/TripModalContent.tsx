@@ -8,9 +8,18 @@ import ContentSectionHeader from './ContentSectionHeader';
 import ContentSectionDescription from './ContentSectionDescription';
 import Container from './Container';
 import { useAppSelector, useAppDispatch } from '@/redux/store';
+import { setFavoriteTrips } from '@/redux/slices/favoriteTripsSlice';
 import { useMap } from '@/hooks/useMap';
+import { useAuth } from '@/context/authContext';
+import { useToast } from '@/context/toastContext';
 import { formatUTCToHumanreadable } from '@/utils/dates';
 import { Trip } from '@/types';
+import TripComments from './TripComments';
+import TripPdf from '@/components/TripPdf';
+import { pdf } from '@react-pdf/renderer';
+import { saveAs } from 'file-saver';
+import Link from 'next/link';
+import { apiCalls } from '@/utils/apiCalls';
 
 
 
@@ -30,7 +39,14 @@ const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
 
 const TripModalContent = ({ trip, isBeingViewed }: Props) => {
+  //VALUES - GENERAL
   const categories = useAppSelector(state => state.categories);
+  const favoriteTrips = useAppSelector((state) => state.favoriteTrips);
+  const dispatch = useAppDispatch();
+  const { showToast } = useToast();
+  const { user } = useAuth();
+
+  //VALUES - MAP
   const meetingMapContainerRef = useRef<HTMLDivElement | null>(null);
   const meetingMapRef = useRef<mapboxgl.Map | null>(null);
   const meetingMarkerRef = useRef<mapboxgl.Marker | null>(null);
@@ -55,6 +71,53 @@ const TripModalContent = ({ trip, isBeingViewed }: Props) => {
   });
 
 
+  //FUNCTIONS - PDF DOWNLOAD
+  async function handleDownload() {
+    if (!trip) return;
+    showToast('Preparing PDF download...');
+    const mapImages = await getMapImages();
+    const blob = await pdf(
+      <TripPdf 
+        trip={trip} 
+        categoryName={getCategoryName(trip?.category)}
+        mapImages={mapImages}
+      />
+    ).toBlob();
+    saveAs(blob, `tripia-${trip.name}.pdf`);
+  };
+
+  async function getMapImages() {
+    let mapImages = { meeting: '', destination: '' };
+    if (destinationMapExists()) {
+      const destinationImage = await fetchMapImage(trip!.destinationLat!, trip!.destinationLng!);
+      mapImages.destination = destinationImage;
+    }
+    if (meetingMapExists()) {
+      const meetingImage = await fetchMapImage(trip!.meetingLat!, trip!.meetingLng!);
+      mapImages.meeting = meetingImage;
+    }
+    return mapImages;
+  }
+
+  async function fetchMapImage(lat: number, lng: number): Promise<string> { //makes api call to mapbox which returns an image based on queryStringParams
+    const width = 790;
+    const height = 400;
+    const zoom = 12;
+    const marker = `pin-l+ff0000(${lng},${lat})`;
+    const url = `https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/${marker}/${lng},${lat},${zoom}/${width}x${height}?access_token=${mapboxToken}`;
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Failed to fetch the map image');
+        const arrayBuffer = await response.arrayBuffer();
+        const base64Image = Buffer.from(arrayBuffer).toString('base64');
+        return `data:image/png;base64,${base64Image}`;
+    } catch (error) {
+        console.error('Error fetching map image:', error);
+        throw new Error('Unable to fetch map image');
+    }
+  }
+
+  //FUNCTIONS - TRIP DETAILS
   function tagsFromKeywords() { return trip?.keyWords?.split(',') || []; }
 
   function getCategoryName(categoryId: string | null | undefined) {
@@ -63,6 +126,20 @@ const TripModalContent = ({ trip, isBeingViewed }: Props) => {
     return category ? category.name : '';
   }
 
+  function canShowAddToFavorites() {
+    if (user.email && user.email !== trip!.createdBy && !favoriteTrips.includes(trip!.id!)) return true
+    else return false;
+  }
+
+  async function addToFavorites(tripId: string) {
+    if (favoriteTrips.includes(tripId)) return showToast('Already in favorites');
+    showToast('Adding to favorites...');
+    let newFavoriteTrips = [...favoriteTrips, tripId];
+    dispatch(setFavoriteTrips(newFavoriteTrips));
+    await apiCalls.post('/favoritetrips', {tripIds: newFavoriteTrips});
+  }
+
+  //FUNCTIONS - RENDER MAP IN BROWSER
   function destinationMapExists() {
     if (trip?.destinationLng && trip?.destinationLat) return true;
     else return false;
@@ -74,6 +151,7 @@ const TripModalContent = ({ trip, isBeingViewed }: Props) => {
   }
 
 
+  //SUBSCRIPTINS
   useEffect(() => { // render destination map if any
     if (!isBeingViewed) return;
     if (trip?.destinationLng && trip?.destinationLat && destinationMapContainerRef.current) { 
@@ -87,6 +165,7 @@ const TripModalContent = ({ trip, isBeingViewed }: Props) => {
   }, [trip, meetingMapContainerRef.current]);
 
 
+  //RENDER
   return (
     <section className='w-[100%]'>
       <Container className='px-4 text-left'>
@@ -165,8 +244,21 @@ const TripModalContent = ({ trip, isBeingViewed }: Props) => {
       {/* printable content end */}
       </Container>
 
+      {/* buttons */}
+      <ContentSectionButton text='Download as PDF' className='mb-4' onClick={handleDownload} />
+            {
+              (user.email && user?.email === trip.createdBy)
+              &&
+              <Link href={`/trips/edit/${trip.id}`}>
+                <ContentSectionButton text='Edit' className='mb-4' />
+              </Link>
+            }
+            {
+              canShowAddToFavorites() && <ContentSectionButton text='Add to Favorites' className='mb-4' onClick={() => addToFavorites(trip.id!)} />
+            }
+
       {/* chat section */}
-      {/* {trip?.id && user.email && <TripComments trip={trip} />} */}
+      {(isBeingViewed && trip?.id && user.email) && <TripComments trip={trip} />}
     </section>
   )
 }

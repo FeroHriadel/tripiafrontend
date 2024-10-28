@@ -73,7 +73,7 @@ const InputComment = ({ onChange, onSubmit, loading, comment, preview }: Props) 
       {/* comment input */}
       <div
         contentEditable={true}
-        className='w-[100%] h-[100%] cursor-text border-none outline-none text-lg sm:text-xl font-medium overflow-y-auto'
+        className='w-[100%] h-[100%] cursor-text border-none outline-none text-lg text-left sm:text-xl font-medium overflow-y-auto'
         ref={inputRef}
         suppressContentEditableWarning={true}
         onFocus={handleFocus}

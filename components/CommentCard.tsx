@@ -19,7 +19,7 @@ interface Props {
 
 
 const CommentCard = ({ comment, deleteComment }: Props) => {
-  const [postedBy, setPostedBy] = useState<UserProfile>({nickname: '', profilePicture: '', about: '', email: ''});
+  const [postedBy, setPostedBy] = useState<UserProfile>({nickname: '', profilePicture: '', about: '', email: '', groups: []});
   const { user } = useAuth();
   const { showToast } = useToast();
 
@@ -51,7 +51,7 @@ const CommentCard = ({ comment, deleteComment }: Props) => {
       </div>
 
       {/* comment body */}
-      <p className='text-lg'>{comment.body}</p>
+      <p className='text-lg text-left'>{comment.body}</p>
       {comment.image && <CenteredImage width={200} height={200} src={comment.image} className='rounded-xl mt-4' />}
     </section>
   )

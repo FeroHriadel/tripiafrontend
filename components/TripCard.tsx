@@ -190,9 +190,6 @@ const TripCard = ({ trip, className = '', style = {}, id, searchword = '', onDel
       <Modal open={modalOpen} onClose={closeModal}>
         <TripModalContent trip={trip} isBeingViewed={modalOpen} />
       </Modal>
-      {/* <Link href={`/trips/${trip.id}`}>
-        <ContentSectionButton text='View Details' />
-      </Link> */}
 
       <ConfirmDialog open={confirmOpen} onClose={closeConfirm} onConfirm={deleteTrip} text={`Do you want to permanently delete this trip?`} />
     </div>
