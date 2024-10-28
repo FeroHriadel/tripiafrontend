@@ -153,16 +153,16 @@ const TripModalContent = ({ trip, isBeingViewed }: Props) => {
 
   //SUBSCRIPTINS
   useEffect(() => { // render destination map if any
-    if (!isBeingViewed) return;
+    if (!isBeingViewed) { destinationMapContainerRef.current = null; return; };
     if (trip?.destinationLng && trip?.destinationLat && destinationMapContainerRef.current) { 
       renderDestinationMap(); placeDestinationMarker({ lng: trip.destinationLng, lat: trip.destinationLat }); }
-  }, [trip, destinationMapContainerRef.current]);
+  }, [trip, destinationMapContainerRef.current, isBeingViewed]);
 
   useEffect(() => { // render meeting point map if any
-    if (!isBeingViewed) return;
+    if (!isBeingViewed) { meetingMapContainerRef.current = null; return; };
     if (trip?.meetingLng && trip?.meetingLat && meetingMapContainerRef.current) {
       renderMeetingMap(); placeMeetingMarker({ lng: trip.meetingLng, lat: trip.meetingLat }); }
-  }, [trip, meetingMapContainerRef.current]);
+  }, [trip, meetingMapContainerRef.current, isBeingViewed]);
 
 
   //RENDER
@@ -190,14 +190,14 @@ const TripModalContent = ({ trip, isBeingViewed }: Props) => {
           {/* category */}
           {trip.category && <ContentSectionDescription text={getCategoryName(trip?.category)} className='text-xl xs:text-xl md:text-xl mb-10'/>}
 
-          {/* destination */}
+          {/* destination + destination map */}
           <h4 className='font-semibold text-xl xs:text-xl md:text-xl mb-4'>
             Destination: 
             {' '}
             <span className='font-normal'>{trip.destination}</span>
           </h4>
           {
-            destinationMapExists()
+            isBeingViewed && destinationMapExists()
             &&
             <div className='w-[100%] h-[400px] mb-4 rounded-2xl' ref={destinationMapContainerRef} />
           }
@@ -229,14 +229,14 @@ const TripModalContent = ({ trip, isBeingViewed }: Props) => {
             </span>
           </h4>
 
-          {/* meeting point */}
+          {/* meeting point & meeting map */}
           <h4 className='font-semibold text-xl xs:text-xl md:text-xl mb-4'>
             Meeting Point: 
             {' '}
             <span className='font-normal'>{trip.departureFrom}</span>
           </h4>
           {
-            meetingMapExists()
+            isBeingViewed && meetingMapExists()
             &&
             <div className='w-[100%] h-[400px] mb-10 rounded-2xl' ref={meetingMapContainerRef} />
           }
