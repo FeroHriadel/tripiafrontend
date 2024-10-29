@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useRef } from "react";
+import { createContext, useContext, useState, useRef, useEffect } from "react";
 import { useToast } from "./toastContext";
 import { getIdToken } from "@/utils/cognito";
 
@@ -31,6 +31,7 @@ interface WSContextProviderProps {
 }
 
 
+const fiveMinutes = 1000 * 60 * 5;
 
 const wsEndpoint = process.env.NEXT_PUBLIC_WS_ENDPOINT!;
 
@@ -54,10 +55,9 @@ export const WSContextProvider: React.FC<WSContextProviderProps> = ({
   const [isConnected, setIsConnected] = useState(false);
   const [message, setMessage] = useState<{ [key: string]: any }>({});
   const { showToast } = useToast();
+  const pingInterval = useRef<ReturnType<typeof setInterval> | null>(null);
 
   
-  function queueMessage(message: { action: string; data: any }) { messageQueue.current.push(message); }
-
   function sendQueuedMessages() {
     while (messageQueue.current.length > 0) {
       const queuedMessage = messageQueue.current.shift();
@@ -102,6 +102,7 @@ export const WSContextProvider: React.FC<WSContextProviderProps> = ({
   }
 
   function handleIncomingMessage(msg: MessageEvent) {
+    if (message.action === 'Pong') return;
     setMessage(JSON.parse(msg.data));
   }
 
@@ -109,6 +110,18 @@ export const WSContextProvider: React.FC<WSContextProviderProps> = ({
     if (ws.current && ws.current.readyState === WebSocket.OPEN) { ws.current.send(JSON.stringify(props)); } 
     else { messageQueue.current.push(props); }
   }
+
+
+  useEffect(() => { //keep connection alive (I think it expires after 10 min of no activity)
+    if (isConnected) {
+      clearInterval(pingInterval.current!);
+      pingInterval.current = setInterval(() => { ws.current?.send(JSON.stringify({ action: 'ping' })); }, fiveMinutes);
+    } else {
+      clearInterval(pingInterval.current!);
+      pingInterval.current = null;
+    }
+    return () => { clearInterval(pingInterval.current!); pingInterval.current = null; };
+  }, [isConnected]);
 
 
   return (
