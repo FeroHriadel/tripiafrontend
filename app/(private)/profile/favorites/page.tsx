@@ -81,7 +81,7 @@ const FavoriteTripsPage = () => {
       </GradientFlexi>
 
       <Container className='px-4 max-w-[750px]'>
-        <ContentSectionHeader text='Favorite Trips' />
+        <ContentSectionHeader text='Favorite Trips'/>
         <ContentSectionDescription text='Trips you added to your favorites' className='mb-20'/>
           {trips.map(trip => (<TripCard key={trip.id!} trip={trip} className='mb-10' />))}
           {loading && <p className='text-center'>Loading...</p>}

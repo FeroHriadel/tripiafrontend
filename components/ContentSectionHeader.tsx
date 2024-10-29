@@ -14,7 +14,7 @@ interface Props {
 const ContentSectionHeader = ({ text, className = '', id, style = {} }: Props) => {
   return (
     <h2 
-      className={`font-semibold text-3xl xs:text-4xl md:text-6xl text-center text-textorange mb-1 ` + className} 
+      className={`font-semibold text-3xl xs:text-4xl md:text-6xl text-center text-textorange mb-2 ` + className} 
       style={{...style}}
       id={id}
     >

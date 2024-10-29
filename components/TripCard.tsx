@@ -176,7 +176,7 @@ const TripCard = ({ trip, className = '', style = {}, id, searchword = '', onDel
       {
         trip.keyWords
         &&
-        <div className="---key-words--- flex gap-2 mb-4">
+        <div className="---key-words--- flex flex-wrap w-[100%] gap-2 mb-4">
           {
             tagsFromKeywords().map((keyWord, idx) => (
               <Tag text={keyWord} key={keyWord + idx} />
