@@ -83,3 +83,25 @@
 .select-option:hover {
   background-color: #F0F0F0;
 }
+
+
+
+@media (max-width: 500px) {
+  .input-and-label-wrapper {
+    max-height: 3rem;
+  }
+
+  .select-input {
+    background-color: #F0F0F0;
+    height: 3rem;
+    font-size: 1rem;
+  }
+
+  .select-input-label {
+    font-size: 1rem;
+  }
+
+  .select-option {
+    font-size: 1rem;
+  }
+}

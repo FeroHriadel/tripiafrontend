@@ -24,6 +24,18 @@
   box-shadow: none;
 }
 
-.gradient-button-big-text {
+.gradient-button-text {
   font-size: 1.25rem;
+}
+
+
+
+@media (max-width: 500px) {
+  .content-button {
+    height: 3rem;
+  }
+
+  .gradient-button-text {
+    font-size: 1rem;
+  }
 }

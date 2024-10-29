@@ -154,7 +154,7 @@ const PostCard = ({ post, userProfile, deletePost }: Props) => {
       )}
 
       {/* post body */}
-      <p className='text-lg mb-4'>{post.body}</p>
+      <p className='text-base xs:text-xl mb-4'>{post.body}</p>
 
       {/* post images */}
       {renderImages()}

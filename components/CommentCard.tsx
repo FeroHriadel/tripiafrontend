@@ -45,13 +45,13 @@ const CommentCard = ({ comment, deleteComment }: Props) => {
       <div className='w-[100%] flex gap-4 mb-4 pr-4'>
         <CenteredImage width={50} height={50} src={postedBy.profilePicture || '/images/user.png'} className='rounded-full min-w-[50px]' />
         <div>
-          {postedBy.email && <h4 className='font-bold text-md sm:text-xl break-all'>{postedBy.nickname || postedBy.email.split('@')[0]}</h4>}
-          <p className='text-xs sm:text:sm font-light break-all'>{formatUTCToDateAndHour(comment.createdAt)}</p>
+          {postedBy.email && <h4 className='font-bold text-base xs:text-xl break-all'>{postedBy.nickname || postedBy.email.split('@')[0]}</h4>}
+          <p className='text-xs xs:text:sm font-light break-all'>{formatUTCToDateAndHour(comment.createdAt)}</p>
         </div>
       </div>
 
       {/* comment body */}
-      <p className='text-lg text-left'>{comment.body}</p>
+      <p className='text-base xs:text-xl text-left'>{comment.body}</p>
       {comment.image && <CenteredImage width={150} height={150} src={comment.image} className='rounded-xl mt-4' />}
     </section>
   )
