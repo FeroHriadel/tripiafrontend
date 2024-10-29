@@ -12,7 +12,7 @@ interface Props {
 
 const ContentSectionDescription = ({ text, className = '', style = {} }: Props) => {
   return (
-    <h4 className={`font-semibold text-xl xs:text-2xl md:text-3xl text-center ` + className} style={{...style}}>{text}</h4>
+    <h4 className={`font-semibold text-xl xs:text-2xl sm:text-3xl text-center ` + className} style={{...style}}>{text}</h4>
   )
 }
 
