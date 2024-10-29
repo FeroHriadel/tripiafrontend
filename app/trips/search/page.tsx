@@ -92,7 +92,7 @@ const TripsSearchPage = () => {
             <Link href='/trips' className='z-[5]'>
               <GradientButtonPurpleGray text='All Trips' className='sm:w-[200px] w-[100%] h-[50px]' />
             </Link>
-            <Link href='/trips/favorites' className='z-[5]'>
+            <Link href='/profile/favorites' className='z-[5]'>
               <GradientButtonPurpleOrange text='My Favorites' className='sm:w-[200px] w-[100%] h-[50px]' />
             </Link>
           </aside>
@@ -100,7 +100,7 @@ const TripsSearchPage = () => {
       </GradientFlexi>
 
       <ContentSection>
-        <Container className='px-4'>
+        <Container className='px-4 max-w-[750px]'>
           <ContentSectionHeader text='Search Trips' />
           <ContentSectionDescription text='Write what you are looking for' className='mb-20'/>
           <Container className='max-w-[500px] px-4'>

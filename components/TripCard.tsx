@@ -185,7 +185,7 @@ const TripCard = ({ trip, className = '', style = {}, id, searchword = '', onDel
         </div>
 
       }
-      <ContentSectionButton text='View Details' onClick={openModal} />
+      <ContentSectionButton text='View Details' onClick={openModal} className='mt-10' />
 
       <Modal open={modalOpen} onClose={closeModal}>
         <TripModalContent trip={trip} isBeingViewed={modalOpen} />

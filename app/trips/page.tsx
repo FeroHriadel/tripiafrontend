@@ -106,7 +106,7 @@ const TripsPage = () => {
       </GradientFlexi>
 
       <ContentSection>
-        <Container className='px-4'>
+        <Container className='px-4 max-w-[750px]'>
           <ContentSectionHeader text='Latest Trips' />
           <ContentSectionDescription text='Browse trips and join one you like' className='mb-20'/>
           {
