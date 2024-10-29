@@ -66,7 +66,7 @@ const InputUsersSearch = ({ className, id, style, onUserSelected }: Props) => {
               if (userProfile.email === user.email) return <div key='cannotChooseYourself'></div>
               return (
                 <div 
-                  className='w-[100%] text-xl text-darkgray bg-white hover:bg-lightgray cursor-pointer flex'
+                  className='w-[100%] text-base xs:text-xl text-darkgray bg-white hover:bg-lightgray cursor-pointer flex items-center'
                   key={userProfile.email}
                   onClick={() => onUserSelected(userProfile)}
                 >

@@ -99,7 +99,7 @@ const InputComment = ({ onChange, onSubmit, loading, comment, preview }: Props) 
       </div>
       
       {/* post button */}
-      <ContentSectionButton text='Post' onClick={addComment} className='min-h-[3.5rem]' />
+      <ContentSectionButton text='Post' onClick={addComment} className='min-h-[3rem] xs:min-h-[3.5rem]' />
     </div>
   );
 };

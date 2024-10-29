@@ -24,7 +24,7 @@
   box-shadow: none;
 }
 
-.gradient-button-text {
+.content-button-text {
   font-size: 1.25rem;
 }
 
@@ -35,7 +35,7 @@
     height: 3rem;
   }
 
-  .gradient-button-text {
+  .content-button-text {
     font-size: 1rem;
   }
 }
