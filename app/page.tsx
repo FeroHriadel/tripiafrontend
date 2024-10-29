@@ -15,6 +15,8 @@ import './HomePageFooter.css';
 import GradientButtonPurpleGray from '@/components/GradientButtonPurpleGray';
 import Link from 'next/link';
 import InputSelect from '@/components/InputSelect';
+import ContentSectionHeader from '@/components/ContentSectionHeader';
+import ContentSectionDescription from '@/components/ContentSectionDescription';
 
 
 
@@ -33,7 +35,7 @@ const HomePage = () => {
         </main>       
       </GradientFullScreen>
 
-      <ContentSection style={{zIndex: 2}}>
+      {/* <ContentSection style={{zIndex: 2}}>
           <img className='hills-image' src={hillsImage.src} alt="hills image" />
           <aside className='promo-text-wrapper'>
             <h3 className='discover-new-adventures text-6xl text-center font-semibold drop-shadow-lg'>Discover New Adventures</h3>
@@ -41,14 +43,34 @@ const HomePage = () => {
               Share the journey. Split the costs of gas and accommodation while making new friends along the way
             </h4>
           </aside>
-      </ContentSection>
+      </ContentSection> */}
+
+      {
+        <ContentSection style={{zIndex: 2}} className='w-[100%] flex items-center justify-center'>
+          <aside className='h-[100%] px-4'>
+            <ContentSectionHeader text='Discover New Adventures' />
+            <br />
+            <ContentSectionDescription text='Share the journey.' className='mb-2' />
+            <ContentSectionDescription text='Split the costs of gas and accommodation.' className='mb-2' />
+            <ContentSectionDescription text='Make new friends along the way.' />
+          </aside>
+        </ContentSection>
+      }
 
       <GradientFlexi>
         <Container className='px-10' style={{zIndex: '2'}}>
           <GradientHeader text='TRIPIA' className='text-center mb-4' />
           <GradientDescription 
-            text={`Welcome to Tripia, the perfect platform for car trips and hikes! Whether you're planning a road trip or a weekend hike, you can invite others to join or find a trip to hop on. Share the journey, split the costs of gas, accommodation while making new friends along the way. Say goodbye to solo trips and enjoy the company of like-minded adventurers.`}
-            className='drop-shadow-lg'
+            text={`Welcome to Tripia, the perfect platform for car trips and hikes!`}
+            className='drop-shadow-lg mb-4 text-center'
+          />
+          <GradientDescription 
+            text={`Whether you're planning a road trip or a weekend hike, you can invite others to join or find a trip to hop on. Share the journey, split the costs of gas, accommodation while making new friends along the way.`}
+            className='drop-shadow-lg mb-4 text-center'
+          />
+          <GradientDescription 
+            text={`Say goodbye to solo trips and enjoy the company of like-minded adventurers.`}
+            className='drop-shadow-lg mb-4 text-center'
           />
           <Link href='/trips'>
             <GradientButtonPurpleGray text='Join a Trip' className='my-4' />

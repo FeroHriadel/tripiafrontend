@@ -52,7 +52,7 @@ const CommentCard = ({ comment, deleteComment }: Props) => {
 
       {/* comment body */}
       <p className='text-lg text-left'>{comment.body}</p>
-      {comment.image && <CenteredImage width={200} height={200} src={comment.image} className='rounded-xl mt-4' />}
+      {comment.image && <CenteredImage width={150} height={150} src={comment.image} className='rounded-xl mt-4' />}
     </section>
   )
 }
