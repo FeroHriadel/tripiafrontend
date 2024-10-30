@@ -17,6 +17,7 @@ import Link from 'next/link';
 import InputSelect from '@/components/InputSelect';
 import ContentSectionHeader from '@/components/ContentSectionHeader';
 import ContentSectionDescription from '@/components/ContentSectionDescription';
+import ContentSectionButton from '@/components/ContentSectionButton';
 
 
 
@@ -48,24 +49,28 @@ const HomePage = () => {
       {
         <ContentSection style={{zIndex: 2}} className='w-[100%] flex items-center justify-center'>
           <aside className='h-[100%] px-4'>
-            <ContentSectionHeader text='Discover New Adventures' />
+            <h2 className='font-semibold text-5xl xs:text-7xl text-center text-textorange'>Discover New Adventures</h2>
             <br />
-            <ContentSectionDescription text='Share the journey.' className='mb-2' />
-            <ContentSectionDescription text='Split the costs of gas and accommodation.' className='mb-2' />
-            <ContentSectionDescription text='Make new friends along the way.' />
+            <h4 className='font-semibold text-5xl text-center mb-10'>Share the journey</h4>
+            <br />
+            <div className='w-[100%] flex justify-center'>
+              <Link href='/trips'>
+                <ContentSectionButton text="See Trips" className='max-w-[260px] min-w-[260px]' />
+              </Link>
+            </div>
           </aside>
         </ContentSection>
       }
 
       <GradientFlexi>
         <Container className='px-10' style={{zIndex: '2'}}>
-          <GradientHeader text='TRIPIA' className='text-center mb-4' />
+          <GradientHeader text='TRIPIA' className='text-center mb-8' />
           <GradientDescription 
             text={`Welcome to Tripia, the perfect platform for car trips and hikes!`}
             className='drop-shadow-lg mb-4 text-center'
           />
           <GradientDescription 
-            text={`Whether you're planning a road trip or a weekend hike, you can invite others to join or find a trip to hop on. Share the journey, split the costs of gas, accommodation while making new friends along the way.`}
+            text={`Whether you're planning a road trip or a weekend hike, you can invite others to join or find a trip to hop on. Share the journey, split the costs of gas and accommodation while making new friends along the way.`}
             className='drop-shadow-lg mb-4 text-center'
           />
           <GradientDescription 

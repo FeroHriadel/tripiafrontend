@@ -23,6 +23,7 @@
   font-weight: bold;
   line-height: 1;
   transform: translate(2rem, -2rem);
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .description {
@@ -82,12 +83,20 @@
   }
 }
 
-@media (max-width: 600px) {  
+@media (max-width: 600px) {
+  .team-up-now {
+    text-align: center;
+  }
+
   .tripia {
     font-size: 2.5rem;
-    transform: translate(1rem, -1.5rem);
-    text-align: left;
+    transform: translate(0, 0rem);
     opacity: 0.75;
+    margin-bottom: 1rem;
+  }
+
+  .description {
+    text-align: center;
   }
 }
 
@@ -98,7 +107,6 @@
   
   .tripia {
     font-size: 2rem;
-    transform: translate(1rem, -1.5rem);
-    text-align: left;
+    transform: translate(0, 0rem);
   }
 }
