@@ -15,12 +15,14 @@ import { apiCalls, uriEncodeObj } from '@/utils/apiCalls';
 import { useToast } from '@/context/toastContext';
 import GradientButtonPurpleGray from '@/components/GradientButtonPurpleGray';
 import GradientButtonPurpleOrange from '@/components/GradientButtonPurpleOrange';
+import { scrollToElement } from '@/utils/DOM';
 
 
 
 export const dynamic = 'force-dynamic';
 
 const pageSize = 10;
+const fiveMinutes = 1000 * 60 * 5;
 
 
 
@@ -30,6 +32,7 @@ const TripsPage = () => {
   const [loading, setLoading] = useState(true);
   const { showToast } = useToast();
   const observerRef = useRef<IntersectionObserver | null>(null);
+  const refreshTripsInterval = useRef<ReturnType<typeof setInterval> | null>(null);
  
 
   async function fetchTripsFromAPI() {
@@ -78,10 +81,35 @@ const TripsPage = () => {
     }
   }
 
+  function newTripsWereAdded(newTrips: Trip[]) {
+    if (trips.length && trips[0].id === newTrips[0].id) return false;
+    else return true;
+  }
 
-  useEffect(() => { loadMoreTrips(); }, []);
+  async function refreshTrips() {
+    if (loading) return;
+    const queryString = `?pageSize=${pageSize}`;
+    const res = await apiCalls.get('/trips' + queryString); if (!res.items) return;
+    const { items, lastEvaluatedKey } = res; if (!items.length) return;
+    if (!newTripsWereAdded(items)) return;
+    setLastEvaluatedKey(lastEvaluatedKey);
+    setTrips(items);
+    showToast('Someone posted a new Trip!');
+    setTimeout(() => scrollToElement(items[0].id), 250);
+  }
+
+  function clearRefreshTripsInterval() { clearInterval(refreshTripsInterval.current!); refreshTripsInterval.current = null; }
+
+
+  useEffect(() => { loadMoreTrips(); }, []); //load first batch of trips
 
   useEffect(() => { if (trips.length) observeLastCard(); }, [trips]); //will load more cards when last card shows in viewport
+
+  useEffect(() => { //refresh trips regularly
+    clearRefreshTripsInterval();
+    refreshTripsInterval.current = setInterval(refreshTrips, fiveMinutes);
+    return () => clearRefreshTripsInterval();
+  }, [trips])
 
 
   return (
