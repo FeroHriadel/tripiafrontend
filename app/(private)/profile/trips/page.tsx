@@ -86,7 +86,7 @@ const MyTripsPage = () => {
       </GradientFlexi>
 
       <ContentSection>
-        <Container className='px-4'>
+        <Container className='px-4 max-w-[750px]'>
           <ContentSectionHeader text='My Trips' />
           <ContentSectionDescription text='Trips organized by me' className='mb-20'/>
           {
