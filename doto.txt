@@ -1,7 +1,5 @@
-- favorite trips page should show only current trips
 - trip comments should update on a 2 minute basis & trips too
 - fix Auth - on 1st page load the Sign In/Log out sometimes doesn't show & stay signed in for 30 days
-- find out what happens to favorite trips if trip was deleted
 - fix gradientSection buttons
 - fix pdf font
 - see other ppl's profile
