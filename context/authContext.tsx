@@ -57,51 +57,27 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ childr
     dispatch(setInvitations([]));
   }
 
-  const getCurrentDate = () => {
-    let now: string | number = Date.now().toString();
-    now = now.slice(0, -3);
-    now = parseInt(now);
-    return now;
-  }
-
-  function getDateFromSeconds(unixTimestamp: number) {
-    const date = new Date(unixTimestamp * 1000);
-    const humanReadableDate = date.toLocaleString();
-    return humanReadableDate;
-  }
-
   const refreshSession = async () => {
     const newSession = await refreshCognitoSession(); if (!newSession.tokens) await logout();
     const newUserData = getUserFromRefreshedSession(newSession);
     setUser({...newUserData});
-  }
-
-  const isSessionValid = (session: any) => {
-    const user = getUserFromSession(session); 
-    const now = getCurrentDate();
-    if (user.expires < now) return false;
-    return true;
+    setCheckingAuth(false);
   }
 
   const populateUser = async () => {
     setCheckingAuth(true);
-    const session = await getCognitoSession();  if (!session.idToken) { await logout(); setCheckingAuth(false); return }
-    if (!isSessionValid(session)) await logout()
-    else await refreshSession();
-    setCheckingAuth(false);
-  }
-
-  const handleRefreshInterval = (user: User) => {
-    if (refreshTokenInterval.current) clearInterval(refreshTokenInterval.current);
-    if (user.email) refreshTokenInterval.current = setInterval(() => { refreshSession() }, oneHour);
-  }
+    const session = await getCognitoSession();
+    if (!session.idToken) { await logout(); setCheckingAuth(false); }
+    else {
+      if (session.idToken.payload.exp! * 1000 < Date.now()) await refreshSession()
+      else { const userData = getUserFromSession(session); setUser(userData); setCheckingAuth(false); }
+    }
+  };
 
 
   useEffect(() => { populateUser(); }, []); //populates user on app refresh on first load if still signed-in
 
-  useEffect(() => { handleRefreshInterval(user); }, [user]); //refreshes token every hour
-
-  //useEffect(() => { console.log(user); console.log(`Token expires: ${getDateFromSeconds(user.expires)}`) }, [user]); //logs user on every change
+  //useEffect(() => { console.log(user); }, [user]); //logs user on every change
 
 
   return (

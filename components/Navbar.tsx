@@ -1,9 +1,8 @@
 import React from 'react';
 import Container from '@/components/Container';
 import Link from 'next/link';
-import { FaCarAlt, FaSignInAlt } from 'react-icons/fa';
+import { FaCarAlt } from 'react-icons/fa';
 import NavbarSigninButton from './NavbarSigninButton';
-import { CgProfile } from "react-icons/cg";
 import { BiSolidMessageRoundedAdd } from "react-icons/bi";
 import NavbarProfileButton from './NavbarProfileButton';
 import NavbarGroupsButton from './NavbarGroupsButton';

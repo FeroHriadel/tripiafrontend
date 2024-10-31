@@ -18,7 +18,7 @@ const NavbarGroupsButton = () => {
   const invitationsInt = useRef<ReturnType<typeof setInterval> | null>(null);
   const dispatch = useDispatch();
   const invitations = useSelector((state: any) => state.invitations);
-  const { user, checkingAuth, logout } = useAuth();
+  const { user, checkingAuth } = useAuth();
   const { email } = user;
 
   async function loadInvitations() {
@@ -29,17 +29,19 @@ const NavbarGroupsButton = () => {
     dispatch(setInvitations(res));
   };
 
+
   useEffect(() => { //check for new invitations regularly
     if (email) {
       invitationsInt.current = null;
       clearInterval(invitationsInt.current!);
-      invitationsInt.current = setInterval(() => { invitationsInt.current = null; loadInvitations(); }, fiveMinutes);
+      invitationsInt.current = setInterval(loadInvitations, fiveMinutes);
     } else {
       invitationsInt.current = null;
       clearInterval(invitationsInt.current!);
     }
     return () => { if (invitationsInt.current) { clearInterval(invitationsInt.current); invitationsInt.current = null; } };
-  }, [invitations, email])
+  }, [invitations, email]);
+
 
   if (checkingAuth || !email) return <></>
 
@@ -49,7 +51,7 @@ const NavbarGroupsButton = () => {
         <TiGroup className="block xs:hidden" />  {/* Icon visible on xs */}
         <span className="hidden xs:block">My Groups</span>  {/* Text visible on larger screens */}
         {
-          (invitations.length > 0) 
+          (invitations && invitations.length > 0) 
           && 
           <span className="absolute -top-3 -right-3 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
             {invitations.length}
