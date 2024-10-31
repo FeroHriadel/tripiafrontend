@@ -1,0 +1,27 @@
+BEFORE DEPLOY:
+- fix gradientSection buttons
+- see other ppl's profile
+- delete trips on a biweekly basis
+- create a script to populate trips
+- redo the toast
+- redo confirm dialog
+- select & InputUserSearch : popping up/down & tabindex
+- favicon 
+- SEO
+- deploy
+- domain
+- include force-dynamic in 'use-client' pages
+- deploy
+
+
+AFTER DEPLOY
+- on 1st app load (locally) the app errors out on syntax error in layout.js => can't find out why. Make sure it never happens in prod.
+- remove the wave line if necessary
+- protect mapbox key
+
+
+IF YOU HAVE TIME
+- testing
+- tips section
+- payment section
+- fix pdf font
