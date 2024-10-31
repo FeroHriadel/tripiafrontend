@@ -1,4 +1,3 @@
-- trip comments should update on a 2 minute basis
 - fix Auth - on 1st page load the Sign In/Log out sometimes doesn't show & stay signed in for 30 days
 - fix gradientSection buttons
 - fix pdf font

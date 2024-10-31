@@ -23,6 +23,7 @@ interface Props {
 
 const hint = 'Write something...';
 const pageSize = 3;
+const twoMinutes = 1000 * 60 * 2;
 
 
 
@@ -39,6 +40,7 @@ const TripComments = ({ trip }: Props) => {
   const observerRef = useRef<IntersectionObserver | null>(null);
   const { user } = useAuth();
   const { showToast } = useToast();
+  const refreshInterval = useRef<ReturnType<typeof setInterval> | null>(null);
 
 
   function onChange(event: {name: string, value: any}) {
@@ -145,10 +147,35 @@ const TripComments = ({ trip }: Props) => {
     closeConfirm();
   }
 
+  function isNewComment(newComments: Comment[]) {
+    if (newComments.length === 0) return false;
+    if (comments.length === 0) return true;
+    if (newComments[0].id === comments[0].id) return false;
+    return true;
+  }
+
+  async function refreshComments() {
+    if (isUploading || loadingComments) return;
+    const res = await fetchCommentsFromAPI(); if (!res.items) return;
+    if (!isNewComment(res.items)) return;
+    setComments(res.items);
+    setLastEvaluatedKey(res.lastEvaluatedKey);
+    showToast('Someone added a new comment!');
+    setTimeout(() => scrollToElement(res.items[0].id), 250);
+  }
+
+  function clearRefreshInterval() { clearInterval(refreshInterval.current!); refreshInterval.current = null; }
+
 
   useEffect(() => { loadMoreComments(); }, []); //fetch a couple of comments initially
 
   useEffect(() => { if (comments.length) observeLastCard(); }, [comments]); //will load more comments when last comment shows in viewport
+
+  useEffect(() => { //refresh comments regularly
+    clearRefreshInterval();
+    refreshInterval.current = setInterval(refreshComments, twoMinutes);
+    return () => clearRefreshInterval();
+  }, [comments]);
 
 
   return (
