@@ -17,6 +17,7 @@ AFTER DEPLOY
 
 IF YOU HAVE TIME
 - see other ppl's profile is not implemented
+- new design for ugly gradient buttons
 - testing
 - tips section
 - payment section
