@@ -61,11 +61,10 @@
 }
 
 .options-container {
-  position: absolute;
   width: 100%;
   height: 10rem;
   min-height: 10rem;
-  top: -11rem; /*height 10rem + 1rem margin */
+  margin-top: 1rem;
   border-radius: 5px;
   overflow-y: auto;
   padding-left: 1rem;

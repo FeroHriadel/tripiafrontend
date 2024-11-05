@@ -1,12 +1,7 @@
 BEFORE DEPLOY:
-- fix gradientSection buttons
-- see other ppl's profile
 - delete trips on a biweekly basis
 - create a script to populate trips
-- redo the toast
-- redo confirm dialog
-- select & InputUserSearch : popping up/down & tabindex
-- favicon 
+- favicon
 - SEO
 - deploy
 - domain
@@ -21,7 +16,9 @@ AFTER DEPLOY
 
 
 IF YOU HAVE TIME
+- see other ppl's profile is not implemented
 - testing
 - tips section
 - payment section
 - fix pdf font
+- look into emai sending

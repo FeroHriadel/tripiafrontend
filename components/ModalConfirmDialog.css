@@ -7,6 +7,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 1rem;
   z-index: 20;
   transition: opacity 0.2s linear;
   opacity: 0;
@@ -39,6 +40,7 @@
   font-size: 1.25rem;
   text-align: center;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .close-icon {

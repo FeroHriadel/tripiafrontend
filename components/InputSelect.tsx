@@ -14,11 +14,12 @@ interface Props {
   className?: string;
   style?: React.CSSProperties;
   options: {value: string, label: string, extraInfo?: string}[];
+  id?: string;
 }
 
 
 
-const InputSelect = ({inputName, options = [], labelText, value, onChange, className = '', style = {}, disabled = false}: Props) => {
+const InputSelect = ({inputName, id = inputName, options = [], labelText, value, onChange, className = '', style = {}, disabled = false}: Props) => {
   const [isFocused, setIsFocused] = React.useState(false);
   const [selectedOptionLabel, setselectedOptionLabel] = React.useState('');
   const [selectedOptionExtraInfo, setSelectedOptionExtraInfo] = React.useState('');
@@ -49,19 +50,19 @@ const InputSelect = ({inputName, options = [], labelText, value, onChange, class
       setIsFocused(false);
     }
   }
-  
 
-  React.useEffect(() => {
+
+  React.useEffect(() => { //hide options on Esc
     window.addEventListener('keydown', closeDialogOnEsc);
     return () => window.removeEventListener('keydown', closeDialogOnEsc);
   }, []);
 
-  React.useEffect(() => {
+  React.useEffect(() => { //hide options on outside click
     window.addEventListener('click', closeDialogOnOutsideClick);
     return () => window.removeEventListener('click', closeDialogOnOutsideClick);
   }, []);
 
-  React.useEffect(() => {
+  React.useEffect(() => { //handle onOptionClick
     if (!value) { 
       setselectedOptionLabel(''); 
       setSelectedOptionExtraInfo('') 
@@ -72,12 +73,11 @@ const InputSelect = ({inputName, options = [], labelText, value, onChange, class
         if (option.extraInfo) setSelectedOptionExtraInfo(option.extraInfo);
       }
     }
-      
   }, [value]);
 
   
   return (
-    <div className={`select-input-container ` + className} style={disabled ? { ...style, pointerEvents: 'none', opacity: 0.5 } : style}>
+    <div className={`select-input-container ` + className} style={disabled ? { ...style, pointerEvents: 'none', opacity: 0.5 } : style} id={id}>
       {/* input area */}
       <div className="input-and-label-wrapper">
         <input 
