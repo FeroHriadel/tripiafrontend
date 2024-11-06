@@ -55,6 +55,13 @@ export function formatUTCToDateAndHour(utcString: string): string {
   const datePart = new Intl.DateTimeFormat('en-US', options).format(date).replace(',', '');
   const hours = date.getUTCHours().toString().padStart(2, '0'); // Format hours as 2 digits
   const minutes = date.getUTCMinutes().toString().padStart(2, '0'); // Format minutes as 2 digits
-  
   return `${datePart} at ${hours}:${minutes}`;
+}
+
+export function getCurrentSlovakDateTime(): string {
+  const currentDate = new Date();
+  const timezoneOffset = currentDate.getTimezoneOffset();
+  const slovakOffsetInMs = 60 * 60 * 1000 * (timezoneOffset / -60);
+  const slovakTime = new Date(currentDate.getTime() + slovakOffsetInMs);
+  return slovakTime.toISOString();
 }

@@ -22,6 +22,7 @@ import { BsPersonPlusFill } from "react-icons/bs";
 import Link from 'next/link';
 import Modal from '@/components/Modal';
 import GroupModalContent from '@/components/GroupModalContent';
+import { getCurrentSlovakDateTime } from '@/utils/dates';
 
 
 export const dynamic = 'force-dynamic';
@@ -63,7 +64,7 @@ const GroupPage = () => {
 
   function getPosts() { sendMessage({action: 'postGet', groupId: id}); }
 
-  function createPost(postInput: PostInput) { sendMessage({action: 'postCreate', post: postInput}); }
+  function createPost(postInput: PostInput) { sendMessage({action: 'postCreate', post: {...postInput, createdAt: getCurrentSlovakDateTime()}}); }
 
   function deletePost(postId: string) { setLoading(true); sendMessage({action: 'postDelete', postId, groupId: id}); }
 
@@ -154,7 +155,6 @@ const GroupPage = () => {
   function closeModal() { setModalOpen(false); }
 
 
-  
   useEffect(() => { //connect/disconnect to ws when user comes to/leaves the page
     if (id && !isConnected) { connect(id as string); }
     return () => { if (isConnected) { disconnect(); } };
