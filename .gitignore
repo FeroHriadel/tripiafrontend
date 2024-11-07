@@ -35,3 +35,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# cdk
+node_modules
+/deployment/node_modules
+.cdk.staging
+/deployment/.cdk.staging
+cdk.out
+/deployment/cdk.out
+/deployment/.env
+

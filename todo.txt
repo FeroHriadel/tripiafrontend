@@ -10,12 +10,13 @@ AFTER DEPLOY
 - testing
 - remove the wave line if necessary
 - protect mapbox key
+- loading & 404
+- see other ppl's profile is not implemented
 - delete trips on a biweekly basis
 - create a script to populate trips
 
 
 IF YOU HAVE TIME
-- see other ppl's profile is not implemented
 - new design for ugly gradient buttons
 - tips section
 - payment section
