@@ -80,20 +80,22 @@ const FavoriteTripsPage = () => {
         </Container>
       </GradientFlexi>
 
-      <Container className='px-4 max-w-[750px]'>
-        <ContentSectionHeader text='Favorite Trips'/>
-        <ContentSectionDescription text='Trips you added to your favorites' className='mb-20'/>
-          {trips.map(trip => (<TripCard key={trip.id!} trip={trip} className='mb-10' />))}
-          {loading && <p className='text-center'>Loading...</p>}
-          {
-            (!loading && !trips.length)
-            &&
-            <div>
-              <p className='text-center'>No favorite trips found</p>
-              <Link href='/profile'> <p className='text-textorange text-center'>Back to My Profile</p> </Link>
-            </div>
-          }
-      </Container>
+      <ContentSection className='min-h-[200px]'>
+        <Container className='px-4 max-w-[750px]'>
+          <ContentSectionHeader text='Favorite Trips'/>
+          <ContentSectionDescription text='Trips you added to your favorites' className='mb-20'/>
+            {trips.map(trip => (<TripCard key={trip.id!} trip={trip} className='mb-10' />))}
+            {loading && <p className='text-center'>Loading...</p>}
+            {
+              (!loading && !trips.length)
+              &&
+              <div>
+                <p className='text-center'>No favorite trips found</p>
+                <Link href='/profile'> <p className='text-textorange text-center'>Back to My Profile</p> </Link>
+              </div>
+            }
+        </Container>
+      </ContentSection>
 
       <GradientFlexi />
     </>

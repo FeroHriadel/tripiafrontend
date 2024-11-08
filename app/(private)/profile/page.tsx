@@ -206,11 +206,11 @@ const ProfilePage = () => {
 
               <ContentSectionButton text="Log out" onClick={logout}  className='mb-4' />
             </Container>
-
-            <GradientFlexi />
           </>
         }
       </ContentSection>
+
+      <GradientFlexi />
     </>
   )
 }
