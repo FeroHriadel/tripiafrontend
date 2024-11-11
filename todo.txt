@@ -2,10 +2,10 @@
 
 
 AFTER DEPLOY
-- testing
 - domain
 - protect mapbox key
 - loading & 404
+- add some more tests
 - see other ppl's profile is not implemented
 - delete trips on a biweekly basis
 - create a script to populate trips
