@@ -47,10 +47,19 @@ export function createAmplifyApp(scope: Construct, props: AmplifyAppProps) {
           preBuild: {commands: [
             'nvm install 20.12.2',
             'nvm use 20.12.2',
-            'npm i'
+            'npm i' //'npm ci' doesn't work - blessed be aws amplify
           ]},
           build: {commands: [
             'npm run build'
+          ]},
+          preTest: { commands: [
+            'npm install -D wait-on',
+            //'npx cypress install', //manually install Cypress Binary (if you are not caching them) (or tests will fail the 2nd time they run)
+            'npm run start &',
+            'npx wait-on http://localhost:3000 --timeout 60000'
+          ]},
+          test: { commands: [
+            'npx cypress run'
           ]},
           postBuild: {commands: [
             'echo BUILD COMPLETE...'
@@ -63,9 +72,10 @@ export function createAmplifyApp(scope: Construct, props: AmplifyAppProps) {
         cache: {
           paths: [
             'node_modules/**/*',
-            '.next/cache/**/'
+            '.next/cache/**/',
+            '~/.cache/Cypress' //cache Cypress Binary (or test will fail the 2nd time they run)
           ]
-        }
+        },
       }
     })
   });
@@ -74,6 +84,9 @@ export function createAmplifyApp(scope: Construct, props: AmplifyAppProps) {
 
   return amplifyApp;
 }
+
+
+
 
 
 

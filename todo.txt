@@ -1,14 +1,9 @@
-BEFORE DEPLOY:
-- include force-dynamic in 'use-client' pages
-- deploy
-- domain
 
 
 
 AFTER DEPLOY
-- on 1st app load (locally) the app errors out on syntax error in layout.js => can't find out why. Make sure it never happens in prod.
 - testing
-- remove the wave line if necessary
+- domain
 - protect mapbox key
 - loading & 404
 - see other ppl's profile is not implemented
@@ -17,8 +12,7 @@ AFTER DEPLOY
 
 
 IF YOU HAVE TIME
-- new design for ugly gradient buttons
+- look into email sending
 - tips section
 - payment section
 - fix pdf font
-- look into emai sending
