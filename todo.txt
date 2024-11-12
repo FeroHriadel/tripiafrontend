@@ -2,7 +2,6 @@
 
 
 AFTER DEPLOY
-- domain
 - protect mapbox key
 - loading & 404
 - add some more tests
