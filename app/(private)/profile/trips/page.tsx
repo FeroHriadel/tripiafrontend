@@ -78,7 +78,7 @@ const MyTripsPage = () => {
             <Link href='/profile' className='z-[5]'>
               <GradientButtonPurpleGray text='My Profile' className='sm:w-[200px] w-[100%]' />
             </Link>
-            <Link href='/trips/profile/favorites' className='z-[5]'>
+            <Link href='/profile/favorites' className='z-[5]'>
               <GradientButtonPurpleOrange text='My Favorites' className='sm:w-[200px] w-[100%]' />
             </Link>
           </aside>
