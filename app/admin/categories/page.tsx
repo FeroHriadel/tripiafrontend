@@ -64,7 +64,7 @@ const CategoriesPage = () => {
       </GradientFlexi>
 
       <ContentSection>
-        <Container className='px-4'>
+        <Container className='px-4 pb-4'>
           <ContentSectionHeader text='Categories' />
           <ContentSectionDescription text='Create, edit and delete categories' className='mb-20' />
           <TableContainer>

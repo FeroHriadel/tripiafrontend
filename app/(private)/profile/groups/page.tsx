@@ -199,7 +199,7 @@ const GroupsPage = () => {
       </GradientFlexi>
 
       <ContentSection>
-        <Container className='px-4'>
+        <Container className='px-4 py-4'>
           <ContentSectionHeader text='My Groups' />
           <ContentSectionDescription text='Groups you created or have joined' className='mb-20'/>
         </Container>
@@ -210,7 +210,7 @@ const GroupsPage = () => {
               <GroupCard key={group.id} group={group} style={{marginBottom: '1rem'}} onDelete={deleteGroup} onUpdate={updateGroup} onLeave={leaveGroup} />
             ))
           }
-          <ContentSectionButton text='Add New' onClick={openModal} className='mt-4' />
+          <ContentSectionButton text='Add New' onClick={openModal} className='my-4' />
           {
             /* invitaions */
             invitations.length > 0 
