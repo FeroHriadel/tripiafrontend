@@ -2,10 +2,11 @@
 
 
 AFTER DEPLOY
+- create a script that: 1) creates cypress.admin@email.com & cypress_user@email.com, 2) deletes all trips created by cypress_user
+- create script that populates trips with sample data
 - add some more tests
 - see other ppl's profile is not implemented
-- delete trips on a biweekly basis
-- create a script to populate trips
+- delete trips older than 2 weeks on a biweekly basis
 
 
 IF YOU HAVE TIME
