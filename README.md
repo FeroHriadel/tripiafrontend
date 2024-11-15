@@ -3,16 +3,20 @@
 - frontend for tripiabackend
 <br />
 
+
 ## FEATURES
 - nextjs
+- aws amplify auth
 - amplify deployment
 - aws serverless backend
 <br />
+
 
 ## SOFTWARE VERSIONS
 - node 20.12.2
 - nextjs 14.2.5
 <br />
+
 
 ## SETUP
 - first deploy the backend: https://github.com/FeroHriadel/tripiabackend.git
@@ -28,8 +32,10 @@ NEXT_PUBLIC_USERPOOL_ID = us-east-1_4wqKAuhEz
 NEXT_PUBLIC_USERPOOL_CLIENT_ID = 7bv7qbvtf1lebf133jifuh3hku
 NEXT_PUBLIC_IMAGES_BUCKET = tripia-devimages-bucket-myuniquename.s3.us-east-1.amazonaws.com
 NEXT_PUBLIC_MAPBOX_TOKEN = pk.eyJ1IjoicG9zc2OcIiwiYSI6ImNtMTd3MW1lZTExYmkycXM4b3V0ZHAyY3QifQ.snfh77uiApPJNVZDW2VMqw
-NEXT_PUBLIC_APP_URL = https://tripia.sk
+NEXT_PUBLIC_APP_URL = https://tripiask.com
 ```
+<br />
+
 
 ### DEPLOYMENT
 - It is assumed that there will be no stages but multiple deployments instead. Each developer can have their own deployment to play with.
@@ -76,3 +82,99 @@ NEXT_PUBLIC_APP_URL = https://tripia.sk
 - Go to go to frontend/deployment and run $ `npm i`
 - Go to frontend/deployment and run $ `cdk deploy --profile ferohriadeladmin`
 - Push to github to trigger Amplify build
+<br />
+
+
+### TESTING
+- Cypress E2E tests. Run locally: $ `npx cypress open`
+- Cypress env. vars can be set in `/cypress.config.json` like so:
+```
+import { defineConfig } from "cypress";
+
+export default defineConfig({
+  e2e: {
+    env: {
+      APP_URL: 'http://localhost:3000',
+    },
+    setupNodeEvents(on, config) {
+ 
+    },
+  },
+});
+```
+- test scenarios are in `/cypress/e2e`
+- custom cypress commands are in `/cypress/support/commands.ts` a new command also needs to be added to types in `/cypress/support/index.d.ts`
+- AWS IAM user needs to be created in AWS Console with the following privileges:
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "cognito-idp:AdminCreateUser",
+                "cognito-idp:AdminAddUserToGroup",
+                "cognito-idp:ListUsers",
+                "cognito-idp:AdminDeleteUser",
+                "cognito-idp:AdminSetUserPassword"
+            ],
+            "Resource": "arn:aws:cognito-idp:us-east-1:472693607173:userpool/us-east-1_5mnKAuhEz"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:DeleteObject"
+            ],
+            "Resource": [
+                "arn:aws:s3:::tripia-devimages-bucket-ioioioi/*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:GetItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:Query",
+                "dynamodb:Scan"
+            ],
+            "Resource": [
+                "arn:aws:dynamodb:<YOUR_REGION>:<YOUR_ACCOUNT_ID>:table/tripia-devUsersTable", //or whatever the table names are...
+                "arn:aws:dynamodb:<YOUR_REGION>:<YOUR_ACCOUNT_ID>:table/tripia-devTripsTable",
+                "arn:aws:dynamodb:<YOUR_REGION>:<YOUR_ACCOUNT_ID>:table/tripia-devPostsTable",
+                "arn:aws:dynamodb:<YOUR_REGION>:<YOUR_ACCOUNT_ID>:table/tripia-devInvitationsTable",
+                "arn:aws:dynamodb:<YOUR_REGION>:<YOUR_ACCOUNT_ID>:table/tripia-devGroupsTable",
+                "arn:aws:dynamodb:<YOUR_REGION>:<YOUR_ACCOUNT_ID>:table/tripia-devFavoriteTripsTable",
+                "arn:aws:dynamodb:<YOUR_REGION>:<YOUR_ACCOUNT_ID>:table/tripia-devCommentsTable",
+                "arn:aws:dynamodb:<YOUR_REGION>:<YOUR_ACCOUNT_ID>:table/tripia-devCommentsTable",
+                "arn:aws:dynamodb:<YOUR_REGION>:<YOUR_ACCOUNT_ID>:table/tripia-devCategoriesTable"
+            ]
+        }
+    ]
+}
+```
+- the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY credentials need to be copied for later use into .env
+- tables names also need to be copied into .env
+- We need this in .env so pretest script can populate data and remove testing data
+- add to .env like this:
+```
+TESTING_AWS_REGION = us-east-1
+TESTING_ACCESS_KEY = AKIAW9IU4BMCRXIDY75P
+TESTING_SECRET_ACCESS_KEY = 98f0fAoXi9D216j6HaGfFBO7GYbdARt+kwPdmMP3
+TESTING_USER_POOL_ID = us-east-1_9oOKAujJj
+TESTING_BUCKET_NAME = tripia-devimages-bucket-ioioioi
+TESTING_USERS_TABLE_NAME=tripia-devUsersTable
+TESTING_TRIPS_TABLE_NAME=tripia-devTripsTable
+TESTING_POSTS_TABLE_NAME=tripia-devPostsTable
+TESTING_INVITATIONS_TABLE_NAME=tripia-devInvitationsTable
+TESTING_GROUPS_TABLE_NAME=tripia-devGroupsTable
+TESTING_FAVORITE_TRIPS_TABLE_NAME=tripia-devFavoriteTripsTable
+TESTING_COMMENTS_TABLE_NAME=tripia-devCommentsTable
+TESTING_CATEGORIES_TABLE_NAME=tripia-devCategoriesTable
+TESTING_ADMIN_EMAIL = cypress.admin@email.com
+TESTING_ADMIN_PASSWORD = 123456
+```
+- scripts/createTestingData.ts needs to be run before testing
+- scripts/destroyTestingData.ts removes all testing data - I recommend running this after testing is done
+<br />
