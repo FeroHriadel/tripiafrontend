@@ -53,7 +53,7 @@ const TripModalContent = ({ trip, isBeingViewed }: Props) => {
   const destinationMapContainerRef = useRef<HTMLDivElement | null>(null);
   const destinationMapRef = useRef<mapboxgl.Map | null>(null);
   const destinationMarkerRef = useRef<mapboxgl.Marker | null>(null);
-  const { renderMap: renderDestinationMap, placeMarker: placeDestinationMarker } = useMap({
+  const { renderMap: renderDestinationMap, placeMarker: placeDestinationMarker, removeMap: removeDestinationMap } = useMap({
     initialCoords: initialCoords,
     onMapClick: () => {},
     mapRef: destinationMapRef,
@@ -61,7 +61,7 @@ const TripModalContent = ({ trip, isBeingViewed }: Props) => {
     mapContainerRef: destinationMapContainerRef,
     interactive: false
   });
-  const { renderMap: renderMeetingMap, placeMarker: placeMeetingMarker } = useMap({
+  const { renderMap: renderMeetingMap, placeMarker: placeMeetingMarker, removeMap: removeMeetingMap } = useMap({
     initialCoords: initialCoords,
     onMapClick: () => {},
     mapRef: meetingMapRef,
@@ -153,13 +153,13 @@ const TripModalContent = ({ trip, isBeingViewed }: Props) => {
 
   //SUBSCRIPTINS
   useEffect(() => { // render destination map if any
-    if (!isBeingViewed) { destinationMapContainerRef.current = null; return; };
+    if (!isBeingViewed) { destinationMapContainerRef.current = null; removeDestinationMap(); return; };
     if (trip?.destinationLng && trip?.destinationLat && destinationMapContainerRef.current) { 
       renderDestinationMap(); placeDestinationMarker({ lng: trip.destinationLng, lat: trip.destinationLat }); }
   }, [trip, destinationMapContainerRef.current, isBeingViewed]);
 
   useEffect(() => { // render meeting point map if any
-    if (!isBeingViewed) { meetingMapContainerRef.current = null; return; };
+    if (!isBeingViewed) { meetingMapContainerRef.current = null; removeMeetingMap(); return; };
     if (trip?.meetingLng && trip?.meetingLat && meetingMapContainerRef.current) {
       renderMeetingMap(); placeMeetingMarker({ lng: trip.meetingLng, lat: trip.meetingLat }); }
   }, [trip, meetingMapContainerRef.current, isBeingViewed]);
