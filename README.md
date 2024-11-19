@@ -63,14 +63,15 @@ NEXT_PUBLIC_APP_URL = https://tripiask.com
 - Go to frontend/deployment and create a new file: .env.
 - Fill it out with values that are true for you:
 ```
-# Deployment vars:
+#Deployment vars:
 ACCOUNT_ID=802688607666
 REGION=us-east-1
 APP_NAME=devTripiaFrontend
 GITHUB_OWNER=FeroHriadel
 GITHUB_TOKEN_NAME=github-token
 GITHUB_REPO_NAME=tripiafrontend
-# NextJS vars (copy-paste from /frontend/.env)
+
+#NextJS vars (copy-paste from /frontend/.env)
 NEXT_PUBLIC_API_ENDPOINT = https://999bphfb7b.execute-api.us-east-1.amazonaws.com/prod
 NEXT_PUBLIC_WS_ENDPOINT = wss://6o234jz3yc.execute-api.us-east-1.amazonaws.com/prod
 NEXT_PUBLIC_USERPOOL_ID = us-east-1_4wqKAuhEz
@@ -78,9 +79,26 @@ NEXT_PUBLIC_USERPOOL_CLIENT_ID = 7bv7qbvtf1lebf133jifuh3hku
 NEXT_PUBLIC_IMAGES_BUCKET = tripia-devimages-bucket-myuniquename.s3.us-east-1.amazonaws.com
 NEXT_PUBLIC_MAPBOX_TOKEN = pk.eyJ1IjoicG9zc2OcIiwiYSI6ImNtMTd3MW1lZTExYmkycXM4b3V0ZHAyY3QifQ.snfh77uiApPJNVZDW2VMqw
 NEXT_PUBLIC_APP_URL = https://tripia.sk
+
+#Testing vars
+TESTING_AWS_REGION = us-east-1
+TESTING_ACCESS_KEY = AKIAW99f9BMtuoCSDY75P
+TESTING_SECRET_ACCESS_KEY = 98f0fAoOoO0O16j6HaGfFBO7GYbdOOt+kwPdmMP3
+TESTING_USER_POOL_ID = us-east-1_9oKOAwjIj
+TESTING_BUCKET_NAME = tripia-devimages-bucket-myuniquename
+TESTING_USERS_TABLE_NAME=tripia-devUsersTable
+TESTING_TRIPS_TABLE_NAME=tripia-devTripsTable
+TESTING_POSTS_TABLE_NAME=tripia-devPostsTable
+TESTING_INVITATIONS_TABLE_NAME=tripia-devInvitationsTable
+TESTING_GROUPS_TABLE_NAME=tripia-devGroupsTable
+TESTING_FAVORITE_TRIPS_TABLE_NAME=tripia-devFavoriteTripsTable
+TESTING_COMMENTS_TABLE_NAME=tripia-devCommentsTable
+TESTING_CATEGORIES_TABLE_NAME=tripia-devCategoriesTable
+TESTING_ADMIN_EMAIL = cypress.admin@email.com
+TESTING_ADMIN_PASSWORD = 123456
 ```
 - Go to go to frontend/deployment and run $ `npm i`
-- Go to frontend/deployment and run $ `cdk deploy --profile ferohriadeladmin`
+- Go to frontend/deployment and run $ `cdk deploy --profile yourawsprofile`
 - Push to github to trigger Amplify build
 <br />
 
@@ -103,7 +121,7 @@ export default defineConfig({
 });
 ```
 - test scenarios are in `/cypress/e2e`
-- custom cypress commands are in `/cypress/support/commands.ts` a new command also needs to be added to types in `/cypress/support/index.d.ts`
+- custom cypress commands are in `/cypress/support/commands.ts` a new command (if you add one) also needs to be added to types in `/cypress/support/index.d.ts`
 - AWS IAM user needs to be created in AWS Console with the following privileges:
 ```
 {
@@ -156,14 +174,14 @@ export default defineConfig({
 ```
 - the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY credentials need to be copied for later use into .env
 - tables names also need to be copied into .env
-- We need this in .env so pretest script can populate data and remove testing data
-- add to .env like this:
+- We need this in .env so preTest script can populate data and postTest script can remove testing data
+- add to `/.env` like this:
 ```
 TESTING_AWS_REGION = us-east-1
-TESTING_ACCESS_KEY = AKIAW9IU4BMCRXIDY75P
-TESTING_SECRET_ACCESS_KEY = 98f0fAoXi9D216j6HaGfFBO7GYbdARt+kwPdmMP3
+TESTING_ACCESS_KEY = AKIAW99f9BMtuoCSDY75P
+TESTING_SECRET_ACCESS_KEY = 98f0fAoOoO0O16j6HaGfFBO7GYbdOOt+kwPdmMP3
 TESTING_USER_POOL_ID = us-east-1_9oOKAujJj
-TESTING_BUCKET_NAME = tripia-devimages-bucket-ioioioi
+TESTING_BUCKET_NAME = tripia-devimages-bucket-myuniquename
 TESTING_USERS_TABLE_NAME=tripia-devUsersTable
 TESTING_TRIPS_TABLE_NAME=tripia-devTripsTable
 TESTING_POSTS_TABLE_NAME=tripia-devPostsTable
@@ -175,6 +193,9 @@ TESTING_CATEGORIES_TABLE_NAME=tripia-devCategoriesTable
 TESTING_ADMIN_EMAIL = cypress.admin@email.com
 TESTING_ADMIN_PASSWORD = 123456
 ```
+- also remember to copy-paste `/.env` into `/deployment/.env`
 - scripts/createTestingData.ts needs to be run before testing
 - scripts/destroyTestingData.ts removes all testing data - I recommend running this after testing is done
+- testing is set up to run on Amplify deploy as well. You'll need to add copy-paste `/.env` into `./deployment/.env`. It's so that env vars can be set up on Amplify!
+
 <br />
