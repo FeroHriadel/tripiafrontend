@@ -53,6 +53,7 @@ export function createAmplifyApp(scope: Construct, props: AmplifyAppProps) {
             'npm run build'
           ]},
           preTest: { commands: [
+            'npm run create-testing-data',
             'npm install -D wait-on',
             //'npx cypress install', //manually install Cypress Binary (if you are not caching them) (or tests will fail the 2nd time they run)
             'npm run start &',
@@ -60,6 +61,9 @@ export function createAmplifyApp(scope: Construct, props: AmplifyAppProps) {
           ]},
           test: { commands: [
             'npx cypress run'
+          ]},
+          postTest: { commands: [
+            'npm run destroy-testing-data'
           ]},
           postBuild: {commands: [
             'echo BUILD COMPLETE...'

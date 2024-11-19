@@ -1,17 +1,17 @@
 /**************************************************************************************************************
 - run like this:
-  $ npx ts-node ./scripts/createTestingData.ts
+  $ npx ts-node ./scripts/destroyTestingData.ts
 **************************************************************************************************************/
 
 
 
 //@ts-ignore
-const { createAdmin } = require('./createUserData');
+const { deleteAdmin } = require('./createUserData');
 
 
 
-async function createData() {
-  await createAdmin();
+async function destroyData() {
+  await deleteAdmin();
 }
 
-createData();
+destroyData();
